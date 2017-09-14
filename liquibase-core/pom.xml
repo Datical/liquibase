@@ -19,7 +19,7 @@
       liquibase-parent
     </artifactId>
     <version>
-      3.5.1119
+      3.5.1126
     </version>
   </parent>
   <properties>
@@ -337,11 +337,13 @@
               org.liquibase.core
             </Bundle-SymbolicName>
             <Import-Package>
+              
               javax.servlet.*;version="[2.6,4)";resolution:=optional,
               javax.sql.*,
               org.osgi.*,
               org.yaml.snakeyaml.*,
               *;resolution:=optional
+            
             </Import-Package>
           </instructions>
         </configuration>
