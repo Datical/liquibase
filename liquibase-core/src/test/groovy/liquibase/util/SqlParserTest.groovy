@@ -46,6 +46,14 @@ class SqlParserTest extends Specification {
         "a ~ b"                                                                                            | ["a", "~", "b"]
         "a > b"                                                                                            | ["a", ">", "b"]
         "a <> b"                                                                                           | ["a", "<", ">", "b"]
+        "a \$b"                                                                                            | ["a", "\$b"]
+        "a b_c"                                                                                            | ["a", "b_c"]
+        "a @b"                                                                                             | ["a", "@b"]
+        "a #b"                                                                                             | ["a", "#b"]
+        "a 'bcd'"                                                                                          | ["a", "'bcd'"]
+        "a N'bcd'"                                                                                         | ["a", "N'bcd'"]
+        "a n'bcd'"                                                                                         | ["a", "n'bcd'"]
+        "a N 'bcd'"                                                                                        | ["a", "N", "'bcd'"]
 
     }
 
