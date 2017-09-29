@@ -1,3 +1,6 @@
+0d65bb5bd DVONE-5315 Added IgnoreChangeSetFilter to other lists of filters in the Liquibase class
+ab8e333b4 Fixed test
+9535abce0 DVONE-5315 Added 'ignore' attribute to change set
 9981390b9 DVONE-4902 Make sqlFile accept schema name
 c4a0cada6 Merge pull request #4 from Datical/TimeOutForExecCmd
 dd207e76f use overridden value if timeout is null in the error message
