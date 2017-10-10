@@ -658,7 +658,7 @@ public class ChangeSet implements Conditional, ChangeLogChild {
 
             RanChangeSet ranChangeSet = database.getRanChangeSet(this);
             if (hasCustomRollbackChanges()) {
-                
+
                 final List<SqlStatement> statements = new LinkedList<SqlStatement>();
                 for (Change change : rollback.getChanges()) {
                     if (((change instanceof DbmsTargetedChange)) && !DatabaseList.definitionMatches(((DbmsTargetedChange) change).getDbms(), database, true)) {
@@ -716,7 +716,7 @@ public class ChangeSet implements Conditional, ChangeLogChild {
     protected boolean hasCustomRollbackChanges() {
         return rollback != null && rollback.getChanges() != null && rollback.getChanges().size() > 0;
     }
-    
+
     /**
      * Returns an unmodifiable list of changes.  To add one, use the addRefactoing method.
      */
@@ -761,7 +761,7 @@ public class ChangeSet implements Conditional, ChangeLogChild {
     }
 
     public void setIgnore(boolean ignore) {
-      this.ignore = ignore;
+        this.ignore = ignore;
     }
 
     public Collection<ContextExpression> getInheritableContexts() {

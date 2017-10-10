@@ -18,11 +18,16 @@ import java.util.Map;
  */
 public class JdbcConnection implements DatabaseConnection {
     private java.sql.Connection con;
+    private String schema;
 
     public JdbcConnection(java.sql.Connection connection) {
         this.con = connection;
     }
-
+    public JdbcConnection(java.sql.Connection connection, String schema) {
+        this.con = connection;
+        this.schema = schema;
+        attachSchemaToConnection();
+    }
 
     @Override
     public void attached(Database database) {
@@ -31,9 +36,23 @@ public class JdbcConnection implements DatabaseConnection {
         } catch (SQLException e) {
             LogFactory.getLogger().info("Error fetching reserved words list from JDBC driver", e);
         }
-
-
     }
+
+    public String getSchema() {
+        return schema;
+    }
+
+    private void attachSchemaToConnection() {
+        if (this.schema==null || schema.isEmpty()) {
+            return;
+        }
+        try {
+            this.con.setSchema(this.schema);
+        }catch (SQLException | AbstractMethodError/*AbstractMethodError in case when JDBC driver for a version of Java <= 6 */ sqlException ) {
+            LogFactory.getInstance().getLog().severe(String.format("Error during set up schema:%s to connection", schema), sqlException);
+        }
+    }
+
 
     @Override
     public String getDatabaseProductName() throws DatabaseException {

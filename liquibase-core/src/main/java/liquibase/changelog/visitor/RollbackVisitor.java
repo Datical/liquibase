@@ -12,7 +12,7 @@ import java.util.Set;
 public class RollbackVisitor implements ChangeSetVisitor {
 
     private Database database;
-    
+
     private ChangeExecListener execListener;
 
     /**
@@ -24,10 +24,10 @@ public class RollbackVisitor implements ChangeSetVisitor {
     }
 
     public RollbackVisitor(Database database, ChangeExecListener listener) {
-      this(database);
-      this.execListener = listener;
-  }
-    
+        this(database);
+        this.execListener = listener;
+    }
+
     @Override
     public Direction getDirection() {
         return ChangeSetVisitor.Direction.REVERSE;
@@ -44,8 +44,8 @@ public class RollbackVisitor implements ChangeSetVisitor {
     }
 
     private void sendRollbackEvent(ChangeSet changeSet, DatabaseChangeLog databaseChangeLog, Database database2) {
-      if (execListener != null) {
-        execListener.rolledBack(changeSet, databaseChangeLog, database);
-      }
+        if (execListener != null) {
+            execListener.rolledBack(changeSet, databaseChangeLog, database);
+        }
     }
 }
