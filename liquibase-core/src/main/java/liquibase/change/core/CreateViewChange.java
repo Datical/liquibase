@@ -18,7 +18,6 @@ import liquibase.statement.core.CreateViewStatement;
 import liquibase.statement.core.DropViewStatement;
 import liquibase.statement.core.SetTableRemarksStatement;
 import liquibase.structure.core.View;
-import liquibase.util.StreamUtil;
 import liquibase.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
@@ -147,18 +146,6 @@ public class CreateViewChange extends AbstractChange {
 		return validate;
 	}
 
-	protected InputStream openSqlStream() throws IOException {
-		if (path == null) {
-			return null;
-		}
-
-		try {
-			return StreamUtil.openStream(getPath(), getRelativeToChangelogFile(), getChangeSet(), getResourceAccessor());
-		} catch (IOException e) {
-			throw new IOException("<" + ChangeFactory.getInstance().getChangeMetaData(this).getName() + " path=" + path + "> -Unable to read file", e);
-		}
-	}
-
 	/**
 	 * Calculates the checksum based on the contained SQL.
 	 *
@@ -170,9 +157,9 @@ public class CreateViewChange extends AbstractChange {
 			return super.generateCheckSum();
 		}
 
-		InputStream stream = null;
+		InputStream stream;
 		try {
-			stream = openSqlStream();
+			stream = openSqlStream(path, relativeToChangelogFile);
 		} catch (IOException e) {
 			throw new UnexpectedLiquibaseException(e);
 		}
@@ -221,19 +208,10 @@ public class CreateViewChange extends AbstractChange {
         }
 
 		String selectQuery;
-		String path = getPath();
 		if (path == null) {
 			selectQuery = StringUtils.trimToNull(getSelectQuery());
 		} else {
-			try {
-				InputStream stream = openSqlStream();
-				if (stream == null) {
-					throw new IOException("File does not exist: " + path);
-				}
-				selectQuery = StreamUtil.getStreamContents(stream, encoding);
-			} catch (IOException e) {
-				throw new UnexpectedLiquibaseException(e);
-			}
+			selectQuery = getChangeContent(path, encoding, relativeToChangelogFile);
 		}
 
 		if (!supportsReplaceIfExistsOption(database) && replaceIfExists) {
