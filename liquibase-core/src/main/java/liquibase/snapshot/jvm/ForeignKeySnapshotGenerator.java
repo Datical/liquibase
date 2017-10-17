@@ -3,7 +3,9 @@ package liquibase.snapshot.jvm;
 import liquibase.CatalogAndSchema;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.Database;
+import liquibase.database.DatabaseConnection;
 import liquibase.database.core.MSSQLDatabase;
+import liquibase.database.jvm.JdbcConnection;
 import liquibase.diff.compare.DatabaseObjectComparatorFactory;
 import liquibase.exception.DatabaseException;
 import liquibase.snapshot.CachedRow;
@@ -15,6 +17,7 @@ import liquibase.structure.core.*;
 import liquibase.util.StringUtils;
 
 import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -190,18 +193,15 @@ public class ForeignKeySnapshotGenerator extends JdbcSnapshotGenerator {
         if (jdbcType == null) {
             return ForeignKeyConstraintType.importedKeyRestrict;
         }
-        if (database instanceof MSSQLDatabase) {
-            /*
-                 * The sp_fkeys stored procedure spec says that returned integer values of 0, 1 and 2
-     * translate to cascade, noAction and SetNull, which are not the values in the JDBC
-     * standard. This override is a sticking plaster to stop invalid SQL from being generated.
-             */
+        if (driverUsesSpFkeys(database)) {
             if (jdbcType == 0) {
                 return ForeignKeyConstraintType.importedKeyCascade;
             } else if (jdbcType == 1) {
                 return ForeignKeyConstraintType.importedKeyNoAction;
             } else if (jdbcType == 2) {
                 return ForeignKeyConstraintType.importedKeySetNull;
+            } else if (jdbcType == 3) {
+                return ForeignKeyConstraintType.importedKeySetDefault;
             } else {
                 throw new DatabaseException("Unknown constraint type: " + jdbcType);
             }
@@ -211,7 +211,12 @@ public class ForeignKeySnapshotGenerator extends JdbcSnapshotGenerator {
             } else if (jdbcType == DatabaseMetaData.importedKeyNoAction) {
                 return ForeignKeyConstraintType.importedKeyNoAction;
             } else if (jdbcType == DatabaseMetaData.importedKeyRestrict) {
-                return ForeignKeyConstraintType.importedKeyRestrict;
+                if (database instanceof MSSQLDatabase) {
+                    //mssql doesn't support restrict. Not sure why it comes back with this type sometimes
+                    return ForeignKeyConstraintType.importedKeyNoAction;
+                } else {
+                    return ForeignKeyConstraintType.importedKeyRestrict;
+                }
             } else if (jdbcType == DatabaseMetaData.importedKeySetDefault) {
                 return ForeignKeyConstraintType.importedKeySetDefault;
             } else if (jdbcType == DatabaseMetaData.importedKeySetNull) {
@@ -219,6 +224,45 @@ public class ForeignKeySnapshotGenerator extends JdbcSnapshotGenerator {
             } else {
                 throw new DatabaseException("Unknown constraint type: " + jdbcType);
             }
+        }
+    }
+
+    /*
+    * Sql server JDBC drivers prior to 6.3.3 used sp_fkeys to determine the delete/cascade metadata.
+    * The sp_fkeys stored procedure spec says that returned integer values of 0, 1, 2, or 4
+    * translate to cascade, noAction, SetNull, or SetDefault which are not the values in the JDBC
+    * standard.
+    *
+    * If this method returns true, the sp_fkeys values should be used. Otherwise use the standard jdbc logic
+    *
+    * The change in logic went in with https://github.com/Microsoft/mssql-jdbc/pull/490
+    */
+    private boolean driverUsesSpFkeys(Database database) throws DatabaseException {
+        if (!(database instanceof MSSQLDatabase)) {
+            return false;
+        }
+        DatabaseConnection connection = database.getConnection();
+        if (!(connection instanceof JdbcConnection)) {
+            return false;
+        }
+
+        try {
+            DatabaseMetaData metaData = ((JdbcConnection) connection).getMetaData();
+            int driverMajorVersion = metaData.getDriverMajorVersion();
+            int driverMinorVersion= metaData.getDriverMinorVersion();
+            String driverName = metaData.getDriverName();
+
+            if (!driverName.startsWith("Microsoft")) {
+                return false;
+            }
+
+            if (driverMajorVersion >= 6 && driverMinorVersion >= 3) {
+                return false;
+            }
+
+            return true;
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
         }
     }
 

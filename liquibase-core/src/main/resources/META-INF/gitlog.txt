@@ -1,3 +1,11 @@
+9970e7125 Handle change to get foreign key logic in mssql-jdbc driver 6.3.3
+e3167ebef Handle change to get foreign key logic in mssql-jdbc driver 6.3.3
+fd20fabe6 Merge remote-tracking branch 'datical/ddb' into ddb
+400ae47c3 handle "set default" foreign keys in sqlserver
+359b120fb DVONE-5349 Added additional check for missing USER_DEPENDENCIES table
+84d535f22 DVONE-5349 Handle situation when we cannot access the DBA_DEPENDENCIES table.  Instead, use USER_DEPENDENCIES
+34bd42a34 Merge remote-tracking branch 'datical/ddb' into ddb
+267aea785 Support encoded keys/values in OfflineConnection URL
 0d65bb5bd DVONE-5315 Added IgnoreChangeSetFilter to other lists of filters in the Liquibase class
 ab8e333b4 Fixed test
 9535abce0 DVONE-5315 Added 'ignore' attribute to change set
