@@ -194,14 +194,13 @@ public class PostgresDatabase extends AbstractJdbcDatabase {
 
     @Override
     public String escapeObjectName(String objectName, Class<? extends DatabaseObject> objectType) {
-        if (objectType !=null && objectType.isAssignableFrom(ColumnChangeLog.class)) {
-            return (objectName!=null && !objectName.isEmpty())?objectName.trim(): objectName;
-        }
         if (quotingStrategy == ObjectQuotingStrategy.LEGACY && hasMixedCase(objectName)) {
             return "\"" + objectName + "\"";
-        } else {
-            return super.escapeObjectName(objectName, objectType);
+        } else if (objectType !=null && objectType.isAssignableFrom(ColumnChangeLog.class)) {
+            return (objectName != null && !objectName.isEmpty()) ? objectName.trim() : objectName;
         }
+
+        return super.escapeObjectName(objectName, objectType);
     }
 
     @Override
