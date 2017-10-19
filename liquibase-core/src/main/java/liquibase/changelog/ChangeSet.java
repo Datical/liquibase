@@ -645,7 +645,7 @@ public class ChangeSet implements Conditional, ChangeLogChild {
     }
 
     public void rollback(Database database) throws RollbackFailedException {
-        rollback(database, null);
+       rollback(database, null);
     }
 
     public void rollback(Database database, ChangeExecListener listener) throws RollbackFailedException {
