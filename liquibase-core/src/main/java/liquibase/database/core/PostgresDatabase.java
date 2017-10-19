@@ -1,6 +1,7 @@
 package liquibase.database.core;
 
 import liquibase.CatalogAndSchema;
+import liquibase.changelog.column.ColumnChangeLog;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.ObjectQuotingStrategy;
@@ -193,6 +194,9 @@ public class PostgresDatabase extends AbstractJdbcDatabase {
 
     @Override
     public String escapeObjectName(String objectName, Class<? extends DatabaseObject> objectType) {
+        if (objectType !=null && objectType.isAssignableFrom(ColumnChangeLog.class)) {
+            return (objectName!=null && !objectName.isEmpty())?objectName.trim(): objectName;
+        }
         if (quotingStrategy == ObjectQuotingStrategy.LEGACY && hasMixedCase(objectName)) {
             return "\"" + objectName + "\"";
         } else {
