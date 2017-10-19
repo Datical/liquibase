@@ -197,7 +197,7 @@ public class PostgresDatabase extends AbstractJdbcDatabase {
         if (quotingStrategy == ObjectQuotingStrategy.LEGACY && hasMixedCase(objectName)) {
             return "\"" + objectName + "\"";
         } else if (objectType !=null && objectType.isAssignableFrom(ColumnChangeLog.class)) {
-            return (objectName != null && !objectName.isEmpty()) ? objectName.trim() : objectName;
+            return objectName.trim();
         }
 
         return super.escapeObjectName(objectName, objectType);
