@@ -11,18 +11,13 @@ import liquibase.database.core.OracleDatabase;
 import liquibase.database.core.DB2Database;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.exception.ValidationErrors;
-import liquibase.parser.core.ParsedNode;
-import liquibase.parser.core.ParsedNodeException;
-import liquibase.resource.ResourceAccessor;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.CreateProcedureStatement;
-import liquibase.util.StreamUtil;
 import liquibase.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.io.UnsupportedEncodingException;
 
@@ -185,18 +180,6 @@ public class CreateProcedureChange extends AbstractChange implements DbmsTargete
         return validate;
     }
 
-    public InputStream openSqlStream() throws IOException {
-        if (path == null) {
-            return null;
-        }
-
-        try {
-            return StreamUtil.openStream(getPath(), isRelativeToChangelogFile(), getChangeSet(), getResourceAccessor());
-        } catch (IOException e) {
-            throw new IOException("<" + ChangeFactory.getInstance().getChangeMetaData(this).getName() + " path=" + path + "> -Unable to read file", e);
-        }
-    }
-
     /**
      * Calculates the checksum based on the contained SQL.
      *
@@ -208,9 +191,9 @@ public class CreateProcedureChange extends AbstractChange implements DbmsTargete
             return super.generateCheckSum();
         }
 
-        InputStream stream = null;
+        InputStream stream;
         try {
-            stream = openSqlStream();
+            stream = openSqlStream(path, relativeToChangelogFile);
         } catch (IOException e) {
             throw new UnexpectedLiquibaseException(e);
         }
@@ -258,15 +241,7 @@ public class CreateProcedureChange extends AbstractChange implements DbmsTargete
         if (path == null) {
             procedureText = StringUtils.trimToNull(getProcedureText());
         } else {
-            try {
-                InputStream stream = openSqlStream();
-                if (stream == null) {
-                    throw new IOException("File does not exist: " + path);
-                }
-                procedureText = StreamUtil.getStreamContents(stream, encoding);
-            } catch (IOException e) {
-                throw new UnexpectedLiquibaseException(e);
-            }
+           procedureText = getChangeContent(path, encoding, relativeToChangelogFile);
         }
         return generateStatements(procedureText, endDelimiter, database);
     }

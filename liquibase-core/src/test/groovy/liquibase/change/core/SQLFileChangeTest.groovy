@@ -100,17 +100,4 @@ public class SQLFileChangeTest extends StandardChangeTest {
         return ((SQLFileChange) change).path != null;
     }
 
-    def "openSqlStream throws exception if file does not exist"() {
-        when:
-        def change = new SQLFileChange()
-        change.path = "non-existing.sql"
-        change.resourceAccessor = new MockResourceAccessor()
-        change.openSqlStream()
-
-        then:
-        def e = thrown(IOException)
-        e.message == "File does not exist: 'non-existing.sql'"
-
-    }
-
 }

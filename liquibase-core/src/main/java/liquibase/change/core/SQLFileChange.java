@@ -1,15 +1,9 @@
 package liquibase.change.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import liquibase.change.*;
-import liquibase.changelog.ChangeLogParameters;
 import liquibase.database.Database;
 import liquibase.exception.SetupException;
-import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.exception.ValidationErrors;
-import liquibase.util.StreamUtil;
 import liquibase.util.StringUtils;
 
 /**
@@ -97,23 +91,6 @@ public class SQLFileChange extends AbstractSQLChange {
         }
     }
 
-    public InputStream openSqlStream() throws IOException {
-        if (path == null) {
-            return null;
-        }
-
-        InputStream inputStream = null;
-        try {
-            inputStream = StreamUtil.openStream(path, isRelativeToChangelogFile(), getChangeSet(), getResourceAccessor());
-        } catch (IOException e) {
-            throw new IOException("Unable to read file '" + path + "'", e);
-        }
-        if (inputStream == null) {
-            throw new IOException("File does not exist: '" + path + "'");
-        }
-        return inputStream;
-    }
-
     @Override
     public ValidationErrors validate(Database database) {
         ValidationErrors validationErrors = new ValidationErrors();
@@ -133,23 +110,7 @@ public class SQLFileChange extends AbstractSQLChange {
     public String getSql() {
         String sql = super.getSql();
         if (sql == null) {
-            InputStream sqlStream;
-            try {
-                sqlStream = openSqlStream();
-                if (sqlStream == null) {
-                    return null;
-                }
-                String content = StreamUtil.getStreamContents(sqlStream, encoding);
-                if (getChangeSet() != null) {
-                    ChangeLogParameters parameters = getChangeSet().getChangeLogParameters();
-                    if (parameters != null) {
-                        content = parameters.expandExpressions(content, getChangeSet().getChangeLog());
-                    }
-                }
-                return content;
-            } catch (IOException e) {
-                throw new UnexpectedLiquibaseException(e);
-            }
+            return getChangeContent(path, encoding, relativeToChangelogFile);
         } else {
             return sql;
         }

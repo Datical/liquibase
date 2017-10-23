@@ -1,9 +1,12 @@
 package liquibase.change;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.*;
 
+import liquibase.changelog.ChangeLogParameters;
 import liquibase.changelog.ChangeSet;
 import liquibase.database.Database;
 import liquibase.parser.core.ParsedNode;
@@ -15,6 +18,7 @@ import liquibase.resource.ResourceAccessor;
 import liquibase.serializer.core.string.StringChangeLogSerializer;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.statement.SqlStatement;
+import liquibase.util.StreamUtil;
 import liquibase.util.StringUtils;
 import liquibase.util.beans.PropertyUtils;
 
@@ -409,6 +413,57 @@ public abstract class AbstractChange implements Change {
     @Override
     public CheckSum generateCheckSum() {
         return CheckSum.compute(new StringChangeLogSerializer().serialize(this, false));
+    }
+
+    /**
+     * Gets sql content from provided file
+     *
+     * @param path                      path to sql file
+     * @param encoding                  The encoding of the file containing SQL statements
+     * @param isRelativeToChangelogFile is file path relative to changelog
+     * @return sql content
+     * @throws UnexpectedLiquibaseException in case of problems with reading file
+     */
+    protected String getChangeContent(String path, String encoding, Boolean isRelativeToChangelogFile) {
+        if (path == null) {
+            return null;
+        }
+
+        String content;
+        try {
+            InputStream stream = openSqlStream(path, isRelativeToChangelogFile);
+            content = StreamUtil.getStreamContents(stream, encoding);
+            if (getChangeSet() != null) {
+                ChangeLogParameters parameters = getChangeSet().getChangeLogParameters();
+                if (parameters != null) {
+                    content = parameters.expandExpressions(content, getChangeSet().getChangeLog());
+                }
+            }
+        } catch (IOException e) {
+            throw new UnexpectedLiquibaseException(e);
+        }
+        return content;
+    }
+
+    /**
+     * Opens file stream
+     *
+     * @param path                      path to sql file
+     * @param isRelativeToChangelogFile is file path relative to changelog
+     * @return sql stream
+     * @throws IOException in case of problems with getting a stream
+     */
+    protected InputStream openSqlStream(String path, Boolean isRelativeToChangelogFile) throws IOException {
+        InputStream inputStream;
+        try {
+            inputStream = StreamUtil.openStream(path, isRelativeToChangelogFile, getChangeSet(), getResourceAccessor());
+        } catch (IOException e) {
+            throw new IOException("Unable to read file '" + path + "'", e);
+        }
+        if (inputStream == null) {
+            throw new IOException("File does not exist: '" + path + "'");
+        }
+        return inputStream;
     }
 
     /*
