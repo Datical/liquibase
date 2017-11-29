@@ -15,7 +15,6 @@ import liquibase.statement.DatabaseFunction;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.*;
-import liquibase.util.ObjectUtil;
 import liquibase.util.SqlUtil;
 import liquibase.util.StringUtils;
 
@@ -279,7 +278,9 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
             } else {
                 type.setColumnSize(columnMetadataResultSet.getInt("DATA_LENGTH"));
 
-                if (dataType.equalsIgnoreCase("NCLOB") || dataType.equalsIgnoreCase("BLOB") || dataType.equalsIgnoreCase("CLOB")) {
+                boolean isTimeStampDataType = dataType.toUpperCase().contains("TIMESTAMP");
+
+                if (isTimeStampDataType || dataType.equalsIgnoreCase("NCLOB") || dataType.equalsIgnoreCase("BLOB") || dataType.equalsIgnoreCase("CLOB")) {
                     type.setColumnSize(null);
                 } else if (dataType.equalsIgnoreCase("NVARCHAR") || dataType.equalsIgnoreCase("NCHAR")) {
                     type.setColumnSize(columnMetadataResultSet.getInt("CHAR_LENGTH"));
@@ -370,7 +371,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
 
         Integer characterOctetLength = columnMetadataResultSet.getInt("CHAR_OCTET_LENGTH");
 
-        if (database instanceof DB2Database) {
+        if (database instanceof AbstractDb2Database) {
             String typeName = columnMetadataResultSet.getString("TYPE_NAME");
             if (typeName.equalsIgnoreCase("DBCLOB") || typeName.equalsIgnoreCase("GRAPHIC") || typeName.equalsIgnoreCase("VARGRAPHIC")) {
                 if (columnSize != null) {
@@ -450,7 +451,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
             }
         }
 
-        if (database instanceof DB2Database) {
+        if (database instanceof AbstractDb2Database) {
             if (columnMetadataResultSet.get("COLUMN_DEF") != null && ((String) columnMetadataResultSet.get("COLUMN_DEF")).equalsIgnoreCase("NULL")) {
                 columnMetadataResultSet.set("COLUMN_DEF", null);
             }

@@ -5,7 +5,6 @@ import liquibase.database.core.*;
 import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
-import liquibase.sqlgenerator.SqlGenerator;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.statement.core.AddUniqueConstraintStatement;
 import liquibase.structure.core.Column;
@@ -44,7 +43,7 @@ public class AddUniqueConstraintGenerator extends AbstractSqlGenerator<AddUnique
     @Override
     public Sql[] generateSql(AddUniqueConstraintStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
 
-        String sql = null;
+        String sql;
         if (statement.getConstraintName() == null) {
             sql = String.format("ALTER TABLE %s ADD UNIQUE" + (statement.isClustered() ? " CLUSTERED " : " ") + "(%s)"
                     , database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName())
@@ -70,10 +69,11 @@ public class AddUniqueConstraintGenerator extends AbstractSqlGenerator<AddUnique
             }
         }
 
+
         if (StringUtils.trimToNull(statement.getTablespace()) != null && database.supportsTablespaces()) {
             if (database instanceof MSSQLDatabase) {
                 sql += " ON " + statement.getTablespace();
-            } else if (database instanceof DB2Database
+            } else if (database instanceof AbstractDb2Database
                     || database instanceof SybaseASADatabase
                     || database instanceof InformixDatabase) {
                 ; //not supported
@@ -84,6 +84,10 @@ public class AddUniqueConstraintGenerator extends AbstractSqlGenerator<AddUnique
 
         if (statement.getForIndexName() != null) {
             sql += " USING INDEX " + database.escapeObjectName(statement.getForIndexCatalogName(), statement.getForIndexSchemaName(), statement.getForIndexName(), Index.class);
+        }
+
+        if (database instanceof OracleDatabase) {
+            sql += !statement.shouldValidate() ? " ENABLE NOVALIDATE " : "";
         }
 
         return new Sql[]{

@@ -4,7 +4,10 @@ import liquibase.CatalogAndSchema;
 import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseConnection;
+import liquibase.database.core.DB2Database;
+import liquibase.database.core.Db2zDatabase;
 import liquibase.database.core.MSSQLDatabase;
+import liquibase.database.core.OracleDatabase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.diff.compare.DatabaseObjectComparatorFactory;
 import liquibase.exception.DatabaseException;
@@ -14,7 +17,6 @@ import liquibase.snapshot.InvalidExampleException;
 import liquibase.snapshot.JdbcDatabaseSnapshot;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.*;
-import liquibase.util.StringUtils;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -153,8 +155,11 @@ public class ForeignKeySnapshotGenerator extends JdbcSnapshotGenerator {
                 foreignKey.addPrimaryKeyColumn(pkColumn);
                 //todo foreignKey.setKeySeq(importedKeyMetadataResultSet.getInt("KEY_SEQ"));
 
-                ForeignKeyConstraintType updateRule = convertToForeignKeyConstraintType(row.getInt("UPDATE_RULE"), database);
-                foreignKey.setUpdateRule(updateRule);
+                // DB2 on z/OS doesn't support ON UPDATE
+                if (!(database instanceof Db2zDatabase)) {
+                    ForeignKeyConstraintType updateRule = convertToForeignKeyConstraintType(row.getInt("UPDATE_RULE"), database);
+                    foreignKey.setUpdateRule(updateRule);
+                }
                 ForeignKeyConstraintType deleteRule = convertToForeignKeyConstraintType(row.getInt("DELETE_RULE"), database);
                 foreignKey.setDeleteRule(deleteRule);
                 short deferrability = row.getShort("DEFERRABILITY");
@@ -172,7 +177,7 @@ public class ForeignKeySnapshotGenerator extends JdbcSnapshotGenerator {
                 } else {
                     throw new RuntimeException("Unknown deferrability result: " + deferrability);
                 }
-
+                setValidateOptionIfAvailable(database, foreignKey, row);
                 if (database.createsIndexesForForeignKeys()) {
                     Index exampleIndex = new Index().setTable(foreignKey.getForeignKeyTable());
                     exampleIndex.getColumns().addAll(foreignKey.getForeignKeyColumns());
@@ -185,6 +190,24 @@ public class ForeignKeySnapshotGenerator extends JdbcSnapshotGenerator {
             return foreignKey;
         } catch (Exception e) {
             throw new DatabaseException(e);
+        }
+    }
+
+    /**
+     * Method to map 'validate' option for FK. This thing works only for ORACLE
+     *
+     * @param database - DB where FK will be created
+     * @param foreignKey - FK object to persist validate option
+     * @param cachedRow - it's a cache-map to get metadata about FK
+     */
+    private void setValidateOptionIfAvailable(Database database, ForeignKey foreignKey, CachedRow cachedRow) {
+        if (!(database instanceof OracleDatabase)) {
+            return;
+        }
+        final String constraintValidate = cachedRow.getString("FK_VALIDATE");
+        final String VALIDATE = "VALIDATED";
+        if (constraintValidate!=null && !constraintValidate.isEmpty()) {
+            foreignKey.setShouldValidate(VALIDATE.equals(cleanNameFromDatabase(constraintValidate.trim(), database)));
         }
     }
 
@@ -215,7 +238,7 @@ public class ForeignKeySnapshotGenerator extends JdbcSnapshotGenerator {
                     //mssql doesn't support restrict. Not sure why it comes back with this type sometimes
                     return ForeignKeyConstraintType.importedKeyNoAction;
                 } else {
-                    return ForeignKeyConstraintType.importedKeyRestrict;
+                return ForeignKeyConstraintType.importedKeyRestrict;
                 }
             } else if (jdbcType == DatabaseMetaData.importedKeySetDefault) {
                 return ForeignKeyConstraintType.importedKeySetDefault;

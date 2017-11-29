@@ -56,15 +56,16 @@ public class AddForeignKeyConstraintGenerator extends AbstractSqlGenerator<AddFo
 			    .append(" (")
 			    .append(database.escapeColumnNameList(statement.getReferencedColumnNames()))
 			    .append(")");
-
-	    if (statement.getOnUpdate() != null) {
+        if (statement.getOnUpdate() != null) {
 		    if (database instanceof OracleDatabase) {
 			    //don't use
             } else if ((database instanceof MSSQLDatabase) && statement.getOnUpdate().equalsIgnoreCase("RESTRICT")) {
                 //don't use
 		    } else if (database instanceof InformixDatabase) {
-			    //TODO don't know if correct
-		    } else {
+                //TODO don't know if correct
+            } else if (database instanceof Db2zDatabase) {
+                //don't use
+            } else {
 			    sb.append(" ON UPDATE ").append(statement.getOnUpdate());
 		    }
 	    }
@@ -90,6 +91,10 @@ public class AddForeignKeyConstraintGenerator extends AbstractSqlGenerator<AddFo
             if (statement.isInitiallyDeferred()) {
                 sb.append(" INITIALLY DEFERRED");
             }
+        }
+
+        if (database instanceof OracleDatabase) {
+            sb.append(!statement.shouldValidate() ? " ENABLE NOVALIDATE " : "");
         }
 
 	    if (database instanceof InformixDatabase) {

@@ -31,7 +31,7 @@ public class TimestampType extends DateTimeType {
         if (database instanceof SybaseDatabase) {
             return new DatabaseDataType(database.escapeDataTypeName("datetime"));
         }
-        if (database instanceof DB2Database) {
+        if (database instanceof AbstractDb2Database) {
             Object[] parameters = getParameters();
             if (parameters != null && parameters.length > 1) {
                 parameters = new Object[] {parameters[1]};
@@ -44,7 +44,7 @@ public class TimestampType extends DateTimeType {
                 && (database instanceof PostgresDatabase
                 || database instanceof OracleDatabase)
                 || database instanceof HsqlDatabase){
-            DatabaseDataType type = new DatabaseDataType("TIMESTAMP");
+            DatabaseDataType type = new DatabaseDataType("TIMESTAMP", getParameters());
             type.addAdditionalInformation(this.getAdditionalInformation());
             return type;
         }

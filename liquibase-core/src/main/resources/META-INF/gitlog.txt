@@ -1,6 +1,35 @@
+0389e73e0 Merge pull request #22 from Datical/DVONE-5499
+4093de505 Add fix to UniqueConstraint
+560ea1a44 Merge pull request #21 from Datical/DVONE-5499
+0a48358a6 Fix problem with unique constrain
+b73158ec4 Merge pull request #13 from Datical/OracleTimestampInvalidDatatypeFix
+c9facefd6 Merge pull request #16
+f7f9f5fbb Merge pull request #20 from Datical/Convert-Object-Enum
+71d2fe590 DVONE-4968 improved wording in comments and some method names
+7723cef3f Add support for parsing enum types in change objects
+ef72cd796 Merge branch 'ddb' of github.com:Datical/liquibase into ddb
+fc3eb0c6f Merge pull request #19 from Datical/db2_zos
+018537262 Fixed DB2 luw semicolon causes An unexpected token "DECLARE" was found following " DECLARE v_reccount INTEGER"
+af5914813 Merge pull request #18 from Datical/int_tests
+07798d639 Fixed integration tests
+491e1776b Fixed alter type
+4aa29572d Merge pull request #17 from Datical/tests_fix
+9ceff417f Moved Db2z to separate database
+cfb056c33 Add logic for 'validate' attribute in FK and UC
+6d3170998 Add logic for 'validate' attribute in FK and UC
+77d263d41 Add logic to map att 'validate' for unique and foreing keys logic
+1876a6272 Merge pull request #14 from Datical/regression_fix
+fd9f03837 Merge branch 'ddb' into db2_zos
+a931e3c7c Merge branch 'ddb' of github.com:Datical/liquibase into ddb
 0d4780235 Merge pull request #15 from Datical/SqlPlusTimeoutIssueFix
 8edeb80c0 Fix for sqlplus hanging until timeout if the sqlplus command process returns very quickly
+03cbe9798 Fixed regression failures on change sets order
+3c8d33872 Fixed snapshot and generateChangelog adding extra "columnSize" at the end of the dataType for timestamp types
+03d18c3a3 Merge pull request #12 from Datical/expand_file_property
+0bba4f9f5 Merge branch 'ddb' into db2_zos
 a03608855 Ignore new LiquibaseColumn meta-class in diff reports
+e60b439c3 Added property support in external sources
+459279adc Merge branch 'ddb' into db2_zos
 56c5a43df Merge pull request #11 from Datical/DVONE-5257
 98fcb9885 DVONE-5257 rename class, fix formatting
 1994f3eba Handle case with quoting system columns
@@ -8,28 +37,71 @@ ed7daae8e Handle case with quoting system columns
 f5769caa5 Handle case with quoting system columns
 809d63f91 Handle case with quoting system columns
 2241341fa Merge pull request #8 from Datical/DVONE-5032
+b65261a25 Merge branch 'ddb' into db2_zos
 9970e7125 Handle change to get foreign key logic in mssql-jdbc driver 6.3.3
 e3167ebef Handle change to get foreign key logic in mssql-jdbc driver 6.3.3
+be0c4a030 Merge branch 'ddb' into db2_zos
 fd20fabe6 Merge remote-tracking branch 'datical/ddb' into ddb
 400ae47c3 handle "set default" foreign keys in sqlserver
+3dfb6ffb6 Reverted to java 6
 b603509cb DVONE-5032 rather than changing public API, retain existing method that delegates to new method with new arg
+189e4f449 Merge branch 'ddb' into db2_zos
 359b120fb DVONE-5349 Added additional check for missing USER_DEPENDENCIES table
+84939746b ZOS-77 fixed index column order
 84d535f22 DVONE-5349 Handle situation when we cannot access the DBA_DEPENDENCIES table.  Instead, use USER_DEPENDENCIES
 b044ddfb2 DVONE-5032 Add implementation to generate Rollback script
+7e977e811 ZOS-77 fixed index column position query
+3b00880de Merge branch 'db2_zos' of github.com:Datical/liquibase into db2_zos
+e273c1dbd Set 7 java in maven-compiler-plugin
+fb81fa0c9 Merge pull request #6 from Datical/ZOS-77_index_order_fix
+9cd65ab5f Merge branch 'ddb' into db2_zos
+c75ae8f34 ZOS-77 retreiving indexes during generate changelog works incorrect
+e1ab628d8 Merge pull request #5 from Datical/ZOS-80_table_replacement_on_diff
 34bd42a34 Merge remote-tracking branch 'datical/ddb' into ddb
 267aea785 Support encoded keys/values in OfflineConnection URL
 0d65bb5bd DVONE-5315 Added IgnoreChangeSetFilter to other lists of filters in the Liquibase class
+2f8207e75 ZOS-80 When diffChangeLog detects one of the change types that requires table replacement, we should generate the appropriate change set to enable this.
+9c6c18c91 Merge branch 'ddb' into db2_zos
 ab8e333b4 Fixed test
 9535abce0 DVONE-5315 Added 'ignore' attribute to change set
+e9261a8f2  ZOS - 77 Avoid implicit indexes indication in changeSet
+07f63dcbe Merge branch 'ddb' into db2_zos
+3815e89d2 Merge pull request #3 from Datical/ZOS-57_replace_table
+d68a0fa0a Renamed ComplexStatement to CompoundStatement
+1f390575e Avoid class cast exceptions
+1c0ab2f03 Merge branch 'db2_zos' into ZOS-57_replace_table
 9981390b9 DVONE-4902 Make sqlFile accept schema name
+f02c21485 ZOS-57 ZOS-60 Moved replace index/table to appdba
 c4a0cada6 Merge pull request #4 from Datical/TimeOutForExecCmd
 dd207e76f use overridden value if timeout is null in the error message
+87eea51c8 ZOS-57, ZOS-50 - split utilities into different statements
 73dbdb90f Refactored to make it clean and made getTimeoutInMillis() protected to allow subclasses to override it
 89a06f53c Added timeout support for ExecuteShellCommandChange
+9ba81098e Merge branch 'ddb' into db2_zos
+02b58e18c ZOS-72 - Fixed incorrect sequence parameters processing
+f647461f6  ZOS-60 Liquibase - Implement index replacement workflow
+0a4275721 Added db2 zos support for DiffToChangelog class
+afce05814 Avoid db2 zos implicitly generated sequences including in generated changlog for db2 on z\os
+22ead2570 ZOS-57 Implemented table replacement
+d0a125a34  ZOS - 61,54 session user, generated by identity, current sqlid added
+7a48a7530  ZOS - 62 Added filter for DB2 Z/os implicitly generated columns
+a6dd57eb2  ZOS-63 supprot "FOR DATA TYPE.." sub attribut added in scope of bug fixing
 0c4749ec9 Merge pull request #2 from Datical/DVONE-5036
 dec9d7da0 DVONE-5036 changed CreateProcedureGenerator.removeTrailingDelimiter to remove the end delimiter string, if any, from the text along with the comments (line and block) and whitespaces following them. The text will be returned as it is if the end delimiter is not found.
+2ec053d57 Avoid systems implicitly created sequence generation in change log. Only user created sequences will be added to changelog file
+9da0a5487 Excluded auto generated tables and columns for xml DB2 on Z/os
+726f180b0 Small ammendment for db2Database type
+1cd30299b Added query for primary keys info retrieving with help of query instead of driver procedure call SYSIBM.SQLPrimaryKeys
+4efd31bde Merge branch 'db2_zos' of github.com:Datical/liquibase into db2_zos
+d245ce9c3 Added "t.tupe = 'U'" to constraints query.
+c57f3892b Removed foreign key ON UPDATE generation for DB2 z/OS
+34251e13f changed JdbcDatabaseSnapshot:1208 on to be using the isZOS() method instead of seeing if the productName is equal to DB2
+8bc325e2c Fixed query for generateChanglog command, view definition
+c17bcf759 SQL statements for update command
+c9db60323 Merge remote-tracking branch 'origin/db2_zos' into ddb
 3ca772e1d Merge branch 'ddb' of github.com:Datical/liquibase into ddb
 14d308025 Do not log error stream if it is empty
+ef339a6b3 Fixed SQL queries for snapshot command for DB2 on z/OS.
 1f2ac9f6f Cherry picked oracle auto-increment support from master
 7aea76390 CORE-3072 Add usePreparedStatements="true|false" flag to loadData (don't default usePreparedStatements)
 5ff8d06bf CORE-3072 Add usePreparedStatements="true|false" flag to loadData (fixed attribute name to be plural)

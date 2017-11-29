@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 
 @DataTypeInfo(name = "datetime", aliases = {"java.sql.Types.DATETIME", "java.util.Date", "smalldatetime", "datetime2"}, minParameters = 0, maxParameters = 1, priority = LiquibaseDataType.PRIORITY_DEFAULT)
 public class DateTimeType extends LiquibaseDataType {
@@ -23,7 +22,7 @@ public class DateTimeType extends LiquibaseDataType {
     public DatabaseDataType toDatabaseDataType(Database database) {
         String originalDefinition = StringUtils.trimToEmpty(getRawDefinition());
         boolean allowFractional = supportsFractionalDigits(database);
-        if (database instanceof DB2Database
+        if (database instanceof AbstractDb2Database
                 || database instanceof DerbyDatabase
                 || database instanceof FirebirdDatabase
                 || database instanceof H2Database
@@ -33,7 +32,8 @@ public class DateTimeType extends LiquibaseDataType {
 
         if (database instanceof OracleDatabase) {
             if (getRawDefinition().toUpperCase().contains("TIME ZONE")) {
-                return new DatabaseDataType(getRawDefinition().replaceFirst("\\(11\\)$", ""));
+                // remove the last data type size that comes from column size
+                return new DatabaseDataType(getRawDefinition().replaceFirst("\\(\\d+\\)$", ""));
             }
             return new DatabaseDataType("TIMESTAMP", getParameters());
         }
@@ -219,7 +219,7 @@ public class DateTimeType extends LiquibaseDataType {
             return value;
         }
 
-        if (database instanceof DB2Database) {
+        if (database instanceof AbstractDb2Database) {
             return value.replaceFirst("^\"SYSIBM\".\"TIMESTAMP\"\\('", "").replaceFirst("'\\)", "");
         }
         if (database instanceof DerbyDatabase) {
@@ -266,7 +266,7 @@ public class DateTimeType extends LiquibaseDataType {
             return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"); //no ms in mysql
         }
 
-        if (database instanceof DB2Database) {
+        if (database instanceof AbstractDb2Database) {
             return new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
         }
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
