@@ -1,3 +1,8 @@
+48aa58aef Merge pull request #23 from Datical/cross_schema_fk
+48cb6abb6 Fixed Oracle: Index out of bounds error from generateChangeLog of a cross-schema foreign key.
+966eedd9d fix problem with how classpath was set up
+7b5dc0972 put the LIQUIBASE_HOME/lib directory on the classpath so that liquibase-slf4j + logback can find the logback.xml file if it is put there.
+3e091007d Merge branch 'ddb' of github.com:Datical/liquibase into ddb
 0389e73e0 Merge pull request #22 from Datical/DVONE-5499
 4093de505 Add fix to UniqueConstraint
 560ea1a44 Merge pull request #21 from Datical/DVONE-5499
