@@ -1,3 +1,5 @@
+0ec7c3a53 Merge branch 'ddb' of github.com:Datical/liquibase into ddb
+ce57d36fa DVONE-5414 Modify precondition check method to accept a ChangeExecListener, and call it if available
 48aa58aef Merge pull request #23 from Datical/cross_schema_fk
 48cb6abb6 Fixed Oracle: Index out of bounds error from generateChangeLog of a cross-schema foreign key.
 966eedd9d fix problem with how classpath was set up
