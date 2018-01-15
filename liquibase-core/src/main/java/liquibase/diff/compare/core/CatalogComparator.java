@@ -58,10 +58,15 @@ public class CatalogComparator implements DatabaseObjectComparator {
             return otherSchema.getCatalogName() == null;
         }
 
-        if (thisSchema.getCatalogName().equalsIgnoreCase(otherSchema.getCatalogName())) {
-            return true;
+        if (accordingTo.isCaseSensitive()) {
+            if (StringUtils.trimToEmpty(object1Name).equals(StringUtils.trimToEmpty(object2Name))){
+                return true;
+            }
+        } else {
+            if (StringUtils.trimToEmpty(object1Name).equalsIgnoreCase(StringUtils.trimToEmpty(object2Name))) {
+                return true;
+            }
         }
-
         if (accordingTo.supportsSchemas()) { //no need to check schema mappings
             return false;
         }
