@@ -1,3 +1,11 @@
+38d2fc978 DVONE-5346: Minor refactor to make catalog & schema code consistent in this area.
+5d402ee01 DVONE-5346: Remove null checks for defaultCatalog in Foreign Key Diff - this was causing ReferencedTableCatalogName to go unset in resulting changeSet when comparing against an offline snapshot.
+e354beb3d DVONE-5346 Handle catalog differently
+19c0dddf2 DVONE-5635 Refactor construction of RollbackVisitor to a method that can be overridden
+fd1c7e1fd DVONE-4717 Fix test
+2c18d95db DVONE-4717 Re-work to handle version > 10
+2d933e33a DVONE-4717 Allow replaceIfExists for DB2 10.5 or higher
+c98bbaa33 DVONE-5493 Converted sequence cacheSize attribute from nonNegativeInteger to String
 0ec7c3a53 Merge branch 'ddb' of github.com:Datical/liquibase into ddb
 ce57d36fa DVONE-5414 Modify precondition check method to accept a ChangeExecListener, and call it if available
 48aa58aef Merge pull request #23 from Datical/cross_schema_fk
