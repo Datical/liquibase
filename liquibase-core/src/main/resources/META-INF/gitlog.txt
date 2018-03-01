@@ -1,16 +1,3 @@
-3bc459911 Merge pull request #27 from Datical/DVONE-4720
-38d2fc978 DVONE-5346: Minor refactor to make catalog & schema code consistent in this area.
-5d402ee01 DVONE-5346: Remove null checks for defaultCatalog in Foreign Key Diff - this was causing ReferencedTableCatalogName to go unset in resulting changeSet when comparing against an offline snapshot.
-e354beb3d DVONE-5346 Handle catalog differently
-19c0dddf2 DVONE-5635 Refactor construction of RollbackVisitor to a method that can be overridden
-c581971e7 Smal code refactoring
-741eda9bb Remove unused imports
-c5f4ec86e Add logic to handle CatalogAndSchema case
-692db30f6 Add logic to handle CatalogAndSchema case
-829d363c8 Fix correctSchema
-b1a8d9e25 Handle case for db2 when schemas have same name but different case
-035d8a2c5 Merge branch 'ddb' of https://github.com/Datical/liquibase into DVONE-4720
-1fe4cc046 Handle case for db2 when schemas have same name but different case
 fd1c7e1fd DVONE-4717 Fix test
 2c18d95db DVONE-4717 Re-work to handle version > 10
 2d933e33a DVONE-4717 Allow replaceIfExists for DB2 10.5 or higher
