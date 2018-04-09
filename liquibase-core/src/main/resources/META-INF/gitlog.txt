@@ -1,5 +1,26 @@
+10f700ff9 Merge pull request #36 from Datical/DVONE-5742
+ebebafba4 DVONE-5742 surround if condition with braces
+7e071ac40 revert changes in pom.xml
+d67415592 remove not needed file
+e7def81ce merge with develop
+07f7a72f4 Fix ColumnSnapshotGenerator for oracle in case of populate validate
+2d9ee68aa Push test
+b23e51bc1 Temporarily disable RPM profile
+2cfd68791 Adding JenkinsFile
+cc9812f39 Merge pull request #34 from Datical/DVONE-5742
+552807521 Merge pull request #35 from Datical/DVONE-5681
+c63c8324d Fix Nathan's code review feedbacks
+14acd2e54 Fix Nathan's code review feedbacks
+d73ae2371 Merge with develop branch
+c46a53ba7 Add rerunnable logic
+78a867b1a DVONE-5742 Add iml to support novalidate logic
+383f3a6e8 Add logic for validate in constraints to generate snapshot
 84e6fcb9f Merge pull request #32 from Datical/DVONE-5742-revert-chg-dupl-bug
 37666318c Revert changes that cause duplication in getColumns method
+fdfaba008 Add impl for novalidate 35% done
+92aa433b5 Fix column duplication
+2384d3a0a Fix column duplication
+513a2634a Fix column duplication
 fa741f506 Merge pull request #30 from Datical/DVONE-5735
 32605d651 Merge pull request #28 from Datical/DVONE-5639
 ec525dace fix issues raised in code review
