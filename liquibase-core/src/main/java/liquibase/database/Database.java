@@ -346,5 +346,9 @@ public interface Database extends PrioritizedService {
     String unescapeDataTypeString(String dataTypeString);
 
     ValidationErrors validate();
+
+    boolean isForceOption();
+
+    void setForceOption(boolean forceOption);
 }
 

@@ -788,4 +788,12 @@ public class MockDatabase implements Database, InternalDatabase {
     public ValidationErrors validate() {
         return new ValidationErrors();
     }
+
+    @Override public boolean isForceOption() {
+        return false;
+    }
+
+    @Override public void setForceOption(boolean forceOption) {
+        //NOP
+    }
 }
