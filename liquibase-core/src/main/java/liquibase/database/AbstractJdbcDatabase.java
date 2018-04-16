@@ -106,7 +106,7 @@ public abstract class AbstractJdbcDatabase implements Database {
     private boolean defaultSchemaSet = false;
 
     private Map<String, Object> attributes = new HashMap<String, Object>();
-
+    private boolean forceOption = false;
     public String getName() {
         return toString();
     }
@@ -1570,4 +1570,12 @@ public abstract class AbstractJdbcDatabase implements Database {
     public CatalogAndSchema.CatalogAndSchemaCase getSchemaAndCatalogCase() {
         return CatalogAndSchema.CatalogAndSchemaCase.UPPER_CASE;
     }
+
+  @Override public boolean isForceOption() {
+    return forceOption;
+  }
+
+  @Override public void setForceOption(boolean forceOption) {
+    this.forceOption = forceOption;
+  }
 }
