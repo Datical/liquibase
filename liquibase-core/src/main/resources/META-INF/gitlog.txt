@@ -1,3 +1,8 @@
+b10ef2df9 Merge pull request #38 from Datical/DAT-120
+820bc862f improve wording
+400c14315 Fix Nathan's comments
+f98cd9f4e Add additional logic to snapshot nullable column
+5ebc8a85d Add additional logic to snapshot nullable column
 10f700ff9 Merge pull request #36 from Datical/DVONE-5742
 ebebafba4 DVONE-5742 surround if condition with braces
 7e071ac40 revert changes in pom.xml
