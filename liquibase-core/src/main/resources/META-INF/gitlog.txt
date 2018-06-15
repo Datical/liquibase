@@ -1,3 +1,11 @@
+b687edc4e Merge branch 'DAT-310' into ddb
+8c1102fd1 DAT-310 Handle DROP DATABASE statements with a try-catch
+17c5e9d00 Merge remote-tracking branch 'origin/ddb' into ddb
+fb5f0b7de DAT-310 Modified comments
+b48d472fd DAT-310 Modify destroy method to allow extension usage
+7fa3d5305 DAT-220 Mods to the standard services for DATABASECHANGELOG and DATABASECHANGELOGLOCK tables to allow them to be removed on DB2z
+d520ab2e9 Merge pull request #39 from Datical/DAT-283
+f285ae0b4 DAT-283 the DropNotNullConstraintChange does not need and should not have a validate attribute
 b10ef2df9 Merge pull request #38 from Datical/DAT-120
 820bc862f improve wording
 400c14315 Fix Nathan's comments
