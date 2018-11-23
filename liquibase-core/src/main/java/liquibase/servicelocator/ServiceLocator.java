@@ -254,4 +254,11 @@ public class ServiceLocator {
     protected Logger getLogger() {
         return logger;
     }
+
+    /** Expose ability to override {@link DefaultLogger} after {@link ServiceLocator} initialization */
+    public void setLogger(Logger logger) {
+        if (this.logger instanceof DefaultLogger) {
+            this.logger = logger;
+        }
+    }
 }
