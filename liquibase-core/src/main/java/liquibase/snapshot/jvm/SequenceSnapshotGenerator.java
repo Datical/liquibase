@@ -1,23 +1,16 @@
 package liquibase.snapshot.jvm;
 
-import liquibase.CatalogAndSchema;
+import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.Database;
 import liquibase.database.core.*;
 import liquibase.exception.DatabaseException;
-import liquibase.exception.UnexpectedLiquibaseException;
-import liquibase.executor.ExecutorService;
-import liquibase.snapshot.DatabaseSnapshot;
-import liquibase.snapshot.InvalidExampleException;
-import liquibase.snapshot.SnapshotIdService;
-import liquibase.statement.core.RawSqlStatement;
+import liquibase.snapshot.*;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.Schema;
 import liquibase.structure.core.Sequence;
-import liquibase.util.StringUtils;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
 
 public class SequenceSnapshotGenerator extends JdbcSnapshotGenerator {
 
@@ -27,24 +20,24 @@ public class SequenceSnapshotGenerator extends JdbcSnapshotGenerator {
 
     @Override
     protected void addTo(DatabaseObject foundObject, DatabaseSnapshot snapshot) throws DatabaseException, InvalidExampleException {
-        if (!snapshot.getDatabase().supportsSequences()) {
+        if (!(foundObject instanceof Schema) || !snapshot.getDatabase().supportsSequences()) {
             return;
         }
-        if (foundObject instanceof Schema) {
-            Schema schema = (Schema) foundObject;
-            Database database = snapshot.getDatabase();
-            if (!database.supportsSequences()) {
-                updateListeners("Sequences not supported for " + database.toString() + " ...");
-            }
+        Schema schema = (Schema) foundObject;
+        Database database = snapshot.getDatabase();
+        String catalogName = ((AbstractJdbcDatabase) database).getJdbcCatalogName(schema);
+        String schemaName = ((AbstractJdbcDatabase) database).getJdbcSchemaName(schema);
 
-            //noinspection unchecked
-            List<Map<String, ?>> sequences = ExecutorService.getInstance().getExecutor(database).queryForList(new RawSqlStatement(getSelectSequenceSql(schema, database)));
-
+        try {
+            JdbcDatabaseSnapshot.CachingDatabaseMetaData databaseMetaData = ((JdbcDatabaseSnapshot) snapshot).getMetaData();
+            List<CachedRow> sequences = databaseMetaData.getSequences(catalogName, schemaName, null);
             if (sequences != null) {
-                for (Map<String, ?> sequence : sequences) {
-                    schema.addDatabaseObject(mapToSequence(sequence, (Schema) foundObject, database));
+                for (CachedRow sequence : sequences) {
+                    schema.addDatabaseObject(toSequence(sequence, (Schema) foundObject, database));
                 }
             }
+        } catch (Exception e) {
+            throw new DatabaseException(e);
         }
     }
 
@@ -54,43 +47,48 @@ public class SequenceSnapshotGenerator extends JdbcSnapshotGenerator {
             return example;
         }
         Database database = snapshot.getDatabase();
-        List<Map<String, ?>> sequences;
-        if (database instanceof Db2zDatabase) {
-            sequences = ExecutorService.getInstance()
-                    .getExecutor(database)
-                    .queryForList(new RawSqlStatement(getSelectSequenceSql(example.getSchema(), database)));
-            return getSequences(example, database, sequences);
-        } else {
-            if (example.getAttribute("liquibase-complete", false)) { //need to go through "snapshotting" the object even if it was previously populated in addTo. Use the "liquibase-complete" attribute to track that it doesn't need to be fully snapshotted
-                example.setSnapshotId(SnapshotIdService.getInstance().generateId());
-                example.setAttribute("liquibase-complete", null);
-                return example;
-            }
+        Schema schema = example.getSchema();
+        String catalogName = ((AbstractJdbcDatabase) database).getJdbcCatalogName(schema);
+        String schemaName = ((AbstractJdbcDatabase) database).getJdbcSchemaName(schema);
 
-            if (!database.supportsSequences()) {
-                return null;
-            }
+        try {
+            JdbcDatabaseSnapshot.CachingDatabaseMetaData databaseMetaData = ((JdbcDatabaseSnapshot) snapshot).getMetaData();
+            boolean caseSensitive = database.isCaseSensitive();
+            List<CachedRow> sequences = databaseMetaData.getSequences(catalogName, schemaName, caseSensitive ? example.getName() : null); // for caseInsensitive DB do bulk
+            if (database instanceof Db2zDatabase) {
+                return getSequence(example, database, sequences, caseSensitive);
+            } else {
+                if (example.getAttribute("liquibase-complete", false)) { //need to go through "snapshotting" the object even if it was previously populated in addTo. Use the "liquibase-complete" attribute to track that it doesn't need to be fully snapshotted
+                    example.setSnapshotId(SnapshotIdService.getInstance().generateId());
+                    example.setAttribute("liquibase-complete", null);
+                    return example;
+                }
 
-            sequences = ExecutorService.getInstance()
-                    .getExecutor(database)
-                    .queryForList(new RawSqlStatement(getSelectSequenceSql(example.getSchema(), database)));
-            DatabaseObject sequenceRow = getSequences(example, database, sequences);
-            if (sequenceRow != null) return sequenceRow;
+                if (!database.supportsSequences()) {
+                    return null;
+                }
+
+                return getSequence(example, database, sequences, caseSensitive);
+            }
+        } catch (Exception e) {
+            throw new DatabaseException(e);
         }
-        return null;
     }
 
-    private DatabaseObject getSequences(DatabaseObject example, Database database, List<Map<String, ?>> sequences) {
-        for (Map<String, ?> sequenceRow : sequences) {
+    private DatabaseObject getSequence(DatabaseObject example, Database database, List<CachedRow> sequences, boolean caseSensitiveComparison) {
+        if (sequences == null) {
+            return null;
+        }
+        for (CachedRow sequenceRow : sequences) {
             String name = cleanNameFromDatabase((String) sequenceRow.get("SEQUENCE_NAME"), database);
-            if ((database.isCaseSensitive() && name.equals(example.getName()) || (!database.isCaseSensitive() && name.equalsIgnoreCase(example.getName())))) {
-                return mapToSequence(sequenceRow, example.getSchema(), database);
+            if ((caseSensitiveComparison && name.equals(example.getName()) || (!caseSensitiveComparison && name.equalsIgnoreCase(example.getName())))) {
+                return toSequence(sequenceRow, example.getSchema(), database);
             }
         }
         return null;
     }
 
-    private Sequence mapToSequence(Map<String, ?> sequenceRow, Schema schema, Database database) {
+    private Sequence toSequence(CachedRow sequenceRow, Schema schema, Database database) {
         String name = cleanNameFromDatabase((String) sequenceRow.get("SEQUENCE_NAME"), database);
         Sequence seq = new Sequence();
         seq.setName(name);
@@ -102,6 +100,8 @@ public class SequenceSnapshotGenerator extends JdbcSnapshotGenerator {
         seq.setIncrementBy(toBigInteger(sequenceRow.get("INCREMENT_BY"), database));
         seq.setWillCycle(toBoolean(sequenceRow.get("WILL_CYCLE"), database));
         seq.setOrdered(toBoolean(sequenceRow.get("IS_ORDERED"), database));
+        seq.setDataType((String) sequenceRow.get("SEQ_TYPE"));
+        seq.setOwnedBy((String) sequenceRow.get("OWNED_BY"));
         seq.setAttribute("liquibase-complete", true);
 
         return seq;
@@ -140,96 +140,5 @@ public class SequenceSnapshotGenerator extends JdbcSnapshotGenerator {
 
         return new BigInteger(value.toString());
     }
-
-    protected String getSelectSequenceSql(Schema schema, Database database) {
-        if (database instanceof DB2Database) {
-            if (database.getDatabaseProductName().startsWith("DB2 UDB for AS/400")) {
-                return "SELECT SEQNAME AS SEQUENCE_NAME FROM QSYS2.SYSSEQUENCES WHERE SEQSCHEMA = '" + schema.getCatalogName() + "'";
-            }
-            return "SELECT SEQNAME AS SEQUENCE_NAME FROM SYSCAT.SEQUENCES WHERE SEQTYPE='S' AND SEQSCHEMA = '" + schema.getCatalogName() + "'";
-        } else if (database instanceof Db2zDatabase) {
-            return "SELECT NAME AS SEQUENCE_NAME, " +
-                    "START AS START_VALUE, " +
-                    "MINVALUE AS MIN_VALUE, " +
-                    "MAXVALUE AS MAX_VALUE, " +
-                    "CACHE AS CACHE_SIZE, " +
-                    "INCREMENT AS INCREMENT_BY, " +
-                    "CYCLE AS WILL_CYCLE, " +
-                    "ORDER AS IS_ORDERED " +
-                    "FROM SYSIBM.SYSSEQUENCES WHERE SEQTYPE = 'S' AND SCHEMA = '" + schema.getCatalogName() + "'";
-        } else if (database instanceof DerbyDatabase) {
-            return "SELECT " +
-                    "  seq.SEQUENCENAME AS SEQUENCE_NAME " +
-                    "FROM " +
-                    "  SYS.SYSSEQUENCES seq, " +
-                    "  SYS.SYSSCHEMAS sch " +
-                    "WHERE " +
-                    "  sch.SCHEMANAME = '" + new CatalogAndSchema(null, schema.getName()).customize(database).getSchemaName() + "' AND " +
-                    "  sch.SCHEMAID = seq.SCHEMAID";
-        } else if (database instanceof FirebirdDatabase) {
-            return "SELECT RDB$GENERATOR_NAME AS SEQUENCE_NAME FROM RDB$GENERATORS WHERE RDB$SYSTEM_FLAG IS NULL OR RDB$SYSTEM_FLAG = 0";
-        } else if (database instanceof H2Database) {
-            return "SELECT SEQUENCE_NAME FROM INFORMATION_SCHEMA.SEQUENCES WHERE SEQUENCE_SCHEMA = '" + schema.getName() + "' AND IS_GENERATED=FALSE";
-        } else if (database instanceof HsqlDatabase) {
-            return "SELECT SEQUENCE_NAME FROM INFORMATION_SCHEMA.SYSTEM_SEQUENCES WHERE SEQUENCE_SCHEMA = '" + schema.getName() + "'";
-        } else if (database instanceof InformixDatabase) {
-            return "SELECT tabname AS SEQUENCE_NAME FROM systables t, syssequences s WHERE s.tabid = t.tabid AND t.owner = '" + schema.getName() + "'";
-        } else if (database instanceof OracleDatabase) {
-            return "SELECT SEQUENCE_NAME AS SEQUENCE_NAME, MIN_VALUE, MAX_VALUE, INCREMENT_BY, CYCLE_FLAG AS WILL_CYCLE, ORDER_FLAG AS IS_ORDERED, LAST_NUMBER as START_VALUE, CACHE_SIZE FROM ALL_SEQUENCES WHERE SEQUENCE_OWNER = '" + schema.getCatalogName() + "'";
-        } else if (database instanceof PostgresDatabase) {
-            return "SELECT c.relname AS SEQUENCE_NAME FROM pg_class c " +
-                    "join pg_namespace on c.relnamespace = pg_namespace.oid " +
-                    "WHERE c.relkind='S' " +
-                    "AND nspname = '" + schema.getName() + "' " +
-                    "AND c.oid not in (select d.objid FROM pg_depend d where d.refobjsubid > 0)"
-                    ;
-
-
-//        select c.relname FROM pg_class c, pg_user u
-//            WHERE c.relowner = u.usesysid and c.relkind = 'S'
-//            AND relnamespace IN (
-//                    SELECT oid
-//                    FROM pg_namespace
-//                    WHERE nspname ='public'
-//            ) and c.oid not in (SELECT d.objid
-//                    FROM   pg_depend    d
-//                    JOIN   pg_attribute a ON a.attrelid = d.refobjid AND a.attnum = d.refobjsubid
-//                    WHERE  d.refobjsubid > 0
-//            );
-        } else if (database instanceof MSSQLDatabase) {
-            return "SELECT SEQUENCE_NAME, " +
-                    "cast(START_VALUE AS BIGINT) AS START_VALUE, " +
-                    "cast(MINIMUM_VALUE AS BIGINT) AS MIN_VALUE, " +
-                    "cast(MAXIMUM_VALUE AS BIGINT) AS MAX_VALUE, " +
-                    "CAST(INCREMENT AS BIGINT) AS INCREMENT_BY, " +
-                    "CYCLE_OPTION AS WILL_CYCLE " +
-                    "FROM INFORMATION_SCHEMA.SEQUENCES WHERE SEQUENCE_SCHEMA = '" + schema.getName() + "'";
-        } else {
-            throw new UnexpectedLiquibaseException("Don't know how to query for sequences on " + database);
-        }
-
-    }
-
-    //from SQLiteDatbaseSnapshotGenerator
-    //    protected void readSequences(DatabaseSnapshot snapshot, String schema, DatabaseMetaData databaseMetaData) throws DatabaseException {
-//        Database database = snapshot.getDatabase();
-//        updateListeners("Reading sequences for " + database.toString() + " ...");
-//
-//        String convertedSchemaName = database.convertRequestedSchemaToSchema(schema);
-//
-//        if (database.supportsSequences()) {
-//            //noinspection unchecked
-//            List<String> sequenceNamess = (List<String>) ExecutorService.getInstance().getExecutor(database).queryForList(new SelectSequencesStatement(schema), String.class);
-//
-//
-//            for (String sequenceName : sequenceNamess) {
-//                Sequence seq = new Sequence();
-//                seq.setName(sequenceName.trim());
-//                seq.setName(convertedSchemaName);
-//
-//                snapshot.getSequences().add(seq);
-//            }
-//        }
-//    }
 
 }

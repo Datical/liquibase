@@ -26,6 +26,7 @@ public class AlterSequenceGenerator extends AbstractSqlGenerator<AlterSequenceSt
         validationErrors.checkDisallowedField("maxValue", alterSequenceStatement.getMaxValue(), database, HsqlDatabase.class, H2Database.class);
         validationErrors.checkDisallowedField("minValue", alterSequenceStatement.getMinValue(), database, H2Database.class);
         validationErrors.checkDisallowedField("ordered", alterSequenceStatement.getOrdered(), database, HsqlDatabase.class, DB2Database.class);
+        validationErrors.checkDisallowedField("dataType", alterSequenceStatement.getDataType(), database, DB2Database.class, HsqlDatabase.class, OracleDatabase.class, MySQLDatabase.class, MSSQLDatabase.class);
 
         validationErrors.checkRequiredField("sequenceName", alterSequenceStatement.getSequenceName());
 
@@ -38,8 +39,16 @@ public class AlterSequenceGenerator extends AbstractSqlGenerator<AlterSequenceSt
         buffer.append("ALTER SEQUENCE ");
         buffer.append(database.escapeSequenceName(statement.getCatalogName(), statement.getSchemaName(), statement.getSequenceName()));
 
+        if (statement.getDataType() != null) {
+            buffer.append(" AS ").append(statement.getDataType());
+        }
+
+        if (database instanceof PostgresDatabase && statement.getStartValue() != null) {
+            buffer.append(" START WITH ").append(statement.getStartValue());
+        }
+
         if (statement.getIncrementBy() != null) {
-                buffer.append(" INCREMENT BY ").append(statement.getIncrementBy());
+            buffer.append(" INCREMENT BY ").append(statement.getIncrementBy());
         }
 
         if (statement.getMinValue() != null) {

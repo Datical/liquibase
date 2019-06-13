@@ -10,6 +10,7 @@ import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.logging.LogFactory;
+import liquibase.logging.Logger;
 import liquibase.snapshot.*;
 import liquibase.statement.DatabaseFunction;
 import liquibase.statement.core.RawSqlStatement;
@@ -19,22 +20,24 @@ import liquibase.util.SqlUtil;
 import liquibase.util.StringUtils;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
 
-  /**
-   * This attribute indicates whether we need to process a column object. It is visible only
-   * in scope of snapshot process.
-   */
-  private static final String LIQUIBASE_COMPLETE = "liquibase-complete";
+    /**
+     * This attribute indicates whether we need to process a column object. It is visible only
+     * in scope of snapshot process.
+     */
+    private static final String LIQUIBASE_COMPLETE = "liquibase-complete";
 
+    // extract schema (optional) and sequence name from expression: nextval('schema.sequence_name'::regclass)
+    private Pattern sequenceDefaultValuePattern = Pattern.compile("^nextval\\('(?:([^.]+)\\.)?(.+?)'(?:::\\w+)?\\)$", Pattern.CASE_INSENSITIVE);
     private Pattern postgresStringValuePattern = Pattern.compile("'(.*)'::[\\w ]+");
     private Pattern postgresNumberValuePattern = Pattern.compile("(\\d*)::[\\w ]+");
+
+    private Logger log = LogFactory.getInstance().getLog();
 
     public ColumnSnapshotGenerator() {
         super(Column.class, new Class[]{Table.class, View.class});
@@ -72,7 +75,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
               CachedRow data = metaDataColumns.get(0);
               column = readColumn(data, relation, database);
               setAutoIncrementDetails(column, database, snapshot);
-
+              setPostgresAutoIncrementDetails(column, database, snapshot, false);
               populateValidateNullableIfNeeded(column, metaDataNotNullConst, database);
             }
 
@@ -129,15 +132,14 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
 
                 JdbcDatabaseSnapshot.CachingDatabaseMetaData databaseMetaData = ((JdbcDatabaseSnapshot) snapshot).getMetaData();
 
-                Schema schema;
-
-                schema = relation.getSchema();
+                Schema schema = relation.getSchema();
                 allColumnsMetadataRs = databaseMetaData.getColumns(((AbstractJdbcDatabase) database).getJdbcCatalogName(schema), ((AbstractJdbcDatabase) database).getJdbcSchemaName(schema), relation.getName(), null);
                 List<CachedRow> metaDataNotNullConst = databaseMetaData.getNotNullConst(schema.getCatalogName(), schema.getName(), relation.getName());
 
                 for (CachedRow row : allColumnsMetadataRs) {
                     Column column = readColumn(row, relation, database);
                     setAutoIncrementDetails(column, database, snapshot);
+                    setPostgresAutoIncrementDetails(column, database, snapshot, true);
                     populateValidateNullableIfNeeded(column, metaDataNotNullConst, database);
                     column.setAttribute(LIQUIBASE_COMPLETE, !column.isNullable());
                     relation.getColumns().add(column);
@@ -172,7 +174,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
                     }
                     snapshot.setScratchData("autoIncrementColumns", autoIncrementColumns);
                 } catch (DatabaseException e) {
-                    LogFactory.getInstance().getLog().info("Could not read identity information", e);
+                    log.info("Could not read identity information", e);
                 }
             }
             if (column.getRelation() != null && column.getSchema() != null) {
@@ -182,6 +184,98 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
                 }
             }
         }
+    }
+
+    /** Discriminate (driver doesn't) between columns with backing sequence and columns with SERIAL data type */
+    private void setPostgresAutoIncrementDetails(Column column, Database database, DatabaseSnapshot snapshot, boolean bulkFetch) {
+        if (column.getAutoIncrementInformation() == null ||
+                !(database instanceof PostgresDatabase) ||
+                database.getConnection() == null ||
+                database.getConnection() instanceof OfflineConnection) {
+            return;
+        }
+        if (column.getDefaultValue() == null ||
+                !(column.getDefaultValue() instanceof DatabaseFunction) ||
+                !column.getDefaultValue().toString().toLowerCase().startsWith("nextval(")) {
+            return;
+        }
+        Table table = (Table) column.getRelation();
+        Schema schema = table.getSchema();
+
+        Matcher matcher = sequenceDefaultValuePattern.matcher(((DatabaseFunction) column.getDefaultValue()).getValue());
+        if (!matcher.matches()) {
+            return;
+        }
+        String sequenceSchema = matcher.group(1);
+        String sequenceName = matcher.group(2);
+
+        boolean nonSystemGeneratedSequenceExists = nonSystemGeneratedSequenceExists(sequenceSchema, sequenceName, schema, database, snapshot, bulkFetch);
+        if (!nonSystemGeneratedSequenceExists) {
+            // nothing to do here. process column as SERIAL
+            return;
+        }
+
+        // the proper way whould be to query database and retrieve real column type
+        // overriding DataType with predefined value sounds like bad idea, but querying DB
+        // and presenting them in driver-compatible format will not look significantly better
+        DataType type = column.getType();
+        String typeName = type.getTypeName().toLowerCase();
+        if ("serial".equals(typeName)) {
+            type = new DataType();
+            type.setTypeName("int4");
+            type.setDataTypeId(4);
+            type.setRadix(10);
+            type.setCharacterOctetLength(10);
+            type.setColumnSizeUnit(DataType.ColumnSizeUnit.BYTE);
+        } else if ("bigserial".equals(typeName)) {
+            type = new DataType();
+            type.setTypeName("int8");
+            type.setDataTypeId(-5);
+            type.setRadix(10);
+            type.setCharacterOctetLength(19);
+            type.setColumnSizeUnit(DataType.ColumnSizeUnit.BYTE);
+        } // smallserial works fine...
+        column.setType(type);
+
+        // for autoIncrement/SERIAL columns default value is ignored
+        column.setAutoIncrementInformation(null);
+    }
+
+    private boolean nonSystemGeneratedSequenceExists(String sequenceSchema, String sequenceName, Schema snapshotSchema, Database database, DatabaseSnapshot snapshot, boolean isBulk) {
+        Set<Sequence> sequences = snapshot.get(Sequence.class);
+        Set<String> comparisonSchemas = new LinkedHashSet<String>();
+        if (StringUtils.isNotEmpty(sequenceSchema)) {
+            comparisonSchemas.add(sequenceSchema);
+        } else {
+            comparisonSchemas.add(snapshotSchema.getName());
+            comparisonSchemas.add("public");
+        }
+        if (sequences != null) {
+            for (Sequence s : sequences) {
+                if (s.getName().equals(sequenceName) && comparisonSchemas.contains(s.getSchema().getName())) {
+                    return true;
+                }
+            }
+        }
+
+        // if above code failed to retrieve sequence, then column either has SERIAL data type
+        // either sequence is not in managed/snapshoted schema (or sequences are not yet snapshoted).
+        // try to fetch sequence(s) and try to do it in bulk with cache
+        try {
+            JdbcDatabaseSnapshot.CachingDatabaseMetaData databaseMetaData = ((JdbcDatabaseSnapshot) snapshot).getMetaData();
+            for (String lookupSchemaName : comparisonSchemas) {
+                Schema lookupSchema = new Schema(snapshotSchema.getCatalog(), lookupSchemaName);
+                List<CachedRow> sequenceRows = databaseMetaData.getSequences(((AbstractJdbcDatabase) database).getJdbcCatalogName(lookupSchema), ((AbstractJdbcDatabase) database).getJdbcSchemaName(lookupSchema), isBulk ? null : sequenceName);
+                for (CachedRow row : sequenceRows) {
+                    if (sequenceName.equals(row.getString("SEQUENCE_NAME"))) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.info("Failed to retrieve Postgres autoIncrement information", e);
+        }
+        return false;
     }
 
     protected Column readColumn(CachedRow columnMetadataResultSet, Relation table, Database database) throws SQLException, DatabaseException {

@@ -33,6 +33,7 @@ public class CreateSequenceGenerator extends AbstractSqlGenerator<CreateSequence
 
         validationErrors.checkDisallowedField("ordered", statement.getOrdered(), database, DB2Database.class, HsqlDatabase.class, PostgresDatabase.class);
 
+        validationErrors.checkDisallowedField("dataType", statement.getDataType(), database, DB2Database.class, HsqlDatabase.class, OracleDatabase.class, MySQLDatabase.class, MSSQLDatabase.class);
 
         return validationErrors;
     }
@@ -44,6 +45,8 @@ public class CreateSequenceGenerator extends AbstractSqlGenerator<CreateSequence
         buffer.append(database.escapeSequenceName(statement.getCatalogName(), statement.getSchemaName(), statement.getSequenceName()));
         if (database instanceof HsqlDatabase || database instanceof Db2zDatabase) {
             buffer.append(" AS BIGINT ");
+        } else if (statement.getDataType() != null) {
+            buffer.append(" AS " + statement.getDataType());
         }
         if (statement.getStartValue() != null) {
             buffer.append(" START WITH ").append(statement.getStartValue());

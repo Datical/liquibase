@@ -134,7 +134,6 @@ public class Sequence extends AbstractDatabaseObject {
 
     public Sequence setOrdered(Boolean isOrdered) {
         this.setAttribute("ordered", isOrdered);
-
         return this;
     }
 
@@ -144,7 +143,6 @@ public class Sequence extends AbstractDatabaseObject {
 
     public Sequence setLastReturnedValue(BigInteger lastReturnedValue) {
         this.setAttribute("lastReturnedValue", lastReturnedValue);
-
         return this;
     }
 
@@ -154,7 +152,24 @@ public class Sequence extends AbstractDatabaseObject {
 
     public Sequence setCacheSize(BigInteger cacheSize) {
         this.setAttribute("cacheSize", cacheSize);
+        return this;
+    }
 
+    public String getOwnedBy() {
+	    return getAttribute("ownedBy", String.class);
+    }
+
+    public Sequence setOwnedBy(String ownedBy) {
+        this.setAttribute("ownedBy", ownedBy);
+        return this;
+    }
+
+    public String getDataType() {
+        return getAttribute("dataType", String.class);
+    }
+
+    public Sequence setDataType(String dataType) {
+        this.setAttribute("dataType", dataType);
         return this;
     }
 }

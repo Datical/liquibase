@@ -2,6 +2,7 @@ package liquibase.change.core;
 
 import liquibase.change.*;
 import liquibase.database.Database;
+import liquibase.database.core.PostgresDatabase;
 import liquibase.snapshot.SnapshotGeneratorFactory;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.AlterSequenceStatement;
@@ -18,12 +19,14 @@ public class AlterSequenceChange extends AbstractChange {
     private String catalogName;
     private String schemaName;
     private String sequenceName;
+    private BigInteger startValue;
     private BigInteger incrementBy;
     private BigInteger maxValue;
     private BigInteger minValue;
     private Boolean ordered;
     private BigInteger cacheSize;
     private Boolean cycle;
+    private String dataType;
 
     @DatabaseChangeProperty(mustEqualExisting ="sequence.catalog", since = "3.0")
     public String getCatalogName() {
@@ -52,6 +55,14 @@ public class AlterSequenceChange extends AbstractChange {
         this.sequenceName = sequenceName;
     }
 
+    @DatabaseChangeProperty(description = "The first sequence number to be generated.", exampleValue = "5")
+    public BigInteger getStartValue() {
+        return startValue;
+    }
+
+    public void setStartValue(BigInteger startValue) {
+        this.startValue = startValue;
+    }
 
     @DatabaseChangeProperty(description = "New amount the sequence should increment by")
     public BigInteger getIncrementBy() {
@@ -106,16 +117,27 @@ public class AlterSequenceChange extends AbstractChange {
         this.cycle = cycle;
     }
 
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+
+    @DatabaseChangeProperty(description = "Data type of the sequence")
+    public String getDataType() {
+        return dataType;
+    }
+
     @Override
     public SqlStatement[] generateStatements(Database database) {
         return new SqlStatement[] {
                 new AlterSequenceStatement(getCatalogName(), getSchemaName(), getSequenceName())
+                .setStartValue(getStartValue())
                 .setIncrementBy(getIncrementBy())
                 .setMaxValue(getMaxValue())
                 .setMinValue(getMinValue())
                 .setCacheSize(getCacheSize())
                 .setCycle(getCycle())
                 .setOrdered(isOrdered())
+                .setDataType(getDataType())
         };
     }
 
@@ -142,6 +164,14 @@ public class AlterSequenceChange extends AbstractChange {
             }
             if (getCacheSize() != null) {
                 result.assertCorrect(getCacheSize().equals(sequence.getCacheSize()), "Cache size is different");
+            }
+            if (getDataType() != null) {
+                result.assertCorrect(getDataType().equals(sequence.getDataType()), "Data type is different");
+            }
+            if (database instanceof PostgresDatabase) {
+                if (getStartValue() != null) {
+                    result.assertCorrect(getStartValue().equals(sequence.getStartValue()), "Start value is different");
+                }
             }
         } catch (Exception e) {
             return result.unknown(e);

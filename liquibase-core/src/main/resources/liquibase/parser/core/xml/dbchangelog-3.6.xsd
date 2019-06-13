@@ -410,7 +410,9 @@
 		<xsd:attribute name="maxValue" type="xsd:string" />
 		<xsd:attribute name="minValue" type="xsd:string" />
 		<xsd:attribute name="ordered" type="xsd:string" />
-    <xsd:attribute name="cacheSize" type="xsd:string" />
+		<xsd:attribute name="cacheSize" type="xsd:string" />
+		<xsd:attribute name="dataType" type="xsd:string" />
+		<xsd:attribute name="ownedBy" type="xsd:string" />
 		<xsd:attribute name="cycle" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation>

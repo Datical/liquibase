@@ -291,6 +291,12 @@ public class JdbcDatabaseSnapshot extends DatabaseSnapshot {
           return getResultSetCache("getColumns").get(getColumnResultSetCache);
         }
 
+        /** @return Sequence for the given catalog, schema and sequence name */
+        public List<CachedRow> getSequences(final String catalogName, final String schemaName, final String sequenceName) throws DatabaseException {
+            GetSequenceResultSetCache getSequenceResultSetCache = new GetSequenceResultSetCache(database, getAllCatalogsStringScratchData(), catalogName, schemaName, sequenceName);
+            return getResultSetCache("getSequences").get(getSequenceResultSetCache);
+        }
+
       /**
        * Return the NotNullConstraints for the given catalog, schema, table, and column.
        */
