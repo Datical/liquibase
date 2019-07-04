@@ -253,6 +253,7 @@
 		<xsd:attribute name="logicalFilePath" type="xsd:string" />
 		<xsd:attribute name="context" type="xsd:string" />
         <xsd:attribute name="objectQuotingStrategy" type="objectQuotingStrategy" default="LEGACY" />
+		<xsd:attribute name="lastEdited" type="xsd:string" />
 	</xsd:attributeGroup>
 
 	<!-- Attributes for changeSet -->
