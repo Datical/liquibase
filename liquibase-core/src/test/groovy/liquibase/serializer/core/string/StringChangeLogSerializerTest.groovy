@@ -358,6 +358,9 @@ public class StringChangeLogSerializerTest extends Specification {
                         } else if (typeToCreate.equals(String.class)) {
                             collection.add(createString());
                             collection.add(createString());
+                        } else if (typeToCreate.equals(StoredLogicArgumentChange.class)) {
+                            collection.add(createStoredLogicArgumentChange());
+                            collection.add(createStoredLogicArgumentChange());
                         } else {
                             throw new RuntimeException("Unknown generic type for " + clazz.getName() + "." + field.getName() + ": " + typeToCreate.getName());
                         }
@@ -373,6 +376,12 @@ public class StringChangeLogSerializerTest extends Specification {
             }
         }
 
+    }
+
+    private StoredLogicArgumentChange createStoredLogicArgumentChange() throws Exception {
+        StoredLogicArgumentChange change = new StoredLogicArgumentChange()
+        setFields(change)
+        return change
     }
 
     private LoadDataColumnConfig createLoadDataColumnConfig() throws Exception {
