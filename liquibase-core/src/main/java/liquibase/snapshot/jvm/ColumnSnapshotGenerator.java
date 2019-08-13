@@ -47,6 +47,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
         if (((Column) example).getComputed() != null && ((Column) example).getComputed()) {
             return example;
         }
+
         Schema schema = relation.getSchema();
         try {
             Column column = null;
@@ -77,6 +78,12 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
             }
 
             example.setAttribute(LIQUIBASE_COMPLETE, null);
+
+            if (column == null && database instanceof PostgresDatabase && looksLikeFunction(example.getName())) {
+                ((Column) example).setComputed(true);
+                return example;
+            }
+
             return column;
         } catch (Exception e) {
             throw new DatabaseException(e);
@@ -105,15 +112,26 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
                 String searchCondition = cachedRow.getString("SEARCH_CONDITION");
                 searchCondition = searchCondition == null ? "" : searchCondition.toUpperCase();
                 String nullable = cachedRow.getString("NULLABLE");
+                String constraintName = cachedRow.getString("CONSTRAINT_NAME");
                 if ("NOT VALIDATED".equalsIgnoreCase(validated.toString())
                         && "Y".equalsIgnoreCase(nullable)
                         && searchCondition.matches("\"?\\w+\" IS NOT NULL")) {
-                        // not validated not null constraint found
-                        column.setNullable(false);
-                        column.setShouldValidateNullable(false);
+                    // not validated not null constraint found
+                    column.setNullable(false);
+                    column.setShouldValidateNullable(false);
+                }
+                if (Boolean.FALSE.equals(column.isNullable()) && hasValidObjectName(constraintName)) {
+                    column.setAttribute("notNullConstraintName", constraintName);
                 }
             }
         }
+    }
+
+    private static boolean hasValidObjectName(String objectName) {
+        if (StringUtils.isEmpty(objectName)) {
+            return false;
+        }
+        return !objectName.startsWith("SYS_") && !objectName.startsWith("BIN$");
     }
 
     @Override
@@ -384,8 +402,9 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
                 columnMetadataResultSet.set("COLUMN_SIZE", columnMetadataResultSet.getInt("DECIMAL_DIGITS"));
                 columnMetadataResultSet.set("DECIMAL_DIGITS", null);
             }
+        } else if (database instanceof PostgresDatabase) {
+            columnTypeName = database.unescapeDataTypeName(columnTypeName);
         }
-
 
         if (database instanceof FirebirdDatabase) {
             if (columnTypeName.equals("BLOB SUB_TYPE 0")) {
@@ -523,6 +542,18 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
         }
 
         return SqlUtil.parseValue(database, columnMetadataResultSet.get("COLUMN_DEF"), columnInfo.getType());
+    }
+
+    /**
+     * {@link IndexSnapshotGenerator} fails to differentiate computed and non-computed column's for {@link PostgresDatabase}
+     * assume that if COLUMN_NAME contains parentesised expression -- its function reference.
+     * should handle cases like:
+     * - ((name)::text)
+     * - lower/upper((name)::text)
+     * - (name)::text || '- concatenation example'
+     */
+    private boolean looksLikeFunction(String columnName) {
+        return columnName.contains("(");
     }
 
     //START CODE FROM SQLITEDatabaseSnapshotGenerator
