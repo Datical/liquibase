@@ -29,7 +29,7 @@ public class SchemaComparator extends CommonCatalogSchemaComparator {
 
     @Override
     public boolean isSameObject(DatabaseObject databaseObject1, DatabaseObject databaseObject2, Database accordingTo, DatabaseObjectComparatorChain chain) {
-        if (!(databaseObject1 instanceof Schema && databaseObject2 instanceof Schema)) {
+        if (!((databaseObject1 instanceof Schema) && (databaseObject2 instanceof Schema))) {
             return false;
         }
 
@@ -66,7 +66,7 @@ public class SchemaComparator extends CommonCatalogSchemaComparator {
         }
 
         //check with schemaComparisons
-        if (chain.getSchemaComparisons() != null && chain.getSchemaComparisons().length > 0) {
+        if ((chain.getSchemaComparisons() != null) && (chain.getSchemaComparisons().length > 0)) {
             for (CompareControl.SchemaComparison comparison : chain.getSchemaComparisons()) {
                 String comparisonSchema1 = getComparisonSchemaOrCatalog(accordingTo, comparison);
                 String comparisonSchema2 = getReferenceSchemaOrCatalog(accordingTo, comparison);
@@ -105,15 +105,15 @@ public class SchemaComparator extends CommonCatalogSchemaComparator {
 
     private String getFinalSchemaAfterComparison(Database accordingTo, String schemaName1, String comparisonSchema1, String comparisonSchema2, String finalSchema1) {
         if (CatalogAndSchema.CatalogAndSchemaCase.ORIGINAL_CASE.equals(accordingTo.getSchemaAndCatalogCase())){
-            if (comparisonSchema1 != null && comparisonSchema1.equals(schemaName1)) {
+            if ((comparisonSchema1 != null) && comparisonSchema1.equals(schemaName1)) {
                 finalSchema1 = comparisonSchema2;
-            } else if (comparisonSchema2 != null && comparisonSchema2.equals(schemaName1)) {
+            } else if ((comparisonSchema2 != null) && comparisonSchema2.equals(schemaName1)) {
                 finalSchema1 = comparisonSchema1;
             }
         } else {
-            if (comparisonSchema1 != null && comparisonSchema1.equalsIgnoreCase(schemaName1)) {
+            if ((comparisonSchema1 != null) && comparisonSchema1.equalsIgnoreCase(schemaName1)) {
                 finalSchema1 = comparisonSchema2;
-            } else if (comparisonSchema2 != null && comparisonSchema2.equalsIgnoreCase(schemaName1)) {
+            } else if ((comparisonSchema2 != null) && comparisonSchema2.equalsIgnoreCase(schemaName1)) {
                 finalSchema1 = comparisonSchema1;
             }
         }

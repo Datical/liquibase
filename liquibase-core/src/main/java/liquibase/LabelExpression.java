@@ -7,8 +7,8 @@ import java.util.*;
 
 public class LabelExpression {
 
-    private HashSet<String> labels = new LinkedHashSet<String>();
-    private String originalString = null;
+    private HashSet<String> labels = new LinkedHashSet<>();
+    private String originalString;
 
     public LabelExpression() {
     }
@@ -64,17 +64,17 @@ public class LabelExpression {
         if (originalString != null) {
             return originalString;
         }
-        return "(" + StringUtils.join(new TreeSet(this.labels), "), (") + ")";
+        return "(" + StringUtils.join(new TreeSet<>(this.labels), "), (") + ")";
     }
 
     /**
      * Returns true if the passed runtime labels match this label expression
      */
     public boolean matches(Labels runtimeLabels) {
-        if (runtimeLabels == null || runtimeLabels.isEmpty()) {
+        if ((runtimeLabels == null) || runtimeLabels.isEmpty()) {
             return true;
         }
-        if (this.labels.size() == 0) {
+        if (this.labels.isEmpty()) {
             return true;
         }
 
@@ -117,7 +117,7 @@ public class LabelExpression {
     }
 
     public boolean isEmpty() {
-        return this.labels == null || this.labels.size() == 0;
+        return (this.labels == null) || this.labels.isEmpty();
     }
 
 }

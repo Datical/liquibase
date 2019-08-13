@@ -17,7 +17,7 @@ public class PrimaryKeyConstraint implements ColumnConstraint {
 	// used for PK's index configuration
 	private String tablespace;
     
-    private List<String> columns = new ArrayList<String>();
+    private List<String> columns = new ArrayList<>();
 
     public PrimaryKeyConstraint() {
     }
@@ -36,15 +36,16 @@ public class PrimaryKeyConstraint implements ColumnConstraint {
         return constraintName;
     }
 
-	public String getTablespace() {
-		return tablespace;
-	}
+    public String getTablespace() {
+        return tablespace;
+    }
 
-	public void setTablespace(String tablespace) {
-		this.tablespace = tablespace;
-	}
+    public PrimaryKeyConstraint setTablespace(String tablespace) {
+        this.tablespace = tablespace;
+        return this;
+    }
 
-	public List<String> getColumns() {
+    public List<String> getColumns() {
         return Collections.unmodifiableList(columns);
     }
 

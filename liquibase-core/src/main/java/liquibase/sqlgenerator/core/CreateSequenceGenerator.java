@@ -5,7 +5,6 @@ import liquibase.database.core.*;
 import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
-import liquibase.sqlgenerator.SqlGenerator;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.statement.core.CreateSequenceStatement;
 import liquibase.structure.core.Sequence;
@@ -28,10 +27,17 @@ public class CreateSequenceGenerator extends AbstractSqlGenerator<CreateSequence
         validationErrors.checkDisallowedField("startValue", statement.getStartValue(), database, FirebirdDatabase.class);
         validationErrors.checkDisallowedField("incrementBy", statement.getIncrementBy(), database, FirebirdDatabase.class);
 
-        validationErrors.checkDisallowedField("minValue", statement.getMinValue(), database, FirebirdDatabase.class, H2Database.class, HsqlDatabase.class);
-        validationErrors.checkDisallowedField("maxValue", statement.getMaxValue(), database, FirebirdDatabase.class, H2Database.class, HsqlDatabase.class);
+        if (isH2WithMinMaxSupport(database)) {
 
-        validationErrors.checkDisallowedField("ordered", statement.getOrdered(), database, DB2Database.class, HsqlDatabase.class, PostgresDatabase.class);
+            validationErrors.checkDisallowedField("minValue", statement.getMinValue(), database, FirebirdDatabase.class, HsqlDatabase.class);
+            validationErrors.checkDisallowedField("maxValue", statement.getMaxValue(), database, FirebirdDatabase.class, HsqlDatabase.class);
+        } else {
+
+            validationErrors.checkDisallowedField("minValue", statement.getMinValue(), database, FirebirdDatabase.class, H2Database.class, HsqlDatabase.class);
+            validationErrors.checkDisallowedField("maxValue", statement.getMaxValue(), database, FirebirdDatabase.class, H2Database.class, HsqlDatabase.class);
+        }
+
+        validationErrors.checkDisallowedField("ordered", statement.getOrdered(), database, HsqlDatabase.class, PostgresDatabase.class);
         validationErrors.checkDisallowedField("dataType", statement.getDataType(), database, DB2Database.class, HsqlDatabase.class, OracleDatabase.class, MySQLDatabase.class, MSSQLDatabase.class);
 
         return validationErrors;
@@ -50,7 +56,7 @@ public class CreateSequenceGenerator extends AbstractSqlGenerator<CreateSequence
         } else if (statement.getDataType() != null) {
             queryStringBuilder.append(" AS " + statement.getDataType());
         }
-        if (statement.getStartValue() != null) {
+        if (!(database instanceof MariaDBDatabase) && statement.getStartValue() != null) {
             queryStringBuilder.append(" START WITH ").append(statement.getStartValue());
         }
         if (statement.getIncrementBy() != null) {
@@ -61,6 +67,9 @@ public class CreateSequenceGenerator extends AbstractSqlGenerator<CreateSequence
         }
         if (statement.getMaxValue() != null) {
             queryStringBuilder.append(" MAXVALUE ").append(statement.getMaxValue());
+        }
+        if (database instanceof MariaDBDatabase && statement.getStartValue() != null) {
+            queryStringBuilder.append(" START WITH ").append(statement.getStartValue());
         }
 
         if (statement.getCacheSize() != null) {
@@ -75,16 +84,18 @@ public class CreateSequenceGenerator extends AbstractSqlGenerator<CreateSequence
             }
         }
 
-        if (statement.getOrdered() != null) {
-            if (statement.getOrdered()) {
-                queryStringBuilder.append(" ORDER");
-            } else {
-               if (database instanceof OracleDatabase) {
-                   queryStringBuilder.append(" NOORDER");
-               }
+        if (!(database instanceof MariaDBDatabase) && statement.getOrdered() != null) {
+            if (!(database instanceof SybaseASADatabase)) {
+                if (statement.getOrdered()) {
+                    queryStringBuilder.append(" ORDER");
+                } else {
+                   if (database instanceof OracleDatabase) {
+                       queryStringBuilder.append(" NOORDER");
+                   }
+                }
             }
         }
-        if (statement.getCycle() != null) {
+        if (!(database instanceof MariaDBDatabase) && statement.getCycle() != null) {
             if (statement.getCycle()) {
                 queryStringBuilder.append(" CYCLE");
             }
@@ -95,5 +106,10 @@ public class CreateSequenceGenerator extends AbstractSqlGenerator<CreateSequence
 
     protected Sequence getAffectedSequence(CreateSequenceStatement statement) {
         return new Sequence().setName(statement.getSequenceName()).setSchema(statement.getCatalogName(), statement.getSchemaName());
+    }
+
+    private boolean isH2WithMinMaxSupport(Database database) {
+        return H2Database.class.isAssignableFrom(database.getClass())
+                && ((H2Database) database).supportsMinMaxForSequences();
     }
 }

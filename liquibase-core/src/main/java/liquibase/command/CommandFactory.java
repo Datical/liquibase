@@ -20,7 +20,7 @@ public class CommandFactory  {
     private CommandFactory() {
         Class<? extends LiquibaseCommand>[] classes;
 
-        commands = new ArrayList<LiquibaseCommand>();
+        commands = new ArrayList<>();
         try {
             classes = ServiceLocator.getInstance().findClasses(LiquibaseCommand.class);
 
@@ -54,13 +54,13 @@ public class CommandFactory  {
         };
 
 
-        List<LiquibaseCommand> sortedCommands = new ArrayList<LiquibaseCommand>(commands);
+        List<LiquibaseCommand> sortedCommands = new ArrayList<>(commands);
         Collections.sort(sortedCommands, commandComparator);
-        if (sortedCommands.size() == 0) {
+        if (sortedCommands.isEmpty()) {
             throw new UnexpectedLiquibaseException("Could not find command class for "+commandName);
         }
         try {
-            LiquibaseCommand command = sortedCommands.iterator().next().getClass().newInstance();
+            LiquibaseCommand command = sortedCommands.iterator().next().getClass().getConstructor().newInstance();
 
             if (command.getPriority(commandName) <= 0) {
                 throw new UnexpectedLiquibaseException("Could not find command class for "+commandName);

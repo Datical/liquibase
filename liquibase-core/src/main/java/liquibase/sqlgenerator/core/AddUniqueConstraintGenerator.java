@@ -56,34 +56,50 @@ public class AddUniqueConstraintGenerator extends AbstractSqlGenerator<AddUnique
                     , database.escapeColumnNameList(statement.getColumnNames())
             );
         }
-        if (database instanceof OracleDatabase || database instanceof PostgresDatabase) {
+        if ((database instanceof OracleDatabase) || (database instanceof PostgresDatabase)) {
             if (statement.isDeferrable()) {
                 sql += " DEFERRABLE";
             }
-
             if (statement.isInitiallyDeferred()) {
                 sql += " INITIALLY DEFERRED";
             }
-            if (statement.isDisabled()) {
-                sql += " DISABLE";
-            }
         }
 
-
-        if (StringUtils.trimToNull(statement.getTablespace()) != null && database.supportsTablespaces()) {
-            if (database instanceof MSSQLDatabase) {
-                sql += " ON " + statement.getTablespace();
-            } else if (database instanceof AbstractDb2Database
-                    || database instanceof SybaseASADatabase
-                    || database instanceof InformixDatabase) {
-                ; //not supported
-            } else {
-                sql += " USING INDEX TABLESPACE " + statement.getTablespace();
-            }
+        if ((database instanceof OracleDatabase) &&  statement.isDisabled()) {
+            sql += " DISABLE";
         }
+
+        boolean isInUsingIndexClause = false;
 
         if (statement.getForIndexName() != null) {
-            sql += " USING INDEX " + database.escapeObjectName(statement.getForIndexCatalogName(), statement.getForIndexSchemaName(), statement.getForIndexName(), Index.class);
+            sql += " USING INDEX ";
+            sql += database.escapeObjectName(statement.getForIndexCatalogName(), statement.getForIndexSchemaName(),
+                statement.getForIndexName(), Index.class);
+            isInUsingIndexClause = true;
+        }
+
+        if ((StringUtils.trimToNull(statement.getTablespace()) != null) && database.supportsTablespaces()) {
+            if (database instanceof MSSQLDatabase) {
+                sql += " ON " + statement.getTablespace();
+            } else if ((database instanceof AbstractDb2Database) || (database instanceof SybaseASADatabase) || (database
+                instanceof InformixDatabase)) {
+                ; //not supported
+            } else if (database instanceof OracleDatabase) {
+                /*
+                 * In Oracle, you can use only exactly one of these clauses:
+                 * 1. USING INDEX (identifier)
+                 * 2. USING INDEX (index attributes) <-- Note that NO identifier is allowed in this form!
+                 * 3. USING INDEX (CREATE INDEX (identifier) TABLESPACE (tablespace) (further attributes...) )
+                 * However, if an index name _is_ present, we can assume that CreateIndexGenerator picked it up before
+                 * this generator is called, so we really only need the second form at this point.
+                */
+                if (statement.getForIndexName() == null)
+                    sql += " USING INDEX TABLESPACE " + statement.getTablespace();
+            } else {
+                if (!isInUsingIndexClause)
+                    sql += " USING INDEX";
+                sql += " TABLESPACE " + statement.getTablespace();
+            }
         }
 
         if (database instanceof OracleDatabase) {
@@ -99,7 +115,7 @@ public class AddUniqueConstraintGenerator extends AbstractSqlGenerator<AddUnique
     protected UniqueConstraint getAffectedUniqueConstraint(AddUniqueConstraintStatement statement) {
         UniqueConstraint uniqueConstraint = new UniqueConstraint()
                 .setName(statement.getConstraintName())
-                .setTable((Table) new Table().setName(statement.getTableName()).setSchema(statement.getCatalogName(), statement.getSchemaName()));
+                .setRelation((Table) new Table().setName(statement.getTableName()).setSchema(statement.getCatalogName(), statement.getSchemaName()));
         int i = 0;
         for (Column column : Column.listFromNames(statement.getColumnNames())) {
             uniqueConstraint.addColumn(i++, column);

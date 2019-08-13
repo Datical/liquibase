@@ -54,24 +54,24 @@ public class Sequence extends AbstractDatabaseObject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if ((o == null) || (getClass() != o.getClass())) return false;
 
         Sequence sequence = (Sequence) o;
 
-        if (this.getSchema() != null && sequence.getSchema() != null) {
+        if ((this.getSchema() != null) && (sequence.getSchema() != null)) {
             boolean schemasEqual = this.getSchema().equals(sequence.getSchema());
             if (!schemasEqual) {
                 return false;
             }
         }
 
-        return !(getName() != null ? !getName().equalsIgnoreCase(sequence.getName()) : sequence.getName() != null);
+        return !((getName() != null) ? !getName().equalsIgnoreCase(sequence.getName()) : (sequence.getName() != null));
 
     }
 
     @Override
     public int hashCode() {
-        return (getName() != null ? getName().toUpperCase().hashCode() : 0);
+        return ((getName() != null) ? getName().toUpperCase().hashCode() : 0);
     }
 
 

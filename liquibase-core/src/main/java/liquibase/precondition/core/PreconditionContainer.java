@@ -1,5 +1,15 @@
 package liquibase.precondition.core;
 
+import liquibase.changelog.ChangeLogChild;
+import liquibase.changelog.ChangeSet;
+import liquibase.changelog.DatabaseChangeLog;
+import liquibase.database.Database;
+import liquibase.exception.PreconditionErrorException;
+import liquibase.exception.PreconditionFailedException;
+import liquibase.executor.Executor;
+import liquibase.executor.ExecutorService;
+import liquibase.logging.LogService;
+import liquibase.logging.LogType;
 import liquibase.changelog.visitor.ChangeExecListener;
 import liquibase.exception.*;
 import liquibase.parser.core.ParsedNode;
@@ -7,15 +17,8 @@ import liquibase.parser.core.ParsedNodeException;
 import liquibase.precondition.ErrorPrecondition;
 import liquibase.precondition.FailedPrecondition;
 import liquibase.resource.ResourceAccessor;
-import liquibase.util.StringUtils;
 import liquibase.util.StreamUtil;
-import liquibase.database.Database;
-import liquibase.changelog.ChangeLogChild;
-import liquibase.changelog.DatabaseChangeLog;
-import liquibase.changelog.ChangeSet;
-import liquibase.executor.Executor;
-import liquibase.executor.ExecutorService;
-import liquibase.logging.LogFactory;
+import liquibase.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,12 +99,16 @@ public class PreconditionContainer extends AndPrecondition implements ChangeLogC
                     return;
                 }
             }
-            List<String> possibleOptions = new ArrayList<String>();
+            List<String> possibleOptions = new ArrayList<>();
             for (FailOption option : FailOption.values()) {
                 possibleOptions.add(option.key);
             }
             throw new RuntimeException("Unknown onFail attribute value '"+onFail+"'.  Possible values: " + StringUtils.join(possibleOptions, ", "));
         }
+    }
+
+    public void setOnFail(FailOption onFail) {
+        this.onFail = onFail;
     }
 
     public ErrorOption getOnError() {
@@ -118,12 +125,16 @@ public class PreconditionContainer extends AndPrecondition implements ChangeLogC
                     return;
                 }
             }
-            List<String> possibleOptions = new ArrayList<String>();
+            List<String> possibleOptions = new ArrayList<>();
             for (ErrorOption option : ErrorOption.values()) {
                 possibleOptions.add(option.key);
             }
             throw new RuntimeException("Unknown onError attribute value '"+onError+"'.  Possible values: " + StringUtils.join(possibleOptions, ", "));
         }
+    }
+
+    public void setOnError(ErrorOption onError) {
+        this.onError = onError;
     }
 
     public OnSqlOutputOption getOnSqlOutput() {
@@ -142,7 +153,7 @@ public class PreconditionContainer extends AndPrecondition implements ChangeLogC
                 return;
             }
         }
-        List<String> possibleOptions = new ArrayList<String>();
+        List<String> possibleOptions = new ArrayList<>();
         for (OnSqlOutputOption option : OnSqlOutputOption.values()) {
             possibleOptions.add(option.key);
         }
@@ -215,7 +226,7 @@ public class PreconditionContainer extends AndPrecondition implements ChangeLogC
                 message = new StringBuffer(getOnFailMessage());
             }
             if (this.getOnFail().equals(PreconditionContainer.FailOption.WARN)) {
-                LogFactory.getLogger().info("Executing: " + ranOn + " despite precondition failure due to onFail='WARN':\n " + message);
+                LogService.getLog(getClass()).info(LogType.LOG, "Executing: " + ranOn + " despite precondition failure due to onFail='WARN':\n " + message);
                 if (changeExecListener != null) {
                     changeExecListener.preconditionFailed(e, FailOption.WARN);
                 }
@@ -235,10 +246,10 @@ public class PreconditionContainer extends AndPrecondition implements ChangeLogC
             }
 
             if (this.getOnError().equals(PreconditionContainer.ErrorOption.CONTINUE)) {
-                LogFactory.getLogger().info("Continuing past: " + toString() + " despite precondition error:\n " + message);
+                LogService.getLog(getClass()).info(LogType.LOG, "Continuing past: " + toString() + " despite precondition error:\n " + message);
                 throw e;
             } else if (this.getOnError().equals(PreconditionContainer.ErrorOption.WARN)) {
-                LogFactory.getLogger().warning("Continuing past: " + toString() + " despite precondition error:\n " + message);
+                LogService.getLog(getClass()).warning(LogType.LOG, "Continuing past: " + toString() + " despite precondition error:\n " + message);
                 if (changeExecListener != null) {
                     changeExecListener.preconditionErrored(e, ErrorOption.WARN);
                 }

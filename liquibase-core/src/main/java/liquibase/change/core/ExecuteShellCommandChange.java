@@ -1,8 +1,8 @@
 package liquibase.change.core;
 
 import liquibase.change.AbstractChange;
-import liquibase.change.DatabaseChange;
 import liquibase.change.ChangeMetaData;
+import liquibase.change.DatabaseChange;
 import liquibase.change.DatabaseChangeProperty;
 import liquibase.configuration.GlobalConfiguration;
 import liquibase.configuration.LiquibaseConfiguration;
@@ -13,7 +13,8 @@ import liquibase.exception.Warnings;
 import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.executor.LoggingExecutor;
-import liquibase.logging.LogFactory;
+import liquibase.logging.LogService;
+import liquibase.logging.LogType;
 import liquibase.parser.core.ParsedNode;
 import liquibase.parser.core.ParsedNodeException;
 import liquibase.resource.ResourceAccessor;
@@ -25,7 +26,8 @@ import liquibase.util.StringUtils;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,14 +36,16 @@ import java.util.regex.Pattern;
  * Executes a given shell executable.
  */
 @DatabaseChange(name = "executeCommand",
-        description = "Executes a system command. Because this refactoring doesn't generate SQL like most, using LiquiBase commands such as migrateSQL may not work as expected. Therefore, if at all possible use refactorings that generate SQL.",
+        description = "Executes a system command. Because this refactoring doesn't generate SQL like most, using " +
+            "Liquibase commands such as migrateSQL may not work as expected. Therefore, if at all possible use " +
+                "refactorings that generate SQL.",
         priority = ChangeMetaData.PRIORITY_DEFAULT)
 public class ExecuteShellCommandChange extends AbstractChange {
 
+    protected List<String> finalCommandArray;
     private String executable;
     private List<String> os;
     private List<String> args = new ArrayList<String>();
-    protected List<String> finalCommandArray;
     private String timeout;
     private static final Pattern TIMEOUT_PATTERN = Pattern.compile("^\\s*(\\d+)\\s*([sSmMhH]?)\\s*$");
     private static final Long SECS_IN_MILLIS = 1000L;
@@ -60,7 +64,8 @@ public class ExecuteShellCommandChange extends AbstractChange {
         return true;
     }
 
-    @DatabaseChangeProperty(description = "Name of the executable to run", exampleValue = "mysqldump", requiredForDatabase = "all")
+    @DatabaseChangeProperty(description = "Name of the executable to run",
+            exampleValue = "mysqldump", requiredForDatabase = "all")
     public String getExecutable() {
         return executable;
     }
@@ -77,10 +82,6 @@ public class ExecuteShellCommandChange extends AbstractChange {
         return Collections.unmodifiableList(args);
     }
 
-    public void setOs(String os) {
-        this.os = StringUtils.splitAndTrim(os, ",");
-    }
-
     @DatabaseChangeProperty(description = "Timeout value for executable to run", exampleValue = "10s")
     public String getTimeout() {
         return timeout;
@@ -93,6 +94,10 @@ public class ExecuteShellCommandChange extends AbstractChange {
     @DatabaseChangeProperty(description = "List of operating systems on which to execute the command (taken from the os.name Java system property)", exampleValue = "Windows 7")
     public List<String> getOs() {
         return os;
+    }
+
+    public void setOs(String os) {
+        this.os = StringUtils.splitAndTrim(os, ",");
     }
 
     @Override
@@ -118,11 +123,12 @@ public class ExecuteShellCommandChange extends AbstractChange {
     @Override
     public SqlStatement[] generateStatements(final Database database) {
         boolean shouldRun = true;
-        if (os != null && os.size() > 0) {
+        if ((os != null) && (!os.isEmpty())) {
             String currentOS = System.getProperty("os.name");
             if (!os.contains(currentOS)) {
                 shouldRun = false;
-                LogFactory.getLogger().info("Not executing on os " + currentOS + " when " + os + " was specified");
+                LogService.getLog(getClass()).info(LogType.LOG, "Not executing on os " + currentOS + " when " + os + " was " +
+                        "specified");
             }
         }
 
@@ -172,7 +178,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
     }
 
     protected List<String> createFinalCommandArray(Database database) {
-        List<String> commandArray = new ArrayList<String>();
+        List<String> commandArray = new ArrayList<>();
         commandArray.add(getExecutable());
         commandArray.addAll(getArgs());
         return commandArray;
@@ -207,16 +213,19 @@ public class ExecuteShellCommandChange extends AbstractChange {
             outputGobbler.finish();
 
         } catch (InterruptedException e) {
-            ;
+            // Restore thread interrupt status
+            Thread.currentThread().interrupt();
         }
 
-        String errorStreamOut = errorStream.toString(LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration.class).getOutputEncoding());
-        String infoStreamOut = inputStream.toString(LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration.class).getOutputEncoding());
+        String errorStreamOut = errorStream.toString(LiquibaseConfiguration.getInstance().getConfiguration
+                (GlobalConfiguration.class).getOutputEncoding());
+        String infoStreamOut = inputStream.toString(LiquibaseConfiguration.getInstance().getConfiguration
+                (GlobalConfiguration.class).getOutputEncoding());
 
         if (errorStreamOut != null && !errorStreamOut.isEmpty()) {
-            LogFactory.getLogger().severe(errorStreamOut);
+            LogService.getLog(getClass()).severe(LogType.LOG, errorStreamOut);
         }
-        LogFactory.getLogger().info(infoStreamOut);
+        LogService.getLog(getClass()).info(LogType.LOG, infoStreamOut);
 
         processResult(returnCode, errorStreamOut, infoStreamOut, database);
     }
@@ -340,7 +349,8 @@ public class ExecuteShellCommandChange extends AbstractChange {
     }
 
     @Override
-    protected void customLoadLogic(ParsedNode parsedNode, ResourceAccessor resourceAccessor) throws ParsedNodeException {
+    protected void customLoadLogic(ParsedNode parsedNode, ResourceAccessor resourceAccessor) throws
+            ParsedNodeException {
         ParsedNode argsNode = parsedNode.getChild(null, "args");
         if (argsNode == null) {
             argsNode = parsedNode;
@@ -351,18 +361,19 @@ public class ExecuteShellCommandChange extends AbstractChange {
         }
         String passedValue = StringUtils.trimToNull(parsedNode.getChildValue(null, "os", String.class));
         if (passedValue == null) {
-            this.os = new ArrayList<String>();
+            this.os = new ArrayList<>();
         } else {
-            List<String> os = StringUtils.splitAndTrim(StringUtils.trimToEmpty(parsedNode.getChildValue(null, "os", String.class)), ",");
-            if (os.size() == 1 && os.get(0).equals("")) {
+            List<String> os = StringUtils.splitAndTrim(StringUtils.trimToEmpty(parsedNode.getChildValue(null, "os",
+                    String.class)), ",");
+            if ((os.size() == 1) && ("".equals(os.get(0)))) {
                 this.os = null;
-            } else if (os.size() > 0) {
+            } else if (!os.isEmpty()) {
                 this.os = os;
             }
         }
     }
-
     private class StreamGobbler extends Thread {
+        private static final int THREAD_SLEEP_MILLIS = 100;
         private final OutputStream outputStream;
         private InputStream processStream;
         boolean loggedTruncated = false;
@@ -373,6 +384,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
             this.outputStream = outputStream;
         }
 
+        @Override
         public void run() {
             try {
                 BufferedInputStream bufferedInputStream = new BufferedInputStream(processStream);
@@ -381,8 +393,10 @@ public class ExecuteShellCommandChange extends AbstractChange {
                         copy(bufferedInputStream, outputStream);
                     }
                     try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ignore) {
+                        Thread.sleep(THREAD_SLEEP_MILLIS);
+                    } catch (InterruptedException e) {
+                        // Restore thread interrupt status
+                        Thread.currentThread().interrupt();
                     }
                 }
             } catch (IOException ioe) {
@@ -391,11 +405,11 @@ public class ExecuteShellCommandChange extends AbstractChange {
         }
 
         public void finish() {
-            InputStream processStream = this.processStream;
+            InputStream procStream = this.processStream;
             this.processStream = null;
 
             try {
-                copy(processStream, outputStream);
+                copy(procStream, outputStream);
             } catch (IOException e) {
                 e.printStackTrace();
             }

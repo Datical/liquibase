@@ -10,8 +10,8 @@ import java.util.*;
  */
 public class ContextExpression {
 
-    private HashSet<String> contexts = new HashSet<String>();
-    private String originalString = null;
+    private HashSet<String> contexts = new HashSet<>();
+    private String originalString;
 
     public ContextExpression() {
     }
@@ -64,17 +64,17 @@ public class ContextExpression {
         if (originalString != null) {
             return originalString;
         }
-        return "(" + StringUtils.join(new TreeSet(this.contexts), "), (") + ")";
+        return "(" + StringUtils.join(new TreeSet<String>(this.contexts), "), (") + ")";
     }
 
     /**
      * Returns true if the passed runtime contexts match this context expression
      */
     public boolean matches(Contexts runtimeContexts) {
-        if (runtimeContexts == null || runtimeContexts.isEmpty()) {
+        if ((runtimeContexts == null) || runtimeContexts.isEmpty()) {
             return true;
         }
-        if (this.contexts.size() == 0) {
+        if (this.contexts.isEmpty()) {
             return true;
         }
 
@@ -91,14 +91,14 @@ public class ContextExpression {
     }
 
     public boolean isEmpty() {
-        return this.contexts == null || this.contexts.size() == 0;
+        return (this.contexts == null) || this.contexts.isEmpty();
     }
 
     public static boolean matchesAll(Collection<ContextExpression> expressions, Contexts contexts) {
-        if (expressions == null || expressions.isEmpty()) {
+        if ((expressions == null) || expressions.isEmpty()) {
             return true;
         }
-        if (contexts == null || contexts.isEmpty()) {
+        if ((contexts == null) || contexts.isEmpty()) {
             return true;
         }
         for (ContextExpression expression : expressions) {

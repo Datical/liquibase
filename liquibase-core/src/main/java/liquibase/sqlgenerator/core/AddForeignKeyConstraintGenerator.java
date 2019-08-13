@@ -58,29 +58,32 @@ public class AddForeignKeyConstraintGenerator extends AbstractSqlGenerator<AddFo
         if (statement.getOnUpdate() != null) {
 		    if (database instanceof OracleDatabase) {
 			    //don't use
-            } else if ((database instanceof MSSQLDatabase) && statement.getOnUpdate().equalsIgnoreCase("RESTRICT")) {
+            } else if ((database instanceof MSSQLDatabase) && "RESTRICT".equalsIgnoreCase(statement.getOnUpdate())) {
                 //don't use
 		    } else if (database instanceof InformixDatabase) {
-                //TODO don't know if correct
-            } else if (database instanceof Db2zDatabase) {
-                //don't use
-            } else {
+			    //TODO don't know if correct
+		    } else if ((database instanceof FirebirdDatabase) && "RESTRICT".equalsIgnoreCase(statement.getOnUpdate())) {
+			    //don't use
+		    } else {
 			    sb.append(" ON UPDATE ").append(statement.getOnUpdate());
 		    }
 	    }
 
-	    if (statement.getOnDelete() != null) {
-            if ((database instanceof OracleDatabase) && (statement.getOnDelete().equalsIgnoreCase("RESTRICT") || statement.getOnDelete().equalsIgnoreCase("NO ACTION"))) {
+        if (statement.getOnDelete() != null) {
+            if ((database instanceof OracleDatabase) && ("RESTRICT".equalsIgnoreCase(statement.getOnDelete()) || ("NO " +
+                "ACTION").equalsIgnoreCase(statement.getOnDelete()))) {
                 //don't use
-            } else if ((database instanceof MSSQLDatabase) && statement.getOnDelete().equalsIgnoreCase("RESTRICT")) {
+            } else if ((database instanceof MSSQLDatabase) && "RESTRICT".equalsIgnoreCase(statement.getOnDelete())) {
                 //don't use
-		    } else if (database instanceof InformixDatabase && !(statement.getOnDelete().equalsIgnoreCase("CASCADE"))) {
-			    //TODO Informix can handle ON DELETE CASCADE only, but I don't know if this is really correct
-		    	// see "REFERENCES Clause" in manual
-		    } else {
-			    sb.append(" ON DELETE ").append(statement.getOnDelete());
-		    }
-	    }
+            } else if ((database instanceof InformixDatabase) && !("CASCADE".equalsIgnoreCase(statement.getOnDelete()))) {
+                //TODO Informix can handle ON DELETE CASCADE only, but I don't know if this is really correct
+                // see "REFERENCES Clause" in manual
+            } else if ((database instanceof FirebirdDatabase) && "RESTRICT".equalsIgnoreCase(statement.getOnDelete())) {
+                //don't use
+            } else {
+                sb.append(" ON DELETE ").append(statement.getOnDelete());
+            }
+        }
 
         if (statement.isDeferrable() || statement.isInitiallyDeferred()) {
             if (statement.isDeferrable()) {
@@ -96,14 +99,14 @@ public class AddForeignKeyConstraintGenerator extends AbstractSqlGenerator<AddFo
             sb.append(!statement.shouldValidate() ? " ENABLE NOVALIDATE " : "");
         }
 
-	    if (database instanceof InformixDatabase) {
-		    sb.append(" CONSTRAINT ");
-		    sb.append(database.escapeConstraintName(statement.getConstraintName()));
-	    }
+        if (database instanceof InformixDatabase) {
+            sb.append(" CONSTRAINT ");
+            sb.append(database.escapeConstraintName(statement.getConstraintName()));
+        }
 
-	    return new Sql[]{
-			    new UnparsedSql(sb.toString(), getAffectedForeignKey(statement))
-	    };
+        return new Sql[]{
+                new UnparsedSql(sb.toString(), getAffectedForeignKey(statement))
+        };
     }
 
     protected ForeignKey getAffectedForeignKey(AddForeignKeyConstraintStatement statement) {

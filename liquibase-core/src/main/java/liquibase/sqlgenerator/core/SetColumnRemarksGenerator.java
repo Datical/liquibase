@@ -1,12 +1,7 @@
 package liquibase.sqlgenerator.core;
 
 import liquibase.database.Database;
-import liquibase.database.core.AbstractDb2Database;
-import liquibase.database.core.MSSQLDatabase;
-import liquibase.database.core.OracleDatabase;
-import liquibase.database.core.PostgresDatabase;
-import liquibase.database.core.SybaseASADatabase;
-import liquibase.database.core.H2Database;
+import liquibase.database.core.*;
 import liquibase.exception.ValidationErrors;
 import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
@@ -24,8 +19,9 @@ public class SetColumnRemarksGenerator extends AbstractSqlGenerator<SetColumnRem
 
     @Override
     public boolean supports(SetColumnRemarksStatement statement, Database database) {
-        return database instanceof OracleDatabase || database instanceof PostgresDatabase || database instanceof AbstractDb2Database || database instanceof MSSQLDatabase || database instanceof H2Database
-        		|| database instanceof SybaseASADatabase;
+        return (database instanceof OracleDatabase) || (database instanceof PostgresDatabase) || (database instanceof
+            AbstractDb2Database) || (database instanceof MSSQLDatabase) || (database instanceof H2Database) || (database
+            instanceof SybaseASADatabase) || (database instanceof MySQLDatabase);
     }
 
     @Override
@@ -41,7 +37,10 @@ public class SetColumnRemarksGenerator extends AbstractSqlGenerator<SetColumnRem
 
         String remarksEscaped = database.escapeStringForDatabase(StringUtils.trimToEmpty(statement.getRemarks()));
 
-        if (database instanceof MSSQLDatabase) {
+        if (database instanceof MySQLDatabase) {
+            return new Sql[]{new UnparsedSql("ALTER TABLE " + database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) + " COMMENT = '" + remarksEscaped
+                    + "'", getAffectedColumn(statement))};
+        } else if (database instanceof MSSQLDatabase) {
             String schemaName = statement.getSchemaName();
             if (schemaName == null) {
                 schemaName = database.getDefaultSchemaName();

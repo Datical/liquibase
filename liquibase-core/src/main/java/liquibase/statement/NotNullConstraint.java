@@ -2,7 +2,11 @@ package liquibase.statement;
 
 public class NotNullConstraint implements ColumnConstraint {
     private String columnName;
+
+    /* Some RDBMS (e.g. Oracle Database) have names for NOT NULL constraints. For Liquibase to make use of this
+     * property, the Database-specific class must override supportsNotNullConstraintNames() to true.  */
     private String constraintName;
+
     /** Default value is true */
     private boolean validateNullable = true;
 
@@ -32,8 +36,8 @@ public class NotNullConstraint implements ColumnConstraint {
         return constraintName;
     }
 
-    public NotNullConstraint setConstraintName(String constraintName) {
-        this.constraintName = constraintName;
+    public NotNullConstraint setConstraintName(String name) {
+        this.constraintName = name;
         return this;
     }
 

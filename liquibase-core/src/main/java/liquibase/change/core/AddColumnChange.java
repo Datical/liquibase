@@ -1,10 +1,5 @@
 package liquibase.change.core;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import liquibase.change.*;
 import liquibase.database.Database;
 import liquibase.database.core.*;
@@ -20,6 +15,11 @@ import liquibase.structure.core.PrimaryKey;
 import liquibase.structure.core.Table;
 import liquibase.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Adds a column to an existing table.
  */
@@ -32,7 +32,7 @@ public class AddColumnChange extends AbstractChange implements ChangeWithColumns
     private List<AddColumnConfig> columns;
 
     public AddColumnChange() {
-        columns = new ArrayList<AddColumnConfig>();
+        columns = new ArrayList<>();
     }
     
     @DatabaseChangeProperty(mustEqualExisting ="relation.catalog", since = "3.0")
@@ -85,21 +85,21 @@ public class AddColumnChange extends AbstractChange implements ChangeWithColumns
     @Override
     public SqlStatement[] generateStatements(Database database) {
 
-        List<SqlStatement> sql = new ArrayList<SqlStatement>();
-        List<AddColumnStatement> addColumnStatements = new ArrayList<AddColumnStatement>();
-        List<UpdateStatement> addColumnUpdateStatements = new ArrayList<UpdateStatement>();
+        List<SqlStatement> sql = new ArrayList<>();
+        List<AddColumnStatement> addColumnStatements = new ArrayList<>();
+        List<UpdateStatement> addColumnUpdateStatements = new ArrayList<>();
 
-        if (getColumns().size() == 0) {
+        if (getColumns().isEmpty()) {
             return new SqlStatement[] {
                     new AddColumnStatement(catalogName, schemaName, tableName, null, null, null)
             };
         }
 
         for (AddColumnConfig column : getColumns()) {
-            Set<ColumnConstraint> constraints = new HashSet<ColumnConstraint>();
+            Set<ColumnConstraint> constraints = new HashSet<>();
             ConstraintsConfig constraintsConfig =column.getConstraints();
             if (constraintsConfig != null) {
-                if (constraintsConfig.isNullable() != null && !constraintsConfig.isNullable()) {
+                if ((constraintsConfig.isNullable() != null) && !constraintsConfig.isNullable()) {
                     NotNullConstraint notNullConstraint = new NotNullConstraint();
                     if (constraintsConfig.shouldValidateNullable()!=null && !constraintsConfig.shouldValidateNullable()) {
                         notNullConstraint.setValidateNullable(false);
@@ -114,7 +114,7 @@ public class AddColumnChange extends AbstractChange implements ChangeWithColumns
                     }
                     constraints.add(uniqueConstraint);
                 }
-                if (constraintsConfig.isPrimaryKey() != null && constraintsConfig.isPrimaryKey()) {
+                if ((constraintsConfig.isPrimaryKey() != null) && constraintsConfig.isPrimaryKey()) {
                     PrimaryKeyConstraint primaryKeyConstraint = new PrimaryKeyConstraint(constraintsConfig.getPrimaryKeyName());
                     if (constraintsConfig.shouldValidatePrimaryKey()!=null && !constraintsConfig.shouldValidatePrimaryKey()) {
                         primaryKeyConstraint.setValidatePrimaryKey(false);
@@ -122,8 +122,8 @@ public class AddColumnChange extends AbstractChange implements ChangeWithColumns
                     constraints.add(primaryKeyConstraint);
                 }
 
-                if (constraintsConfig.getReferences() != null ||
-                        (constraintsConfig.getReferencedColumnNames() != null && constraintsConfig.getReferencedTableName() != null)) {
+                if ((constraintsConfig.getReferences() != null) || ((constraintsConfig.getReferencedColumnNames() !=
+                    null) && (constraintsConfig.getReferencedTableName() != null))) {
                     ForeignKeyConstraint foreignKeyConstraint = new ForeignKeyConstraint(constraintsConfig.getForeignKeyName(),
                         constraintsConfig.getReferences(), constraintsConfig.getReferencedTableName(),
                         constraintsConfig.getReferencedColumnNames());
@@ -134,7 +134,7 @@ public class AddColumnChange extends AbstractChange implements ChangeWithColumns
                 }
             }
 
-            if (column.isAutoIncrement() != null && column.isAutoIncrement()) {
+            if ((column.isAutoIncrement() != null) && column.isAutoIncrement()) {
                 constraints.add(new AutoIncrementConstraint(column.getName(), column.getStartWith(), column.getIncrementBy(), column.getGenerationType(), column.getDefaultOnNull()));
             }
 
@@ -197,7 +197,7 @@ public class AddColumnChange extends AbstractChange implements ChangeWithColumns
 
     @Override
     protected Change[] createInverses() {
-        List<Change> inverses = new ArrayList<Change>();
+        List<Change> inverses = new ArrayList<>();
 
         DropColumnChange inverse = new DropColumnChange();
         inverse.setSchemaName(getSchemaName());
@@ -232,7 +232,8 @@ public class AddColumnChange extends AbstractChange implements ChangeWithColumns
 
                     ConstraintsConfig constraints = column.getConstraints();
                     if (constraints != null) {
-                        result.assertComplete(constraints.isPrimaryKey() == (snapshotPK != null && snapshotPK.getColumnNames().contains(column.getName())), "Column " + column.getName() + " not set as primary key");
+                        result.assertComplete(constraints.isPrimaryKey() == ((snapshotPK != null) && snapshotPK
+                            .getColumnNames().contains(column.getName())), "Column " + column.getName() + " not set as primary key");
                     }
                 }
             }
@@ -245,7 +246,7 @@ public class AddColumnChange extends AbstractChange implements ChangeWithColumns
 
     @Override
     public String getConfirmationMessage() {
-        List<String> names = new ArrayList<String>(columns.size());
+        List<String> names = new ArrayList<>(columns.size());
         for (ColumnConfig col : columns) {
             names.add(col.getName() + "(" + col.getType() + ")");
         }

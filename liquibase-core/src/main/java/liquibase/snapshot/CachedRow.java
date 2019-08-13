@@ -58,7 +58,12 @@ public class CachedRow {
             }
         }
         if (o instanceof String) {
-            return Boolean.valueOf((String) o);
+            String s = (String)o;
+            // Firebird JDBC driver quirk:
+            // Returns "T" instead of "true" (Boolean.valueOf tests case-insensitively for "true")
+            if ("T".equalsIgnoreCase(s))
+                s = "TRUE";
+            return Boolean.valueOf(s);
         }
         return (Boolean) o;
     }

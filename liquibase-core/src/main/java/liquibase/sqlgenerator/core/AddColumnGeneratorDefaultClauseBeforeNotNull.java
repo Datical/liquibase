@@ -24,15 +24,10 @@ public class AddColumnGeneratorDefaultClauseBeforeNotNull extends AddColumnGener
 
     @Override
     public boolean supports(AddColumnStatement statement, Database database) {
-        return database instanceof OracleDatabase
-                || database instanceof HsqlDatabase
-                || database instanceof H2Database
-                || database instanceof DerbyDatabase
-                || database instanceof AbstractDb2Database
-                || database instanceof FirebirdDatabase
-                || database instanceof SybaseDatabase
-                || database instanceof SybaseASADatabase
-                || database instanceof InformixDatabase;
+        return (database instanceof OracleDatabase) || (database instanceof HsqlDatabase) || (database instanceof
+            H2Database) || (database instanceof DerbyDatabase) || (database instanceof AbstractDb2Database) || (database
+            instanceof FirebirdDatabase) || (database instanceof SybaseDatabase) || (database instanceof
+            SybaseASADatabase) || (database instanceof InformixDatabase);
     }
 
     @Override
@@ -50,7 +45,7 @@ public class AddColumnGeneratorDefaultClauseBeforeNotNull extends AddColumnGener
 
     private void validateSingleColumn(AddColumnStatement statement,
             Database database, ValidationErrors validationErrors) {
-        if (database instanceof DerbyDatabase && statement.isAutoIncrement()) {
+        if ((database instanceof DerbyDatabase) && statement.isAutoIncrement()) {
             validationErrors.addError("Cannot add an identity column to derby");
         }
     }
@@ -75,7 +70,7 @@ public class AddColumnGeneratorDefaultClauseBeforeNotNull extends AddColumnGener
 
         if (!statement.isNullable()) {
             alterTable += " NOT NULL";
-        } else if (database instanceof SybaseDatabase || database instanceof SybaseASADatabase) {
+        } else if ((database instanceof SybaseDatabase) || (database instanceof SybaseASADatabase)) {
             alterTable += " NULL";
         }
 
@@ -97,7 +92,7 @@ public class AddColumnGeneratorDefaultClauseBeforeNotNull extends AddColumnGener
     }
 
     private boolean primaryKeyBeforeNotNull(Database database) {
-        return !(database instanceof HsqlDatabase || database instanceof H2Database);
+        return !((database instanceof HsqlDatabase) || (database instanceof H2Database));
     }
 
 

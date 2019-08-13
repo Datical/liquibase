@@ -29,7 +29,7 @@ public class CatalogComparator extends CommonCatalogSchemaComparator {
 
     @Override
     public boolean isSameObject(DatabaseObject databaseObject1, DatabaseObject databaseObject2, Database accordingTo, DatabaseObjectComparatorChain chain) {
-        if (!(databaseObject1 instanceof Catalog && databaseObject2 instanceof Catalog)) {
+        if (!((databaseObject1 instanceof Catalog) && (databaseObject2 instanceof Catalog))) {
             return false;
         }
 
@@ -63,7 +63,7 @@ public class CatalogComparator extends CommonCatalogSchemaComparator {
         if (equalsSchemas(accordingTo,object1Name,  object2Name)) return true;
 
         //check with schemaComparisons
-        if (chain.getSchemaComparisons() != null && chain.getSchemaComparisons().length > 0) {
+        if ((chain.getSchemaComparisons() != null) && (chain.getSchemaComparisons().length > 0)) {
             for (CompareControl.SchemaComparison comparison : chain.getSchemaComparisons()) {
                 String comparisonCatalog1 = getComparisonSchemaOrCatalog(accordingTo, comparison);
                 String comparisonCatalog2 = getReferenceSchemaOrCatalog(accordingTo, comparison);
@@ -71,9 +71,9 @@ public class CatalogComparator extends CommonCatalogSchemaComparator {
                 String finalCatalog1 = thisSchema.getCatalogName();
                 String finalCatalog2 = otherSchema.getCatalogName();
 
-                if (comparisonCatalog1 != null && comparisonCatalog1.equalsIgnoreCase(finalCatalog1)) {
+                if ((comparisonCatalog1 != null) && comparisonCatalog1.equalsIgnoreCase(finalCatalog1)) {
                     finalCatalog1 = comparisonCatalog2;
-                } else if (comparisonCatalog2 != null && comparisonCatalog2.equalsIgnoreCase(finalCatalog1)) {
+                } else if ((comparisonCatalog2 != null) && comparisonCatalog2.equalsIgnoreCase(finalCatalog1)) {
                     finalCatalog1 = comparisonCatalog1;
                 }
 
@@ -81,9 +81,9 @@ public class CatalogComparator extends CommonCatalogSchemaComparator {
                     return true;
                 }
 
-                if (comparisonCatalog1 != null && comparisonCatalog1.equalsIgnoreCase(finalCatalog2)) {
+                if ((comparisonCatalog1 != null) && comparisonCatalog1.equalsIgnoreCase(finalCatalog2)) {
                     finalCatalog2 = comparisonCatalog2;
-                } else if (comparisonCatalog2 != null && comparisonCatalog2.equalsIgnoreCase(finalCatalog2)) {
+                } else if ((comparisonCatalog2 != null) && comparisonCatalog2.equalsIgnoreCase(finalCatalog2)) {
                     finalCatalog2 = comparisonCatalog1;
                 }
 

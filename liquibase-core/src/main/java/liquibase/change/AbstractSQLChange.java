@@ -5,14 +5,19 @@ import liquibase.configuration.GlobalConfiguration;
 import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.database.Database;
 import liquibase.database.core.MSSQLDatabase;
-import liquibase.exception.*;
-import liquibase.logging.LogFactory;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.UnexpectedLiquibaseException;
+import liquibase.exception.ValidationErrors;
+import liquibase.exception.Warnings;
+import liquibase.logging.LogService;
+import liquibase.logging.LogType;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.util.StringUtils;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A common parent for all raw SQL related changes regardless of where the sql was sourced from.
@@ -28,7 +33,7 @@ public abstract class AbstractSQLChange extends AbstractChange implements DbmsTa
     private String sql;
     private String dbms;
 
-    protected String encoding = null;
+    protected String encoding;
 
 
     protected AbstractSQLChange() {
@@ -54,7 +59,7 @@ public abstract class AbstractSQLChange extends AbstractChange implements DbmsTa
     /**
      * {@inheritDoc}
      * @param database
-     * @return
+     * @return always true (in AbstractSQLChange)
      */
     @Override
     public boolean supports(Database database) {
@@ -167,12 +172,17 @@ public abstract class AbstractSQLChange extends AbstractChange implements DbmsTa
             stream = openSqlStream();
 
             String sql = this.sql;
-            if (stream == null && sql == null) {
+            if ((stream == null) && (sql == null)) {
                 sql = "";
             }
 
             if (sql != null) {
-                stream = new ByteArrayInputStream(sql.getBytes(LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration.class).getOutputEncoding()));
+                stream = new ByteArrayInputStream(
+                    sql.getBytes(
+                        LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration.class)
+                        .getOutputEncoding()
+                    )
+                );
             }
 
             return CheckSum.compute(new NormalizingStream(this.getEndDelimiter(), this.isSplitStatements(), this.isStripComments(), stream), false);
@@ -183,7 +193,7 @@ public abstract class AbstractSQLChange extends AbstractChange implements DbmsTa
                 try {
                     stream.close();
                 } catch (IOException e) {
-                    LogFactory.getLogger().debug("Error closing stream", e);
+                    LogService.getLog(getClass()).debug(LogType.LOG, "Error closing stream", e);
                 }
             }
         }
@@ -200,7 +210,7 @@ public abstract class AbstractSQLChange extends AbstractChange implements DbmsTa
     @Override
     public SqlStatement[] generateStatements(Database database) {
 
-        List<SqlStatement> returnStatements = new ArrayList<SqlStatement>();
+        List<SqlStatement> returnStatements = new ArrayList<>();
 
         String sql = StringUtils.trimToNull(getSql());
         if (sql == null) {
@@ -223,8 +233,8 @@ public abstract class AbstractSQLChange extends AbstractChange implements DbmsTa
                     escapedStatement = database.getConnection().nativeSQL(statement);
                 }
             } catch (DatabaseException e) {
-				escapedStatement = statement;
-			}
+                escapedStatement = statement;
+            }
 
             returnStatements.add(new RawSqlStatement(escapedStatement, getEndDelimiter()));
         }
@@ -251,31 +261,16 @@ public abstract class AbstractSQLChange extends AbstractChange implements DbmsTa
         return string.replace("\r", "");
     }
 
-//    @Override
-//    public Set<String> getSerializableFields() {
-//        Set<String> fieldsToSerialize = new HashSet<String>(super.getSerializableFields());
-//        fieldsToSerialize.add("splitStatements");
-//        fieldsToSerialize.add("stripComments");
-//        return Collections.unmodifiableSet(fieldsToSerialize);
-//    }
-//
-//    @Override
-//    public Object getSerializableFieldValue(String field) {
-//        if (field.equals("splitStatements")) {
-//            return isSplitStatements();
-//        }
-//    }
-
     public static class NormalizingStream extends InputStream {
         private ByteArrayInputStream headerStream;
         private PushbackInputStream stream;
 
         private byte[] quickBuffer = new byte[100];
-        private List<Byte> resizingBuffer = new ArrayList<Byte>();
+        private List<Byte> resizingBuffer = new ArrayList<>();
 
 
         private int lastChar = 'X';
-        private boolean seenNonSpace = false;
+        private boolean seenNonSpace;
 
         public NormalizingStream(String endDelimiter, Boolean splitStatements, Boolean stripComments, InputStream stream) {
             this.stream = new PushbackInputStream(stream, 2048);
@@ -301,7 +296,7 @@ public abstract class AbstractSQLChange extends AbstractChange implements DbmsTa
                 returnChar = ' ';
             }
 
-            while (returnChar == ' ' && (!seenNonSpace || lastChar == ' ')) {
+            while ((returnChar == ' ') && (!seenNonSpace || (lastChar == ' '))) {
                 returnChar = stream.read();
 
                 if (isWhiteSpace(returnChar)) {
@@ -313,7 +308,7 @@ public abstract class AbstractSQLChange extends AbstractChange implements DbmsTa
 
             lastChar = returnChar;
 
-            if (lastChar == ' ' && isOnlyWhitespaceRemaining()) {
+            if ((lastChar == ' ') && isOnlyWhitespaceRemaining()) {
                 return -1;
             }
 
@@ -355,7 +350,7 @@ public abstract class AbstractSQLChange extends AbstractChange implements DbmsTa
                         return true;
                     }
                     if (!isWhiteSpace(read)) {
-                        if (resizingBuffer.size() > 0) {
+                        if (!resizingBuffer.isEmpty()) {
 
                             byte[] buf = new byte[resizingBuffer.size()];
                             for (int i=0; i< resizingBuffer.size(); i++) {
@@ -375,7 +370,7 @@ public abstract class AbstractSQLChange extends AbstractChange implements DbmsTa
         }
 
         private boolean isWhiteSpace(int read) {
-            return read == ' ' || read == '\n' || read == '\r' || read == '\t';
+            return (read == ' ') || (read == '\n') || (read == '\r') || (read == '\t');
         }
 
         @Override

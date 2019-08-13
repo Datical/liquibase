@@ -4,19 +4,22 @@ import liquibase.database.Database;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.OfflineConnection;
 import liquibase.database.PreparedStatementFactory;
-import liquibase.database.core.DB2Database;
 import liquibase.database.core.Db2zDatabase;
 import liquibase.database.core.OracleDatabase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.executor.AbstractExecutor;
-import liquibase.logging.LogFactory;
+import liquibase.logging.LogService;
+import liquibase.logging.LogType;
 import liquibase.logging.Logger;
 import liquibase.sql.CallableSql;
 import liquibase.sql.Sql;
 import liquibase.sql.visitor.SqlVisitor;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
-import liquibase.statement.*;
+import liquibase.statement.CallableSqlStatement;
+import liquibase.statement.CompoundStatement;
+import liquibase.statement.ExecutablePreparedStatement;
+import liquibase.statement.SqlStatement;
 import liquibase.statement.core.DropTableStatement;
 import liquibase.util.JdbcUtils;
 import liquibase.util.StringUtils;
@@ -34,10 +37,9 @@ import java.util.Map;
  * <br><br>
  * <b>Note: This class is currently intended for Liquibase-internal use only and may change without notice in the future</b>
  */
-@SuppressWarnings({"unchecked"})
 public class JdbcExecutor extends AbstractExecutor {
 
-    private Logger log = LogFactory.getLogger();
+    private Logger log = LogService.getLog(getClass());
 
     @Override
     public boolean updatesDatabase() {
@@ -74,6 +76,10 @@ public class JdbcExecutor extends AbstractExecutor {
         }
     }
 
+    // Incorrect warning, at least at this point. The situation here is not that we inject some unsanitised parameter
+    // into a query. Instead, we process a whole query. The check should be performed at the places where
+    // the query is composed.
+    @SuppressWarnings("squid:S2077")
     public Object execute(CallableStatementCallback action, List<SqlVisitor> sqlVisitors) throws DatabaseException {
         DatabaseConnection con = database.getConnection();
 
@@ -177,8 +183,8 @@ public class JdbcExecutor extends AbstractExecutor {
 
     @Override
     public long queryForLong(SqlStatement sql, List<SqlVisitor> sqlVisitors) throws DatabaseException {
-        Number number = (Number) queryForObject(sql, Long.class, sqlVisitors);
-        return (number != null ? number.longValue() : 0);
+        Number number = queryForObject(sql, Long.class, sqlVisitors);
+        return ((number != null) ? number.longValue() : 0);
     }
 
     @Override
@@ -188,8 +194,8 @@ public class JdbcExecutor extends AbstractExecutor {
 
     @Override
     public int queryForInt(SqlStatement sql, List<SqlVisitor> sqlVisitors) throws DatabaseException {
-        Number number = (Number) queryForObject(sql, Integer.class, sqlVisitors);
-        return (number != null ? number.intValue() : 0);
+        Number number = queryForObject(sql, Integer.class, sqlVisitors);
+        return ((number != null) ? number.intValue() : 0);
     }
 
     @Override
@@ -209,7 +215,6 @@ public class JdbcExecutor extends AbstractExecutor {
 
     @Override
     public List<Map<String, ?>> queryForList(SqlStatement sql, List<SqlVisitor> sqlVisitors) throws DatabaseException {
-        //noinspection unchecked
         return (List<Map<String, ?>>) query(sql, getColumnMapRowMapper(), sqlVisitors);
     }
 
@@ -218,6 +223,10 @@ public class JdbcExecutor extends AbstractExecutor {
         return update(sql, new ArrayList());
     }
 
+    // Incorrect warning, at least at this point. The situation here is not that we inject some unsanitised parameter
+    // into a query. Instead, we process a whole query. The check should be performed at the places where
+    // the query is composed.
+    @SuppressWarnings("squid:S2077")
     @Override
     public int update(final SqlStatement sql, final List<SqlVisitor> sqlVisitors) throws DatabaseException {
         if (sql instanceof CallableSqlStatement) {
@@ -231,7 +240,7 @@ public class JdbcExecutor extends AbstractExecutor {
                 if (sqlToExecute.length != 1) {
                     throw new DatabaseException("Cannot call update on Statement that returns back multiple Sql objects");
                 }
-                log.debug("Executing UPDATE database command: "+sqlToExecute[0]);
+                log.debug(LogType.WRITE_SQL, sqlToExecute[0]);
                 return stmt.executeUpdate(sqlToExecute[0]);
             }
 
@@ -267,7 +276,7 @@ public class JdbcExecutor extends AbstractExecutor {
 
     @Override
     public void comment(String message) throws DatabaseException {
-        LogFactory.getLogger().debug(message);
+        LogService.getLog(getClass()).debug(LogType.LOG, message);
     }
 
     private void executeDb2ZosComplexStatement(SqlStatement sqlStatement) throws DatabaseException {
@@ -300,7 +309,7 @@ public class JdbcExecutor extends AbstractExecutor {
                     }
                 }
             } catch (Exception e) {
-                throw new DatabaseException(e.getMessage() + " [Failed SQL: " + sql.toSql() + "]", e);
+                throw new DatabaseException(e.getMessage() + " [Failed SQL: " + getErrorCode(e) + sql.toSql() + "]", e);
             }
         }
     }
@@ -319,26 +328,11 @@ public class JdbcExecutor extends AbstractExecutor {
         }
     }
 
-    /**
-     * Adapter to enable use of a RowCallbackHandler inside a ResultSetExtractor.
-     * <p>Uses a regular ResultSet, so we have to be careful when using it:
-     * We don't use it for navigating since this could lead to unpredictable consequences.
-     */
-    private static class RowCallbackHandlerResultSetExtractor implements ResultSetExtractor {
-
-        private final RowCallbackHandler rch;
-
-        public RowCallbackHandlerResultSetExtractor(RowCallbackHandler rch) {
-            this.rch = rch;
+    String getErrorCode(Throwable e) {
+        if (e instanceof SQLException) {
+            return "(" + ((SQLException)e).getErrorCode() + ") ";
         }
-
-        @Override
-        public Object extractData(ResultSet rs) throws SQLException {
-            while (rs.next()) {
-                this.rch.processRow(rs);
-            }
-            return null;
-        }
+        return "";
     }
 
     /**
@@ -348,7 +342,7 @@ public class JdbcExecutor extends AbstractExecutor {
      * we just log the exception and continue, otherwise we re-throw
      * This keeps us from erroring out in the case of DB2 z/OS, where
      * we may end up attempting to drop the same database multiple times
-     * This should only affect DB2 z/OS, since we do not drop databases 
+     * This should only affect DB2 z/OS, since we do not drop databases
      * for any other platform.
      *
      */
@@ -389,19 +383,37 @@ public class JdbcExecutor extends AbstractExecutor {
         public Object doInStatement(Statement stmt) throws SQLException, DatabaseException {
             for (String statement : applyVisitors(sql, sqlVisitors)) {
                 if (database instanceof OracleDatabase) {
-                    while (statement.matches("(?s).*[\\s\\r\\n]*/[\\s\\r\\n]*$")) { //all trailing /'s
-                        statement = statement.replaceFirst("[\\s\\r\\n]*/[\\s\\r\\n]*$", "");
+                    while (statement.matches("(?s).*[\\s\\r\\n]*[^*]/[\\s\\r\\n]*$")) { //all trailing /'s
+                        statement = statement.replaceFirst("[\\s\\r\\n]*[^*]/[\\s\\r\\n]*$", "");
                     }
                 }
 
-                log.debug("Executing EXECUTE database command: "+statement);
+                log.info(LogType.WRITE_SQL, String.format("%s", statement));
                 if (statement.contains("?")) {
                     stmt.setEscapeProcessing(false);
                 }
                 try {
-                    stmt.execute(statement);
+                    //if execute returns false, we can retrieve the affected rows count
+                    // (true used when resultset is returned)
+                    if (!stmt.execute(statement)) {
+                        log.debug(Integer.toString(stmt.getUpdateCount()) + " row(s) affected");
+                    }
                 } catch (Throwable e) {
-                    throw new DatabaseException(e.getMessage()+ " [Failed SQL: "+statement+"]", e);
+                    throw new DatabaseException(e.getMessage()+ " [Failed SQL: " + getErrorCode(e) + statement+"]", e);
+                }
+                try {
+                    int updateCount = 0;
+                    //cycle for retrieving row counts from all statements
+                    do {
+                        if (!stmt.getMoreResults()) {
+                            updateCount = stmt.getUpdateCount();
+                            if (updateCount != -1)
+                                log.debug(Integer.toString(updateCount) + " row(s) affected");
+                        }
+                    } while (updateCount != -1);
+
+                } catch (Exception e) {
+                    throw new DatabaseException(e.getMessage()+ " [Failed SQL: "+ getErrorCode(e) + statement+"]", e);
                 }
             }
             return null;
@@ -426,7 +438,20 @@ public class JdbcExecutor extends AbstractExecutor {
         }
 
 
+        /**
+         * 1. Applies all SqlVisitor to the stmt
+         * 2. Executes the (possibly modified) stmt
+         * 3. Reads all data from the java.sql.ResultSet into an Object and returns the Object.
+         * @param stmt A JDBC Statement that is expected to return a ResultSet (e.g. SELECT)
+         * @return An object representing all data from the result set.
+         * @throws SQLException If an error occurs during SQL processing
+         * @throws DatabaseException If an error occurs in the DBMS-specific program code
+         */
         @Override
+        // Incorrect warning, at least at this point. The situation here is not that we inject some unsanitised
+        // parameter into a query. Instead, we process a whole query. The check should be performed at the places where
+        // the query is composed.
+        @SuppressWarnings("squid:S2077")
         public Object doInStatement(Statement stmt) throws SQLException, DatabaseException {
             ResultSet rs = null;
             try {
@@ -435,14 +460,16 @@ public class JdbcExecutor extends AbstractExecutor {
                 if (sqlToExecute.length != 1) {
                     throw new DatabaseException("Can only query with statements that return one sql statement");
                 }
-                log.debug("Executing QUERY database command: "+sqlToExecute[0]);
+                log.info(LogType.READ_SQL, sqlToExecute[0]);
 
                 rs = stmt.executeQuery(sqlToExecute[0]);
                 ResultSet rsToUse = rs;
                 return rse.extractData(rsToUse);
             }
             finally {
-                JdbcUtils.closeResultSet(rs);
+                if (rs != null) {
+                        JdbcUtils.closeResultSet(rs);
+                }
             }
         }
 

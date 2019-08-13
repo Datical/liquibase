@@ -16,7 +16,8 @@ import liquibase.diff.output.DiffOutputControl;
 import liquibase.diff.output.changelog.AbstractChangeGenerator;
 import liquibase.diff.output.changelog.ChangeGeneratorChain;
 import liquibase.diff.output.changelog.ChangedObjectChangeGenerator;
-import liquibase.logging.LogFactory;
+import liquibase.logging.LogService;
+import liquibase.logging.LogType;
 import liquibase.statement.DatabaseFunction;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.*;
@@ -61,7 +62,7 @@ public class ChangedColumnChangeGenerator extends AbstractChangeGenerator implem
             return null;
         }
 
-        List<Change> changes = new ArrayList<Change>();
+        List<Change> changes = new ArrayList<>();
 
         handleTypeDifferences(column, differences, control, changes, referenceDatabase, comparisonDatabase);
         handleNullableDifferences(column, differences, control, changes, referenceDatabase, comparisonDatabase);
@@ -89,7 +90,7 @@ public class ChangedColumnChangeGenerator extends AbstractChangeGenerator implem
 
     protected void handleNullableDifferences(Column column, ObjectDifferences differences, DiffOutputControl control, List<Change> changes, Database referenceDatabase, Database comparisonDatabase) {
         Difference nullableDifference = differences.getDifference("nullable");
-        if (nullableDifference != null && nullableDifference.getReferenceValue() != null) {
+        if ((nullableDifference != null) && (nullableDifference.getReferenceValue() != null)) {
             boolean nullable = (Boolean) nullableDifference.getReferenceValue();
             if (nullable) {
                 DropNotNullConstraintChange change = new DropNotNullConstraintChange();
@@ -125,7 +126,7 @@ public class ChangedColumnChangeGenerator extends AbstractChangeGenerator implem
         Difference difference = differences.getDifference("autoIncrementInformation");
         if (difference != null) {
             if (difference.getReferenceValue() == null) {
-                LogFactory.getLogger().info("ChangedColumnChangeGenerator cannot fix dropped auto increment values");
+                LogService.getLog(getClass()).info(LogType.LOG, "ChangedColumnChangeGenerator cannot fix dropped auto increment values");
                 //todo: Support dropping auto increments
             } else {
                 AddAutoIncrementChange change = new AddAutoIncrementChange();
@@ -158,7 +159,9 @@ public class ChangedColumnChangeGenerator extends AbstractChangeGenerator implem
 
             String tableName = column.getRelation().getName();
 
-            if (comparisonDatabase instanceof OracleDatabase && (((DataType) typeDifference.getReferenceValue()).getTypeName().equalsIgnoreCase("clob") || ((DataType) typeDifference.getComparedValue()).getTypeName().equalsIgnoreCase("clob"))) {
+            if ((comparisonDatabase instanceof OracleDatabase) && ("clob".equalsIgnoreCase(((DataType) typeDifference
+                .getReferenceValue()).getTypeName()) || "clob".equalsIgnoreCase(((DataType) typeDifference
+                .getComparedValue()).getTypeName()))) {
                 String tempColName = "TEMP_CLOB_CONVERT";
                 OutputChange outputChange = new OutputChange();
                 outputChange.setMessage("Cannot convert directly from " + ((DataType) typeDifference.getComparedValue()).getTypeName()+" to "+((DataType) typeDifference.getReferenceValue()).getTypeName()+". Instead a new column will be created and the data transferred. This may cause unexpected side effects including constraint issues and/or table locks.");
@@ -193,7 +196,7 @@ public class ChangedColumnChangeGenerator extends AbstractChangeGenerator implem
                 changes.add(renameColumnChange);
 
             } else {
-                if (comparisonDatabase instanceof MSSQLDatabase && column.getDefaultValue() != null) { //have to drop the default value, will be added back with the "data type changed" logic.
+                if ((comparisonDatabase instanceof MSSQLDatabase) && (column.getDefaultValue() != null)) { //have to drop the default value, will be added back with the "data type changed" logic.
                     DropDefaultValueChange dropDefaultValueChange = new DropDefaultValueChange();
                     dropDefaultValueChange.setCatalogName(catalogName);
                     dropDefaultValueChange.setSchemaName(schemaName);

@@ -12,6 +12,7 @@ import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.Column;
 import liquibase.util.BooleanUtils;
 
+import java.util.Locale;
 import java.util.Set;
 
 public class ColumnComparator implements DatabaseObjectComparator {
@@ -34,12 +35,12 @@ public class ColumnComparator implements DatabaseObjectComparator {
         if (BooleanUtils.isTrue(column.getComputed())) {
             hash += ":computed";
         }
-        return new String[] {hash.toLowerCase()};
+        return new String[] {hash.toLowerCase(Locale.US)};
     }
 
     @Override
     public boolean isSameObject(DatabaseObject databaseObject1, DatabaseObject databaseObject2, Database accordingTo, DatabaseObjectComparatorChain chain) {
-        if (!(databaseObject1 instanceof Column && databaseObject2 instanceof Column)) {
+        if (!((databaseObject1 instanceof Column) && (databaseObject2 instanceof Column))) {
             return false;
         }
 
@@ -81,7 +82,7 @@ public class ColumnComparator implements DatabaseObjectComparator {
         boolean autoIncrement1 = ((Column) databaseObject1).isAutoIncrement();
         boolean autoIncrement2 = ((Column) databaseObject2).isAutoIncrement();
 
-        if (autoIncrement1 != autoIncrement2) { //only compare if autoIncrement or not since there are sometimes expected differences in start/increment/etc value.
+        if (autoIncrement1 != autoIncrement2 && !compareControl.isSuppressedField(Column.class, "autoIncrementInformation")) { //only compare if autoIncrement or not since there are sometimes expected differences in start/increment/etc value.
             differences.addDifference("autoIncrement", autoIncrement1, autoIncrement2);
         }
 

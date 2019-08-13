@@ -1,13 +1,13 @@
 package liquibase.diff.output.report;
 
 import liquibase.database.Database;
+import liquibase.diff.DiffResult;
 import liquibase.diff.Difference;
 import liquibase.diff.ObjectDifferences;
-import liquibase.diff.compare.CompareControl;
-import liquibase.structure.DatabaseObject;
-import liquibase.diff.DiffResult;
 import liquibase.diff.StringDiff;
+import liquibase.diff.compare.CompareControl;
 import liquibase.exception.DatabaseException;
+import liquibase.structure.DatabaseObject;
 import liquibase.structure.DatabaseObjectComparator;
 import liquibase.structure.core.Schema;
 import liquibase.util.StringUtils;
@@ -33,7 +33,7 @@ public class DiffToReport {
         out.println("Comparison Database: " + diffResult.getComparisonSnapshot().getDatabase());
 
         CompareControl.SchemaComparison[] schemas = diffResult.getCompareControl().getSchemaComparisons();
-        if (schemas != null && schemas.length > 0) {
+        if ((schemas != null) && (schemas.length > 0)) {
             out.println("Compared Schemas: " + StringUtils.join(Arrays.asList(schemas), ", ", formatter, true));
         }
 
@@ -41,7 +41,7 @@ public class DiffToReport {
         printComparison("Product Version", diffResult.getProductVersionDiff(), out);
 
 
-        TreeSet<Class<? extends DatabaseObject>> types = new TreeSet<Class<? extends DatabaseObject>>(new Comparator<Class<? extends DatabaseObject>>() {
+        TreeSet<Class<? extends DatabaseObject>> types = new TreeSet<>(new Comparator<Class<? extends DatabaseObject>>() {
             @Override
             public int compare(Class<? extends DatabaseObject> o1, Class<? extends DatabaseObject> o2) {
                 return o1.getSimpleName().compareTo(o2.getSimpleName());
@@ -72,7 +72,7 @@ public class DiffToReport {
 
     protected void printChangedComparison(String title, Map<? extends DatabaseObject, ObjectDifferences> objects, PrintStream out) {
         out.print(title + ": ");
-        if (objects.size() == 0) {
+        if (objects.isEmpty()) {
             out.println("NONE");
         } else {
             out.println();
@@ -90,12 +90,13 @@ public class DiffToReport {
     protected void printSetComparison(String title, Set<? extends DatabaseObject> objects, PrintStream out) {
         out.print(title + ": ");
         Schema lastSchema = null;
-        if (objects.size() == 0) {
+        if (objects.isEmpty()) {
             out.println("NONE");
         } else {
             out.println();
             for (DatabaseObject object : objects) {
-                if (getIncludeSchema() && object.getSchema() != null && (lastSchema == null || !lastSchema.equals(object.getSchema()))) {
+                if (getIncludeSchema() && (object.getSchema() != null) && ((lastSchema == null) || !lastSchema.equals
+                    (object.getSchema()))) {
                     lastSchema = object.getSchema();
                     String schemaName = object.getSchema().getName();
                     if (schemaName == null) {
@@ -113,7 +114,7 @@ public class DiffToReport {
     protected String includeSchemaComparison(String schemaName) {
         String convertedSchemaName = CompareControl.SchemaComparison.convertSchema(schemaName, diffResult.getCompareControl().getSchemaComparisons());
 
-        if (convertedSchemaName != null && !convertedSchemaName.equals(schemaName)) {
+        if ((convertedSchemaName != null) && !convertedSchemaName.equals(schemaName)) {
             schemaName = schemaName + " -> " + convertedSchemaName;
         }
         return schemaName;

@@ -45,7 +45,7 @@ public class Column extends AbstractDatabaseObject {
             setDefaultValue(columnConfig.getDefaultValueObject());
         }
 
-        if (columnConfig.isAutoIncrement() != null && columnConfig.isAutoIncrement()) {
+        if ((columnConfig.isAutoIncrement() != null) && columnConfig.isAutoIncrement()) {
             setAutoIncrementInformation(new AutoIncrementInformation(columnConfig.getStartWith(), columnConfig.getIncrementBy()));
         }
 
@@ -229,7 +229,7 @@ public class Column extends AbstractDatabaseObject {
             return getName() + columnOrder;
         } else {
             String tableOrViewName = getRelation().getName();
-            if (getRelation().getSchema() != null && getRelation().getSchema().getName() != null) {
+            if ((getRelation().getSchema() != null) && (getRelation().getSchema().getName() != null)) {
                 tableOrViewName = getRelation().getSchema().getName()+"."+tableOrViewName;
             }
             return tableOrViewName + "." + getName() + columnOrder;
@@ -243,13 +243,14 @@ public class Column extends AbstractDatabaseObject {
         try {
             //noinspection UnusedAssignment
             int returnValue = 0;
-            if (this.getRelation() != null && o.getRelation() == null) {
+            if ((this.getRelation() != null) && (o.getRelation() == null)) {
                 return 1;
-            } else if (this.getRelation() == null && o.getRelation() != null) {
+            } else if ((this.getRelation() == null) && (o.getRelation() != null)) {
                 return -1;
             } else if (this.getRelation() != null && o.getRelation() != null) {
                 returnValue = this.getRelation().compareTo(o.getRelation());
-                if (returnValue == 0 && this.getRelation().getSchema() != null && o.getRelation().getSchema() != null) {
+                if ((returnValue == 0) && (this.getRelation().getSchema() != null) && (o.getRelation().getSchema() !=
+                    null)) {
                     returnValue = this.getSchema().compareTo(o.getRelation().getSchema());
                 }
             }
@@ -269,7 +270,7 @@ public class Column extends AbstractDatabaseObject {
     public boolean equals(Object o) {
         try {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if ((o == null) || (getClass() != o.getClass())) return false;
 
             Column column = (Column) o;
 
@@ -295,13 +296,13 @@ public class Column extends AbstractDatabaseObject {
 
     @SuppressWarnings({"SimplifiableIfStatement"})
     public boolean isNullabilityDifferent(Column otherColumn) {
-        if (this.isNullable() == null && otherColumn.isNullable() == null) {
+        if ((this.isNullable() == null) && (otherColumn.isNullable() == null)) {
             return false;
         }
-        if (this.isNullable() == null && otherColumn.isNullable() != null) {
+        if ((this.isNullable() == null) && (otherColumn.isNullable() != null)) {
             return true;
         }
-        if (this.isNullable() != null && otherColumn.isNullable() == null) {
+        if ((this.isNullable() != null) && (otherColumn.isNullable() == null)) {
             return true;
         }
         return !this.isNullable().equals(otherColumn.isNullable());
@@ -403,8 +404,8 @@ public class Column extends AbstractDatabaseObject {
         }
 
         public AutoIncrementInformation(Number startWith, Number incrementBy) {
-            this.startWith = startWith == null ? null : BigInteger.valueOf(startWith.longValue());
-            this.incrementBy = incrementBy == null ? null : BigInteger.valueOf(incrementBy.longValue());
+            this.startWith = (startWith == null) ? null : BigInteger.valueOf(startWith.longValue());
+            this.incrementBy = (incrementBy == null) ? null : BigInteger.valueOf(incrementBy.longValue());
         }
 
         public BigInteger getStartWith() {

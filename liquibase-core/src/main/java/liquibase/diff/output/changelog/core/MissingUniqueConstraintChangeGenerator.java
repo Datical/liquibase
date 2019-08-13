@@ -45,24 +45,24 @@ public class MissingUniqueConstraintChangeGenerator extends AbstractChangeGenera
 
     @Override
     public Change[] fixMissing(DatabaseObject missingObject, DiffOutputControl control, Database referenceDatabase, Database comparisonDatabase, ChangeGeneratorChain chain) {
-        List<Change> returnList = new ArrayList<Change>();
+        List<Change> returnList = new ArrayList<>();
 
         UniqueConstraint uc = (UniqueConstraint) missingObject;
 
-        if (uc.getTable() == null) {
+        if (uc.getRelation() == null) {
             return null;
         }
 
         AddUniqueConstraintChange change = createAddUniqueConstraintChange();
-        change.setTableName(uc.getTable().getName());
-        if (uc.getBackingIndex() != null && control.getIncludeTablespace()) {
+        change.setTableName(uc.getRelation().getName());
+        if ((uc.getBackingIndex() != null) && control.getIncludeTablespace()) {
             change.setTablespace(uc.getBackingIndex().getTablespace());
         }
         if (control.getIncludeCatalog()) {
-            change.setCatalogName(uc.getTable().getSchema().getCatalogName());
+            change.setCatalogName(uc.getRelation().getSchema().getCatalogName());
         }
         if (control.getIncludeSchema()) {
-            change.setSchemaName(uc.getTable().getSchema().getName());
+            change.setSchemaName(uc.getRelation().getSchema().getName());
         }
         change.setConstraintName(uc.getName());
         change.setColumnNames(uc.getColumnNames());
@@ -76,7 +76,7 @@ public class MissingUniqueConstraintChangeGenerator extends AbstractChangeGenera
 
         if (comparisonDatabase instanceof OracleDatabase) {
             Index backingIndex = uc.getBackingIndex();
-            if (backingIndex != null && backingIndex.getName() != null) {
+            if ((backingIndex != null) && (backingIndex.getName() != null)) {
                 if (referenceDatabase.equals(comparisonDatabase) || !alreadyExists(backingIndex, comparisonDatabase, control)) {
                     Change[] changes = ChangeGeneratorFactory.getInstance().fixMissing(backingIndex, control, referenceDatabase, comparisonDatabase);
                     if (changes != null) {

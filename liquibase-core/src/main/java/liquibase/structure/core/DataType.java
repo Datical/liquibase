@@ -104,7 +104,9 @@ public class DataType extends AbstractLiquibaseSerializable {
             }
 
             //Failing on data types such as nvarchar if included
-            if (columnSizeUnit != null && (typeName.equalsIgnoreCase("VARCHAR") || typeName.equalsIgnoreCase("VARCHAR2")|| typeName.equalsIgnoreCase("CHAR"))) {
+            if ((columnSizeUnit != null) && ("VARCHAR".equalsIgnoreCase(typeName) || "VARCHAR2".equalsIgnoreCase
+                (typeName) || "CHAR".equalsIgnoreCase(typeName))
+            ) {
                 value += " " + columnSizeUnit;
             }
 
@@ -134,12 +136,6 @@ public class DataType extends AbstractLiquibaseSerializable {
         this.characterOctetLength = characterOctetLength;
     }
 
-
-    public static enum ColumnSizeUnit {
-        BYTE,
-        CHAR,
-    }
-
     @Override
     public String getSerializedObjectName() {
         return "dataType";
@@ -148,5 +144,13 @@ public class DataType extends AbstractLiquibaseSerializable {
     @Override
     public String getSerializedObjectNamespace() {
         return STANDARD_SNAPSHOT_NAMESPACE;
+    }
+
+    /**
+     * Specifies the unit of a column's size. Currently, the possible units are BYTE and CHAR.
+     */
+    public enum ColumnSizeUnit {
+        BYTE,
+        CHAR,
     }
 }
