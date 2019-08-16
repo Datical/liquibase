@@ -1,0 +1,630 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet author="steve (generated)" id="1565903601691-1">
+        <createSequence catalogName="LIQUIBASE" schemaName="PUBLIC" sequenceName="INSERTTEST_SEQ"/>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-2">
+        <createSequence catalogName="LIQUIBASE" schemaName="PUBLIC" sequenceName="SEQTESTONALL"/>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-3">
+        <createSequence catalogName="LIQUIBASE" schemaName="PUBLIC" sequenceName="SEQ_NEWS"/>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-4">
+        <createSequence catalogName="LIQUIBASE" schemaName="PUBLIC" sequenceName="SEQ_PERSON"/>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-5">
+        <createSequence catalogName="LIQUIBASE" schemaName="PUBLIC" sequenceName="TABLEDEFAULT_SEQ"/>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-6">
+        <createSequence catalogName="LIQUIBASE" schemaName="PUBLIC" sequenceName="UPDATETEST_SEQ"/>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-7">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="ADDAUTOINCCOLUMNTEST">
+            <column name="NOTPK" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-8">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="ADDRESS">
+            <column autoIncrement="true" name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_ADDRESS"/>
+            </column>
+            <column name="LINE1" type="VARCHAR(255)"/>
+            <column name="LINE2" type="VARCHAR(255)"/>
+            <column name="CITY" type="VARCHAR(255)"/>
+            <column name="STATE" type="CHAR(2)"/>
+            <column name="POSTALCODE" type="VARCHAR(20)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-9">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="AUTOCOMMITTEST">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-10">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="BAR_ID">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-11">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="BOOK">
+            <column autoIncrement="true" name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_BOOK"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-12">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="CHANGESETPRECONDITION_RAN">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-13">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="CHILD_TABLE">
+            <column name="REF1" type="INT"/>
+            <column name="REF2" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-14">
+        <createTable catalogName="LIQUIBASE" remarks="Some 'ing remarks go here" schemaName="PUBLIC" tableName="COMMATEST">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_COMMATEST"/>
+            </column>
+            <column name="FK_TEST" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-15">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="COMMENTTEST">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-16">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="COMMONTYPESTEST">
+            <column name="INTCOLUMN" type="INT"/>
+            <column name="FLOATCOLUMN" type="DOUBLE(17)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-17">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="COMPANY">
+            <column autoIncrement="true" name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_EMPLOYEE"/>
+            </column>
+            <column name="NAME" type="VARCHAR(50)"/>
+            <column name="COMPANY_ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-18">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="COMPOUNDINDEXTEST">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_COMPOUNDINDEXTEST"/>
+            </column>
+            <column name="FIRSTNAME" type="VARCHAR(10)"/>
+            <column name="LASTNAME" type="VARCHAR(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-19">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="COMPOUNDPKTEST">
+            <column name="ID1" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_COMPOUNDPKTEST"/>
+            </column>
+            <column name="ID2" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_COMPOUNDPKTEST"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-20">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="CONTEXTSTEST">
+            <column name="ID" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-21">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="CREATETABLENAMEDPK">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_PKTEST1"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-22">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="CREATETABLENAMEDPKREF">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_CREATETABLENAMEDPKREF"/>
+            </column>
+            <column name="REFEREE" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-23">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="CREATETABLENAMEDUQCONST">
+            <column name="ID" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-24">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="CREATETABLEUNNAMEDUQCONST">
+            <column name="ID" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-25">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="CSVDATA">
+            <column name="NAME" type="VARCHAR(50)"/>
+            <column name="USERNAME" type="VARCHAR(50)"/>
+            <column name="SECURITY_LEVEL" type="INT"/>
+            <column name="LAST_LOGIN" type="TIMESTAMP"/>
+            <column name="LOCKED" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-26">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="DATATABLE">
+            <column name="COL" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-27">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="DATATYPECONVERSIONTEST">
+            <column name="BOOLEANCOLUMN" type="BOOLEAN"/>
+            <column name="CURRENCYCOLUMN" type="DECIMAL(65535, 32767)"/>
+            <column name="UUIDCOLUMN" type="UUID"/>
+            <column name="BLOBCOLUMN" type="BLOB"/>
+            <column name="CLOBCOLUMN" type="CLOB"/>
+            <column name="DATECOLUMN" type="date"/>
+            <column name="TIMECOLUMN" type="time"/>
+            <column name="DATETIMECOLUMN" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-28">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="DATATYPETEST">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_DATATYPETEST"/>
+            </column>
+            <column name="DATECOL" type="date"/>
+            <column name="TIMECOL" type="time"/>
+            <column name="DATETIMECOL" type="TIMESTAMP"/>
+            <column name="BIGINTCOL" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-29">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="DEFAULTVALUETEST">
+            <column name="ID" type="INT"/>
+            <column defaultValueNumeric="1" name="INTA" type="INT"/>
+            <column defaultValue="a" name="TEXTA" type="VARCHAR(5)"/>
+            <column defaultValueBoolean="true" name="BOOLEANA" type="BOOLEAN"/>
+            <column defaultValueDate="2007-08-09" name="DATEA" type="date"/>
+            <column defaultValueDate="14:15:16" name="TIMEA" type="time"/>
+            <column defaultValueDate="2007-08-09T10:11:12" name="DATETIMEA" type="TIMESTAMP"/>
+            <column defaultValueDate="2007-08-09T10:11:12" name="DATETIMEB" type="TIMESTAMP"/>
+            <column defaultValueDate="2007-08-09T10:11:12.123" name="TIMESTAMPA" type="TIMESTAMP"/>
+            <column defaultValueDate="2007-08-09T10:11:12.012" name="TIMESTAMPB" type="TIMESTAMP"/>
+            <column defaultValueComputed="NOW()" name="COMPUTEDDATE" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-30">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="DEFAULTVALUETEST2">
+            <column name="ID" type="INT"/>
+            <column defaultValueNumeric="1" name="INTA" type="INT"/>
+            <column defaultValue="a" name="TEXTA" type="VARCHAR(5)"/>
+            <column defaultValueBoolean="true" name="BOOLEANA" type="BOOLEAN"/>
+            <column defaultValueDate="2007-08-09" name="DATEA" type="date"/>
+            <column defaultValueDate="14:15:16" name="TIMEA" type="time"/>
+            <column defaultValueDate="2007-08-09T10:11:12" name="DATETIMEA" type="TIMESTAMP"/>
+            <column defaultValueDate="2007-08-09T10:11:12" name="DATETIMEB" type="TIMESTAMP"/>
+            <column defaultValueDate="2007-08-09T10:11:12.123" name="TIMESTAMPA" type="TIMESTAMP"/>
+            <column defaultValueDate="2007-08-09T10:11:12.012" name="TIMESTAMPB" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-31">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="DEFAULT_VAL_COMPUTED">
+            <column name="ID" type="INT"/>
+            <column defaultValueComputed="NOW()" name="TESTCOL" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="NOW()" name="ADDED_COL" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-32">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="DELETETEST">
+            <column name="ID" type="INT"/>
+            <column name="VARCHARCOLUMN" type="VARCHAR(255)"/>
+            <column name="DATECOL" type="date"/>
+            <column name="INTCOL" type="INT"/>
+            <column name="COMMONCOL" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-33">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="ERROR_WARN_RAN">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-34">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="FAIL_WARN_RAN">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-35">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="FATHER_TABLE1">
+            <column name="SOME_KEY" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_FATHER1"/>
+            </column>
+            <column name="SOME_VALUE" type="VARCHAR(200)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-36">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="FATHER_TABLE2">
+            <column name="SOME_KEY" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_FATHER2"/>
+            </column>
+            <column name="SOME_VALUE" type="VARCHAR(200)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-37">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="FOO_ID">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-38">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="INCLUDED_JSON">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-39">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="INCLUDED_SQL">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_8"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-40">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="INCLUDED_YAML">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-41">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="INDEXWITHASCDESCCOLUMNS">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_INDEXWITHASCDESCCOLUMNS"/>
+            </column>
+            <column name="COLUMN1FORASC" type="VARCHAR(10)"/>
+            <column name="COLUMN1FORDESC" type="VARCHAR(10)"/>
+            <column name="COLUMN2FORASC" type="INT"/>
+            <column name="COLUMN2FORDESC" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-42">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="INSERTTEST">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_INSERTTEST"/>
+            </column>
+            <column name="STRINGVALUE" type="VARCHAR(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-43">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="INSERTWITHDEFAULTSEQ">
+            <column defaultValueComputed="NEXTVAL('PUBLIC.tableDefault_seq')" name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_INSERTWITHDEFAULTSEQ"/>
+            </column>
+            <column name="STRINGVALUE" type="VARCHAR(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-44">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="INSTRUMENT">
+            <column name="NAME" type="VARCHAR(3)">
+                <constraints primaryKey="true" primaryKeyName="PK_INSTRUMENT"/>
+            </column>
+            <column name="OTHER" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-45">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="KEEPMODIFYSQLTEST">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-46">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="LIQUIBASERUNINFO">
+            <column name="TIMESRAN" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-47">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="MOVEDFROMTEST">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-48">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="NEWCHANGEMODIFYSQLTEST">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-49">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="NEWS">
+            <column autoIncrement="true" name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_NEWS"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-50">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="NUMBERTEST">
+            <column name="ID" type="DECIMAL(65535, 32767)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-51">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PACKAGEDCHANGELOG">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_PACKAGEDCHANGELOG"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-52">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PACKAGEDCHANGELOG2">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_PACKAGEDCHANGELOG2"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-53">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PARAMS_TEST">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_PARAMS_TEST"/>
+            </column>
+            <column name="STRING_VALUE" type="VARCHAR(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-54">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PARAMTER_TABLE">
+            <column name="ID" type="INT"/>
+            <column name="COLUMNA" type="VARCHAR(10)"/>
+            <column name="COLUMNB" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-55">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PATHINCLUDE1">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-56">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PATHINCLUDE2">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-57">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PATHINCLUDE2A">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-58">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PATHINCLUDE3">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-59">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PATHINCLUDE4">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-60">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PENDINGTEST">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-61">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PENDINGTESTA">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-62">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PENDINGTESTB">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-63">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PERSON">
+            <column autoIncrement="true" name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_PERSON"/>
+            </column>
+            <column name="FULLNAME" type="VARCHAR(100)"/>
+            <column name="EMPLOYER_ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-64">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="PKTEST">
+            <column name="ID" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-65">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="RELPATHINCLUDE1">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-66">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="RELPATHINCLUDE2">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-67">
+        <createTable catalogName="LIQUIBASE" remarks="Some remarks go here" schemaName="PUBLIC" tableName="REMARKSTEST">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_REMARKSTEST"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-68">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="REPLACEDTEST">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-69">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="SHOULDNOTEXIST">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-70">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="SQLFILEROLLBACK">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-71">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="SQLFILEROLLBACK2">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-72">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="STANDARDTYPESTEST">
+            <column name="TIMESTAMPCOLUMN" type="TIMESTAMP"/>
+            <column name="VARCHARCOLUMN" type="VARCHAR(255)"/>
+            <column name="BLOBCOLUMN" type="BLOB"/>
+            <column name="BOOLEANCOLUMN" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-73">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="TABLESPACE_TEST_TABLE">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_TABLESPACETEST"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="USERNAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-74">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="TABLETOADDDEFAULTSEQTO">
+            <column defaultValueComputed="NEXTVAL('PUBLIC.tableDefault_seq')" name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_TABLETOADDDEFAULTSEQTO"/>
+            </column>
+            <column name="STRINGVALUE" type="VARCHAR(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-75">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="TABLETOROLLBACK">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-76">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="TABLEWITHINITIALVALUE">
+            <column name="ID" type="INT"/>
+            <column name="VARCHARCOLUMN" type="VARCHAR(25)"/>
+            <column name="INTCOLUMN" type="INT"/>
+            <column name="DATECOL" type="date"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-77">
+        <createTable catalogName="LIQUIBASE" remarks="some test remarks" schemaName="PUBLIC" tableName="TABLEWITHREMARKS">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-78">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="TEST1">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_4"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-79">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="TESTUTF8INSERT">
+            <column name="STRINGVALUE" type="VARCHAR(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-80">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="TEST_TABLE">
+            <column name="ID" type="INT"/>
+            <column name="NAME" type="VARCHAR(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-81">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="TEST_TIMESTAMP_FRACTIONS">
+            <column name="TIMESTAMPCOLUMNDEFAULT" type="TIMESTAMP"/>
+            <column name="TIMESTAMPCOLUMNPREC3" type="TIMESTAMP"/>
+            <column name="TIMESTAMPCOLUMNPREC6" type="TIMESTAMP"/>
+            <column name="TIMESTAMPCOLUMNPREC9" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-82">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="TRAILING_SPACE_TEST">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-83">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="UPDATETEST">
+            <column name="ID" type="INT"/>
+            <column name="VARCHARCOLUMN" type="VARCHAR(255)"/>
+            <column name="DATECOL" type="date"/>
+            <column name="INTCOL" type="INT"/>
+            <column name="COMMONCOL" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-84">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="UPDATEWITHSEQUENCETEST">
+            <column name="ID" type="INT">
+                <constraints primaryKey="true" primaryKeyName="PK_UPDATEWITHSEQUENCETEST"/>
+            </column>
+            <column name="STRINGVALUE" type="VARCHAR(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-85">
+        <createTable catalogName="LIQUIBASE" schemaName="PUBLIC" tableName="validTableName">
+            <column name="ID" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-86">
+        <addUniqueConstraint catalogName="LIQUIBASE" columnNames="ID" constraintName="CONSTRAINT_6" schemaName="PUBLIC" tableName="CREATETABLEUNNAMEDUQCONST"/>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-87">
+        <addUniqueConstraint catalogName="LIQUIBASE" columnNames="USERNAME" constraintName="UQ_TBSPTEST_USERN" schemaName="PUBLIC" tableName="TABLESPACE_TEST_TABLE"/>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-88">
+        <addUniqueConstraint catalogName="LIQUIBASE" columnNames="ID" constraintName="UQ_UQTEST1" schemaName="PUBLIC" tableName="CREATETABLENAMEDUQCONST"/>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-89">
+        <createIndex catalogName="LIQUIBASE" indexName="FK_EMPLOYEE_COMPANY_INDEX_7" schemaName="PUBLIC" tableName="COMPANY">
+            <column name="COMPANY_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-90">
+        <createIndex catalogName="LIQUIBASE" indexName="FK_REFTEST_INDEX_E" schemaName="PUBLIC" tableName="CREATETABLENAMEDPKREF">
+            <column name="REFEREE"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-91">
+        <createIndex catalogName="LIQUIBASE" indexName="FK_TEST_FK_ADDCOL_INDEX_4" schemaName="PUBLIC" tableName="COMMATEST">
+            <column name="FK_TEST"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-92">
+        <createIndex catalogName="LIQUIBASE" indexName="IDX_COMPANY_NAME" schemaName="PUBLIC" tableName="COMPANY">
+            <column name="NAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-93">
+        <createIndex catalogName="LIQUIBASE" indexName="IDX_COMPOUNDTEST" schemaName="PUBLIC" tableName="COMPOUNDINDEXTEST">
+            <column name="FIRSTNAME"/>
+            <column name="LASTNAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-94">
+        <createIndex catalogName="LIQUIBASE" indexName="IDX_INDEXWITHASCDESCCOLUMNS" schemaName="PUBLIC" tableName="INDEXWITHASCDESCCOLUMNS">
+            <column name="COLUMN1FORASC"/>
+            <column name="COLUMN1FORDESC"/>
+            <column name="COLUMN2FORASC"/>
+            <column name="COLUMN2FORDESC"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-95">
+        <addForeignKeyConstraint baseColumnNames="COMPANY_ID" baseTableCatalogName="LIQUIBASE" baseTableName="COMPANY" baseTableSchemaName="PUBLIC" constraintName="FK_EMPLOYEE_COMPANY" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="LIQUIBASE" referencedTableName="COMPANY" referencedTableSchemaName="PUBLIC" validate="true"/>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-96">
+        <addForeignKeyConstraint baseColumnNames="REFEREE" baseTableCatalogName="LIQUIBASE" baseTableName="CREATETABLENAMEDPKREF" baseTableSchemaName="PUBLIC" constraintName="FK_REFTEST" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="LIQUIBASE" referencedTableName="CREATETABLENAMEDPK" referencedTableSchemaName="PUBLIC" validate="true"/>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-97">
+        <addForeignKeyConstraint baseColumnNames="FK_TEST" baseTableCatalogName="LIQUIBASE" baseTableName="COMMATEST" baseTableSchemaName="PUBLIC" constraintName="FK_TEST_FK_ADDCOL" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="LIQUIBASE" referencedTableName="REMARKSTEST" referencedTableSchemaName="PUBLIC" validate="true"/>
+    </changeSet>
+    <changeSet author="steve (generated)" id="1565903601691-98">
+        <createView catalogName="LIQUIBASE" fullDefinition="false" remarks="" schemaName="PUBLIC" viewName="PERSONVIEW">SELECT
+    ID,
+    FULLNAME
+FROM PUBLIC.PERSON</createView>
+    </changeSet>
+</databaseChangeLog>
