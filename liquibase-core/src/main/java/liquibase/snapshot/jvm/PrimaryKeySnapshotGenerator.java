@@ -47,7 +47,10 @@ public class PrimaryKeySnapshotGenerator extends JdbcSnapshotGenerator {
                 }
                 String columnName = cleanNameFromDatabase(row.getString("COLUMN_NAME"), database);
                 short position = row.getShort("KEY_SEQ");
-
+                //SQLite is zero based position?
+                if (database instanceof SQLiteDatabase) {
+                  position = (short) (position + 1);
+                }
                 if (returnKey == null) {
                     returnKey = new PrimaryKey();
                     CatalogAndSchema tableSchema = ((AbstractJdbcDatabase) database).getSchemaFromJdbcInfo(
