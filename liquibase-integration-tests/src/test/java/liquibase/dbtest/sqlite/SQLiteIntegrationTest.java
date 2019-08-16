@@ -74,4 +74,10 @@ public class SQLiteIntegrationTest extends AbstractIntegrationTest {
         assertTrue(true);
     }
 
+    @Override
+    public void testRunUpdateOnOldChangelogTableFormat() throws Exception {
+        LogService.getLog(getClass()).info(LogType.LOG, "Due to  problems with composite primary keys in SQLite, " +
+                "this test is technically impossible on this RDBMS.");
+        assertTrue(true);
+    }
 }
