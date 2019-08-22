@@ -41,8 +41,8 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
   private static final String LIQUIBASE_COMPLETE = "liquibase-complete";
     protected static final String COLUMN_DEF_COL = "COLUMN_DEF";
 
-    private Pattern postgresStringValuePattern = Pattern.compile("'(.*)'::[\\w ]+");
-    private Pattern postgresNumberValuePattern = Pattern.compile("(\\d*)::[\\w ]+");
+    private Pattern postgresStringValuePattern = Pattern.compile("'(.*)'::[\\w .]+");
+    private Pattern postgresNumberValuePattern = Pattern.compile("(\\d*)::[\\w .]+");
 
 
     public ColumnSnapshotGenerator() {
