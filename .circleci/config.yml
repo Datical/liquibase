@@ -25,9 +25,8 @@ jobs:
       _JAVA_OPTIONS: "-Xms512m -Xmx1024m -Djdk.net.URLClassPath.disableClassPathURLCheck=true"
     steps:
       - run:
-          name: Install 3rd party software
+          name: Install needed packages
           command: |
-            # So that we can fetch .deb packages from Microsoft, who only deliver by https:
             sudo apt-get install -y apt-transport-https rpm
 
       #
@@ -47,7 +46,7 @@ jobs:
 
       - run:
           name: Build and test
-          command: mvn --batch-mode clean package
+          command: mvn --batch-mode clean package -P build-rpm
 
       - save_cache:
           paths:
@@ -74,15 +73,17 @@ jobs:
       #          name: Build and test everything.
       #          command: mvn -B -Psonar --fail-at-end clean install jacoco:restore-instrumented-classes sonar:sonar -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -Dsonar.login=${SONARQUBE_TOKEN} -Dsonar.branch.name=${CIRCLE_BRANCH}
       - run:
-          name: Collect test results
+          name: Collect test results and build artifacts
           command: |
             mkdir /home/circleci/circle_artifacts
             export CIRCLE_ARTIFACTS=/home/circleci/circle_artifacts
-            cp liquibase-core/target/liquibase*-bin.zip ${CIRCLE_ARTIFACTS}
-            cp liquibase-core/target/liquibase*-bin.tar.gz ${CIRCLE_ARTIFACTS}
-            cp liquibase-core/target/liquibase*-SNAPSHOT.jar ${CIRCLE_ARTIFACTS}
-            cp liquibase-rpm/target/rpm/liquibase/RPMS/noarch/liquibase-*.noarch.rpm ${CIRCLE_ARTIFACTS}
-            cp liquibase-debian/target/*.deb ${CIRCLE_ARTIFACTS}
+            cp liquibase-dist/target/liquibase*.zip ${CIRCLE_ARTIFACTS}
+            cp liquibase-dist/target/liquibase*.tar.gz ${CIRCLE_ARTIFACTS}
+            cp liquibase-dist/target/liquibase*.jar ${CIRCLE_ARTIFACTS}
+            cp liquibase-dist/target/rpm/liquibase/RPMS/noarch/liquibase-*.noarch.rpm ${CIRCLE_ARTIFACTS}
+            cp liquibase-dist/target/*.deb ${CIRCLE_ARTIFACTS}
+
+            rm ${CIRCLE_ARTIFACTS}/liquibase-dist*
           when: always
 
       - store_test_results:
