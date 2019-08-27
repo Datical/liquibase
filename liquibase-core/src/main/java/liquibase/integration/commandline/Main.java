@@ -755,7 +755,11 @@ public class Main {
                 } else {
                     commandParams.add(arg);
                     if (arg.startsWith("--")) {
-                        parseOptionArgument(arg);
+                        try {
+                            parseOptionArgument(arg);
+                        } catch (CommandLineParsingException ex) {
+                            LOG.warning(LogType.LOG, ex.getMessage());
+                        }
                     }
                 }
             } else if (arg.startsWith("--")) {
