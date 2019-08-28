@@ -29,6 +29,7 @@ import liquibase.exception.DatabaseException;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
+import liquibase.logging.LogFactory;
 import liquibase.logging.LogService;
 import liquibase.logging.LogType;
 import liquibase.serializer.ChangeLogSerializer;
@@ -103,7 +104,7 @@ public class DiffToChangeLog {
         this.changeSetPath = changeLogFile;
         File file = new File(changeLogFile);
         if (!file.exists()) {
-            //print changeLog only if there are available changeSets to print instead of printing it always
+            LogService.getLog(getClass()).info(LogType.LOG, file + " does not exist, creating");
             printNew(changeLogSerializer, file);
         } else {
             LogService.getLog(getClass()).info(LogType.LOG, file + " exists, appending");
@@ -158,24 +159,12 @@ public class DiffToChangeLog {
 
     /**
      * Prints changeLog that would bring the target database to be the same as
-     * the reference database only when there are available changeSets to print
+     * the reference database
      */
     public void printNew(ChangeLogSerializer changeLogSerializer, File file) throws ParserConfigurationException, IOException, DatabaseException {
-
-        List<ChangeSet> changeSets = generateChangeSets();
-
-        Scope.getCurrentScope().getLog(getClass()).info(LogType.LOG, "changeSets count: " + changeSets.size());
-        if (changeSets.isEmpty()) {
-            Scope.getCurrentScope().getLog(getClass()).info(LogType.LOG, "Skipping creation of empty file.");
-            return;
-        }
-
-        Scope.getCurrentScope().getLog(getClass()).info(LogType.LOG, file + " does not exist, creating");
-
-        try (FileOutputStream stream = new FileOutputStream(file);
-             PrintStream out = new PrintStream(stream, true, LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration.class).getOutputEncoding())) {
-            changeLogSerializer.write(changeSets, out);
-        }
+        FileOutputStream stream = new FileOutputStream(file);
+        print(new PrintStream(stream, true, LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration.class).getOutputEncoding()), changeLogSerializer);
+        stream.close();
     }
 
     /**
