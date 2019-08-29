@@ -210,8 +210,9 @@ public class Main {
                             }
                         }
                     }
+                    outputLoggingEnabled = rootLogger.getLevel() != Level.OFF;
 
-                    if (main.command.toLowerCase().endsWith("sql")) {
+                    if (StringUtil.trimToEmpty(main.command).toLowerCase().endsWith("sql")) {
                         ui.setOutputStream(System.err);
                     }
 
@@ -265,7 +266,7 @@ public class Main {
                             Scope.getCurrentScope().getUI().sendErrorMessage(String.format(coreBundle.getString("unexpected.error"), message), e);
                             Scope.getCurrentScope().getUI().sendErrorMessage(generateLogLevelWarningMessage(outputLoggingEnabled));
 
-                            e.printStackTrace();
+                            Scope.getCurrentScope().getLog(getClass()).severe(e.getMessage(), e);
                         }
                     } catch (IllegalFormatException e1) {
                         e1.printStackTrace();
