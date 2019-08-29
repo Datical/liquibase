@@ -56,13 +56,13 @@ public class CommandLineOutputAppender extends ConsoleAppender {
             Marker marker = ((LoggingEvent) event).getMarker();
             LogType logType = LogType.valueOf(marker.getName());
             if (CommandLineOutputAppender.this.mode == Mode.STANDARD) {
-                if (logType == LogType.USER_MESSAGE && target.equals(ConsoleTarget.SystemOut)) {
+                if (logType == LogType.USER_MESSAGE && target.equals(ConsoleTarget.SystemErr)) {
                     return FilterReply.ACCEPT;
                 } else {
                     return FilterReply.DENY;
                 }
             } else if (CommandLineOutputAppender.this.mode == Mode.PIPE_SQL) {
-                if (logType == LogType.USER_MESSAGE && target == ConsoleTarget.SystemErr) {
+                if (logType == LogType.USER_MESSAGE && target == ConsoleTarget.SystemOut) {
                     return FilterReply.ACCEPT;
                 } else if (logType == LogType.WRITE_SQL && target == ConsoleTarget.SystemOut) {
                     return FilterReply.ACCEPT;
