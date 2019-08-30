@@ -1231,7 +1231,6 @@
         <xsd:complexType>
             <xsd:attributeGroup ref="changeAttributes"/>
             <xsd:attributeGroup ref="sequenceAttributes"/>
-            <xsd:attribute name="dataType" type="xsd:string"/>
         </xsd:complexType>
     </xsd:element>
 
