@@ -107,7 +107,7 @@ class FileSystemResourceAccessorTest extends Specification {
 
         then:
         def e = thrown(IOException)
-        e.message == "Found 3 files that match com/example/everywhere/file-everywhere.txt"
+        e.message == "Found 3 files that match com/example/everywhere/file-everywhere.txt: file:/C:/src/datical/liquibase/liquibase-core/target/test-classes/com/example/everywhere/file-everywhere.txt, file:///C:/src/datical/liquibase/liquibase-core/target/test-classes/simple-files.jar!com/example/everywhere/file-everywhere.txt, file:///C:/src/datical/liquibase/liquibase-core/target/test-classes/simple-files.zip!com/example/everywhere/file-everywhere.txt"
 
     }
 
