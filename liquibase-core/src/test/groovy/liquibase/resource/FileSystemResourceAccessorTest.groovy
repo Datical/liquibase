@@ -107,10 +107,11 @@ class FileSystemResourceAccessorTest extends Specification {
 
         then:
         def e = thrown(IOException)
-        def workDir = System.getProperty('user.dir')
-        def expected = "Found 3 files that match com/example/everywhere/file-everywhere.txt: file:${workDir}/target/test-classes/com/example/everywhere/file-everywhere.txt, file://${workDir}/target/test-classes/simple-files.jar!com/example/everywhere/file-everywhere.txt, file://${workDir}/target/test-classes/simple-files.zip!com/example/everywhere/file-everywhere.txt"
-        e.message == expected
-
+        e.message.startsWith("Found 3 files that match com/example/everywhere/file-everywhere.txt: file:")
+        e.message.contains("file-everywhere.txt")
+        e.message.contains("test-classes")
+        e.message.contains("simple-files.jar")
+        e.message.contains("simple-files.zip")
     }
 
     def "openStream returns null if nothing matches"() {
