@@ -48,7 +48,7 @@ public class ClobTypeTest {
     }
 
     @Test
-    public void mssqlTextToVarcharNoConvertTest() {
+    public void mssqlTextNoConvertTest() {
         LiquibaseConfiguration.getInstance()
                 .getConfiguration(GlobalConfiguration.class)
                 .getProperty(GlobalConfiguration.CONVERT_DATA_TYPES)
@@ -57,7 +57,7 @@ public class ClobTypeTest {
         ClobType ct = new ClobType();
         ct.finishInitialization("Text");
         DatabaseDataType dbType = ct.toDatabaseDataType(new MSSQLDatabase());
-        assertEquals("varchar (max)", dbType.getType());
+        assertEquals("text", dbType.getType());
     }
 
     @Test
@@ -74,7 +74,7 @@ public class ClobTypeTest {
     }
 
     @Test
-    public void mssqlEscapedTextToVarcharNoConvertTest() {
+    public void mssqlEscapedTextNoConvertTest() {
         LiquibaseConfiguration.getInstance()
                 .getConfiguration(GlobalConfiguration.class)
                 .getProperty(GlobalConfiguration.CONVERT_DATA_TYPES)
@@ -83,7 +83,7 @@ public class ClobTypeTest {
         ClobType ct = new ClobType();
         ct.finishInitialization("[Text]");
         DatabaseDataType dbType = ct.toDatabaseDataType(new MSSQLDatabase());
-        assertEquals("varchar (max)", dbType.getType());
+        assertEquals("text", dbType.getType());
     }
 
     @Test

@@ -44,14 +44,12 @@ public class ClobType extends LiquibaseDataType {
     public DatabaseDataType toDatabaseDataType(Database database) {
         String originalDefinition = StringUtils.trimToEmpty(getRawDefinition());
         if (database instanceof MSSQLDatabase) {
-            if ((!LiquibaseConfiguration.getInstance().getProperty(GlobalConfiguration.class, GlobalConfiguration
-                .CONVERT_DATA_TYPES).getValue(Boolean.class) && originalDefinition.toLowerCase(Locale.US).startsWith("text"))
-                || originalDefinition.toLowerCase(Locale.US).startsWith("[text]")) {
-                DatabaseDataType type = new DatabaseDataType(database.escapeDataTypeName("varchar"));
+            if (!LiquibaseConfiguration.getInstance().getProperty(GlobalConfiguration.class, GlobalConfiguration.CONVERT_DATA_TYPES).getValue(Boolean.class)
+                    && (originalDefinition.toLowerCase(Locale.US).startsWith("text") || originalDefinition.toLowerCase(Locale.US).startsWith("[text]"))) {
+                DatabaseDataType type = new DatabaseDataType(database.escapeDataTypeName("text"));
                 // If there is additional specification after ntext (e.g.  COLLATE), import that.
                 String originalExtraInfo = originalDefinition.replaceFirst("^(?i)\\[?text\\]?\\s*", "");
-                type.addAdditionalInformation("(max)"
-                        + (StringUtils.isEmpty(originalExtraInfo) ? "" : " " + originalExtraInfo));
+                type.addAdditionalInformation( originalExtraInfo);
                 return type;
             }
         }

@@ -37,7 +37,7 @@ public class DatabaseDataType {
     }
 
     public void addAdditionalInformation(String additionalInformation) {
-        if (additionalInformation != null) {
+        if (!StringUtils.isEmpty(additionalInformation)) {
             this.type += " " + additionalInformation;
         }
     }
