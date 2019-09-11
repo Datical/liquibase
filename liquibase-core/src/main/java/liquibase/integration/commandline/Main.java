@@ -36,6 +36,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.MessageFormat;
@@ -1011,7 +1012,7 @@ public class Main {
             return;
         }
 
-        FileSystemResourceAccessor fsOpener = new FileSystemResourceAccessor();
+        FileSystemResourceAccessor fsOpener = new FileSystemResourceAccessor(Paths.get(".").toAbsolutePath().toFile());
         CommandLineResourceAccessor clOpener = new CommandLineResourceAccessor(classLoader);
         CompositeResourceAccessor fileOpener = new CompositeResourceAccessor(fsOpener, clOpener);
 
