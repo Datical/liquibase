@@ -14,7 +14,9 @@ public class StandardServiceLocator implements ServiceLocator {
     public <T> List<T> findInstances(Class<T> interfaceType) throws ServiceNotFoundException {
         List<T> allInstances = new ArrayList<>();
 
-        for (T t : ServiceLoader.load(interfaceType, Scope.getCurrentScope().getClassLoader(true))) {
+        ClassLoader classLoader = Scope.getCurrentScope().getClassLoader(true);
+        ServiceLoader<T> services = ServiceLoader.load(interfaceType, classLoader);
+        for (T t : services) {
             allInstances.add(t);
         }
 
