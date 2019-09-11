@@ -124,6 +124,7 @@ public class Main {
         try {
             errorLevel = run(args);
         } catch (Throwable e) {
+            e.printStackTrace(System.err);
             System.exit(-1);
         }
         System.exit(errorLevel);
