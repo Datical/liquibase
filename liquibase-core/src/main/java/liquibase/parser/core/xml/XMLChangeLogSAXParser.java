@@ -20,32 +20,12 @@ import java.io.InputStream;
 public class XMLChangeLogSAXParser extends AbstractChangeLogParser {
 
     public static final String LIQUIBASE_SCHEMA_VERSION = "3.9";
-    private static final String XSD_FILE = "/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-" + LIQUIBASE_SCHEMA_VERSION + ".xsd";
     private SAXParserFactory saxParserFactory;
 
     public XMLChangeLogSAXParser() {
         saxParserFactory = SAXParserFactory.newInstance();
         saxParserFactory.setValidating(true);
         saxParserFactory.setNamespaceAware(true);
-
-        boolean preferInternalXsd = true;
-        String property = System.getProperty("liquibase.prefer.internal.xsd");
-        if (property != null) {
-            preferInternalXsd = Boolean.getBoolean("liquibase.prefer.internal.xsd");
-        }
-        if (preferInternalXsd) {
-            InputStream xsdInputStream = XMLChangeLogSAXParser.class.getResourceAsStream(XSD_FILE);
-            if (xsdInputStream != null) {
-                try {
-                    SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                    Schema schema = schemaFactory.newSchema(new StreamSource(xsdInputStream));
-                    saxParserFactory.setSchema(schema);
-                    saxParserFactory.setValidating(false);
-                } catch (SAXException e) {
-                    Scope.getCurrentScope().getLog(XMLChangeLogSAXParser.class).warning("Could not load " + XSD_FILE + ", enabling parser validator", e);
-                }
-            }
-        }
     }
 
     @Override
