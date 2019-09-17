@@ -164,11 +164,6 @@ public class DiffToChangeLog {
         List<ChangeSet> changeSets = generateChangeSets();
 
         Scope.getCurrentScope().getLog(getClass()).info("changeSets count: " + changeSets.size());
-        if (changeSets.isEmpty()) {
-            Scope.getCurrentScope().getLog(getClass()).info("Skipping creation of empty file.");
-            return;
-        }
-
         Scope.getCurrentScope().getLog(getClass()).info(file + " does not exist, creating");
 
         try (FileOutputStream stream = new FileOutputStream(file);
