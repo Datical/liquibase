@@ -235,7 +235,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>default-install</id>
+                        <id>default-deploy</id>
                         <phase>none</phase>
                     </execution>
                 </executions>
