@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.liquibase</groupId>
         <artifactId>liquibase-base</artifactId>
-        <version>${revision}</version>
+        <version>${liquibase.version}</version>
         <relativePath>../base.pom.xml</relativePath>
     </parent>
 
@@ -34,13 +34,6 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.24</version>
             <optional>true</optional>
         </dependency>
 

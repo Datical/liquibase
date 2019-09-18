@@ -36,6 +36,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.MessageFormat;
@@ -124,6 +125,7 @@ public class Main {
         try {
             errorLevel = run(args);
         } catch (Throwable e) {
+            e.printStackTrace(System.err);
             System.exit(-1);
         }
         System.exit(errorLevel);
@@ -210,8 +212,9 @@ public class Main {
                             }
                         }
                     }
+                    outputLoggingEnabled = rootLogger.getLevel() != Level.OFF;
 
-                    if (main.command.toLowerCase().endsWith("sql")) {
+                    if (StringUtil.trimToEmpty(main.command).toLowerCase().endsWith("sql")) {
                         ui.setOutputStream(System.err);
                     }
 
@@ -265,7 +268,7 @@ public class Main {
                             Scope.getCurrentScope().getUI().sendErrorMessage(String.format(coreBundle.getString("unexpected.error"), message), e);
                             Scope.getCurrentScope().getUI().sendErrorMessage(generateLogLevelWarningMessage(outputLoggingEnabled));
 
-                            e.printStackTrace();
+                            Scope.getCurrentScope().getLog(getClass()).severe(e.getMessage(), e);
                         }
                     } catch (IllegalFormatException e1) {
                         e1.printStackTrace();
@@ -1009,7 +1012,7 @@ public class Main {
             return;
         }
 
-        FileSystemResourceAccessor fsOpener = new FileSystemResourceAccessor();
+        FileSystemResourceAccessor fsOpener = new FileSystemResourceAccessor(Paths.get(".").toAbsolutePath().toFile());
         CommandLineResourceAccessor clOpener = new CommandLineResourceAccessor(classLoader);
         CompositeResourceAccessor fileOpener = new CompositeResourceAccessor(fsOpener, clOpener);
 

@@ -3,11 +3,9 @@ package liquibase.parser.core.xml;
 import liquibase.Scope;
 import liquibase.changelog.ChangeLogParameters;
 import liquibase.exception.ChangeLogParseException;
-import liquibase.logging.LogType;
 import liquibase.parser.core.ParsedNode;
 import liquibase.resource.ResourceAccessor;
 import liquibase.util.BomAwareInputStream;
-import liquibase.util.file.FilenameUtils;
 import org.xml.sax.*;
 
 import javax.xml.XMLConstants;
@@ -22,28 +20,12 @@ import java.io.InputStream;
 public class XMLChangeLogSAXParser extends AbstractChangeLogParser {
 
     public static final String LIQUIBASE_SCHEMA_VERSION = "3.9";
-    private static final boolean PREFER_INTERNAL_XSD = Boolean.getBoolean("liquibase.prefer.internal.xsd");
-    private static final String XSD_FILE = "dbchangelog-" + LIQUIBASE_SCHEMA_VERSION + ".xsd";
     private SAXParserFactory saxParserFactory;
 
     public XMLChangeLogSAXParser() {
         saxParserFactory = SAXParserFactory.newInstance();
         saxParserFactory.setValidating(true);
         saxParserFactory.setNamespaceAware(true);
-
-        if (PREFER_INTERNAL_XSD) {
-            InputStream xsdInputStream = XMLChangeLogSAXParser.class.getResourceAsStream(XSD_FILE);
-            if (xsdInputStream != null) {
-                try {
-                    SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                    Schema schema = schemaFactory.newSchema(new StreamSource(xsdInputStream));
-                    saxParserFactory.setSchema(schema);
-                    saxParserFactory.setValidating(false);
-                } catch (SAXException e) {
-                    Scope.getCurrentScope().getLog(XMLChangeLogSAXParser.class).warning("Could not load " + XSD_FILE + ", enabling parser validator", e);
-                }
-            }
-        }
     }
 
     @Override
@@ -67,7 +49,7 @@ public class XMLChangeLogSAXParser extends AbstractChangeLogParser {
     @Override
     protected ParsedNode parseToNode(String physicalChangeLogLocation, ChangeLogParameters changeLogParameters, ResourceAccessor resourceAccessor) throws ChangeLogParseException {
         try (
-                InputStream inputStream = resourceAccessor.openStream(null, physicalChangeLogLocation)) {
+            InputStream inputStream = resourceAccessor.openStream(null, physicalChangeLogLocation)) {
             SAXParser parser = saxParserFactory.newSAXParser();
             trySetSchemaLanguageProperty(parser);
 

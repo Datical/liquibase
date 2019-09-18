@@ -317,7 +317,7 @@ public abstract class AbstractIntegrationTest {
     }
 
     protected Liquibase createLiquibase(String changeLogFile) throws Exception {
-        CompositeResourceAccessor fileOpener = new CompositeResourceAccessor(new JUnitResourceAccessor(), new FileSystemResourceAccessor());
+        ResourceAccessor fileOpener = new JUnitResourceAccessor();
         return createLiquibase(changeLogFile, fileOpener);
     }
 
@@ -889,29 +889,6 @@ public abstract class AbstractIntegrationTest {
 
     }
 
-    @Test
-    @SuppressWarnings("squid:S2699") // Successful execution qualifies as test success.
-    public void testAbsolutePathChangeLog() throws Exception {
-        assumeNotNull(this.getDatabase());
-
-        String fileUrlToChangeLog = getClass().getResource("/" + includedChangeLog).toString();
-        assertTrue(fileUrlToChangeLog.startsWith("file:/"));
-
-        String absolutePathOfChangeLog = fileUrlToChangeLog.replaceFirst("file:\\/", "");
-        if (System.getProperty("os.name").startsWith("Windows ")) {
-            absolutePathOfChangeLog = absolutePathOfChangeLog.replace('/', '\\');
-        } else {
-            absolutePathOfChangeLog = "/" + absolutePathOfChangeLog;
-        }
-        Liquibase liquibase = createLiquibase(absolutePathOfChangeLog, new FileSystemResourceAccessor());
-        clearDatabase();
-
-        liquibase.update(this.contexts);
-
-        liquibase.update(this.contexts); //try again, make sure there are no errors
-
-        clearDatabase();
-    }
 
     private void dropDatabaseChangeLogTable(String catalog, String schema, Database database) {
         try {

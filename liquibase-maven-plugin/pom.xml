@@ -5,21 +5,18 @@
 	<parent>
 		<groupId>org.liquibase</groupId>
 		<artifactId>liquibase-base-module</artifactId>
-		<version>${revision}</version>
+		<version>${liquibase.version}</version>
 		<relativePath>../base-module.pom.xml</relativePath>
 	</parent>
 
 	<artifactId>liquibase-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 
-	<name>Liquibase Maven Plugin</name>
-	<description>A Maven plugin wraps up some of the functionality of Liquibase</description>
-
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>${revision}</version>
+			<version>${liquibase.version}</version>
 		</dependency>
 
 		<dependency>
@@ -51,13 +48,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>false</skip>
-				</configuration>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-plugin-plugin</artifactId>

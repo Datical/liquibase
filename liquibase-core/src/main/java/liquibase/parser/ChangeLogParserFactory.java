@@ -5,6 +5,7 @@ import liquibase.exception.LiquibaseException;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.exception.UnknownChangelogFormatException;
 import liquibase.resource.ResourceAccessor;
+import liquibase.servicelocator.ServiceLocator;
 
 import java.util.*;
 
@@ -34,7 +35,9 @@ public class ChangeLogParserFactory {
 
     private ChangeLogParserFactory() {
         try {
-            List<ChangeLogParser> parser = Scope.getCurrentScope().getServiceLocator().findInstances(ChangeLogParser.class);
+            Scope currentScope = Scope.getCurrentScope();
+            ServiceLocator serviceLocator = currentScope.getServiceLocator();
+            List<ChangeLogParser> parser = serviceLocator.findInstances(ChangeLogParser.class);
             register(parser);
         } catch (Exception e) {
             throw new UnexpectedLiquibaseException(e);
