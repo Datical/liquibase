@@ -22,6 +22,7 @@ public class GlobalConfiguration extends AbstractConfigurationContainer {
     public static final String ALWAYS_OVERRIDE_STORED_LOGIC_SCHEMA = "alwaysOverrideStoredLogicSchema";
     public static final String GENERATED_CHANGESET_IDS_INCLUDE_DESCRIPTION = "generatedChangeSetIdsContainsDescription";
     public static final String INCLUDE_CATALOG_IN_SPECIFICATION = "includeCatalogInSpecification";
+    public static final String TRIM_IDENTIFIERS = "trimIdentifiers";
 
     public GlobalConfiguration() {
         super("liquibase");
@@ -95,6 +96,11 @@ public class GlobalConfiguration extends AbstractConfigurationContainer {
         getContainer().addProperty(INCLUDE_CATALOG_IN_SPECIFICATION, Boolean.class)
                 .setDescription("Should Liquibase include the catalog name when determining equality?")
                 .setDefaultValue(false);
+
+        getContainer().addProperty(TRIM_IDENTIFIERS, Boolean.class)
+                .setDescription("Should Liquibase trim object name/identifier?")
+                .setDefaultValue(true);
+
     }
 
     /**
@@ -245,4 +251,9 @@ public class GlobalConfiguration extends AbstractConfigurationContainer {
         getContainer().setValue(GENERATED_CHANGESET_IDS_INCLUDE_DESCRIPTION, containDescription);
         return this;
     }
+
+    public Boolean getTrimIdentifiers() {
+        return getContainer().getValue(TRIM_IDENTIFIERS, Boolean.class);
+    }
+
 }
