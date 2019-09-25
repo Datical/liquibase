@@ -70,28 +70,26 @@ public class ClobType extends LiquibaseDataType {
             if (originalDefinition.matches("^(?i)\\[?text\\]?.*")) {
                 // The SQL Server datatype "text" is deprecated and should be replaced with VARCHAR(MAX).
                 // See: https://docs.microsoft.com/en-us/sql/t-sql/data-types/ntext-text-and-image-transact-sql
-                DatabaseDataType type = new DatabaseDataType(database.escapeDataTypeName("varchar"));
+                DatabaseDataType type = new DatabaseDataType(database.escapeDataTypeName("varchar"), "max");
                 // If there is additional specification after ntext (e.g.  COLLATE), import that.
                 String originalExtraInfo = originalDefinition.replaceFirst("^(?i)\\[?text\\]?\\(?\\d*\\)?\\s*", "");
-                type.addAdditionalInformation("(max)"
-                        + (StringUtils.isEmpty(originalExtraInfo) ? "" : " " + originalExtraInfo));
+                type.addAdditionalInformation(StringUtils.isEmpty(originalExtraInfo) ? "" : " " + originalExtraInfo);
                 return type;
             }
             if (originalDefinition.matches("^(?i)\\[?ntext\\]?.*")) {
                 // The SQL Server datatype "ntext" is deprecated and should be replaced with NVARCHAR(MAX).
                 // See: https://docs.microsoft.com/en-us/sql/t-sql/data-types/ntext-text-and-image-transact-sql
-                DatabaseDataType type = new DatabaseDataType(database.escapeDataTypeName("nvarchar"));
+                DatabaseDataType type = new DatabaseDataType(database.escapeDataTypeName("nvarchar"), "max");
                 // If there is additional specification after ntext (e.g.  COLLATE), import that.
                 String originalExtraInfo = originalDefinition.replaceFirst("^(?i)\\[?ntext\\]?\\(?\\d*\\)?\\s*", "");
-                type.addAdditionalInformation("(max)"
-                    + (StringUtils.isEmpty(originalExtraInfo) ? "" : " " + originalExtraInfo));
+                type.addAdditionalInformation(StringUtils.isEmpty(originalExtraInfo) ? "" : " " + originalExtraInfo);
                 return type;
             }
             if ("nclob".equals(originalDefinition.toLowerCase(Locale.US))) {
-                return new DatabaseDataType(database.escapeDataTypeName("nvarchar"), "MAX");
+                return new DatabaseDataType(database.escapeDataTypeName("nvarchar"), "max");
             }
 
-            return new DatabaseDataType(database.escapeDataTypeName("varchar"), "MAX");
+            return new DatabaseDataType(database.escapeDataTypeName("varchar"), "max");
         } else if (database instanceof MySQLDatabase) {
             if (originalDefinition.toLowerCase(Locale.US).startsWith("text")) {
                 return new DatabaseDataType("TEXT");
