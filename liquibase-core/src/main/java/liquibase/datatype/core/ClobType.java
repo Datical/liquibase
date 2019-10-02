@@ -44,13 +44,21 @@ public class ClobType extends LiquibaseDataType {
     public DatabaseDataType toDatabaseDataType(Database database) {
         String originalDefinition = StringUtils.trimToEmpty(getRawDefinition());
         if (database instanceof MSSQLDatabase) {
-            if (!LiquibaseConfiguration.getInstance().getProperty(GlobalConfiguration.class, GlobalConfiguration.CONVERT_DATA_TYPES).getValue(Boolean.class)
-                    && (originalDefinition.toLowerCase(Locale.US).startsWith("text") || originalDefinition.toLowerCase(Locale.US).startsWith("[text]"))) {
-                DatabaseDataType type = new DatabaseDataType(database.escapeDataTypeName("text"));
-                // If there is additional specification after ntext (e.g.  COLLATE), import that.
-                String originalExtraInfo = originalDefinition.replaceFirst("^(?i)\\[?text\\]?\\s*", "");
-                type.addAdditionalInformation( originalExtraInfo);
-                return type;
+            if (!LiquibaseConfiguration.getInstance().getProperty(GlobalConfiguration.class, GlobalConfiguration.CONVERT_DATA_TYPES).getValue(Boolean.class)) {
+                if (originalDefinition.matches("^(?i)\\[?text\\]?.*")) {
+                    DatabaseDataType type = new DatabaseDataType(database.escapeDataTypeName("text"));
+                    // If there is additional specification after text (e.g.  COLLATE), import that.
+                    String originalExtraInfo = originalDefinition.replaceFirst("^(?i)\\[?text\\]?\\(?\\d*\\)?\\s*", "");
+                    type.addAdditionalInformation(originalExtraInfo);
+                    return type;
+                }
+                if (originalDefinition.matches("^(?i)\\[?ntext\\]?.*")) {
+                    DatabaseDataType type = new DatabaseDataType(database.escapeDataTypeName("ntext"));
+                    // If there is additional specification after ntext (e.g.  COLLATE), import that.
+                    String originalExtraInfo = originalDefinition.replaceFirst("^(?i)\\[?ntext\\]?\\(?\\d*\\)?\\s*", "");
+                    type.addAdditionalInformation(originalExtraInfo);
+                    return type;
+                }
             }
         }
 
@@ -64,18 +72,17 @@ public class ClobType extends LiquibaseDataType {
                 // See: https://docs.microsoft.com/en-us/sql/t-sql/data-types/ntext-text-and-image-transact-sql
                 DatabaseDataType type = new DatabaseDataType(database.escapeDataTypeName("varchar"));
                 // If there is additional specification after ntext (e.g.  COLLATE), import that.
-                String originalExtraInfo = originalDefinition.replaceFirst("^(?i)\\[?text\\]?\\s*", "");
+                String originalExtraInfo = originalDefinition.replaceFirst("^(?i)\\[?text\\]?\\(?\\d*\\)?\\s*", "");
                 type.addAdditionalInformation("(max)"
                         + (StringUtils.isEmpty(originalExtraInfo) ? "" : " " + originalExtraInfo));
                 return type;
             }
-            if (originalDefinition.toLowerCase(Locale.US).startsWith("ntext")
-                    || originalDefinition.toLowerCase(Locale.US).startsWith("[ntext]")) {
+            if (originalDefinition.matches("^(?i)\\[?ntext\\]?.*")) {
                 // The SQL Server datatype "ntext" is deprecated and should be replaced with NVARCHAR(MAX).
                 // See: https://docs.microsoft.com/en-us/sql/t-sql/data-types/ntext-text-and-image-transact-sql
                 DatabaseDataType type = new DatabaseDataType(database.escapeDataTypeName("nvarchar"));
                 // If there is additional specification after ntext (e.g.  COLLATE), import that.
-                String originalExtraInfo = originalDefinition.replaceFirst("^(?i)\\[?ntext\\]?\\s*", "");
+                String originalExtraInfo = originalDefinition.replaceFirst("^(?i)\\[?ntext\\]?\\(?\\d*\\)?\\s*", "");
                 type.addAdditionalInformation("(max)"
                     + (StringUtils.isEmpty(originalExtraInfo) ? "" : " " + originalExtraInfo));
                 return type;
