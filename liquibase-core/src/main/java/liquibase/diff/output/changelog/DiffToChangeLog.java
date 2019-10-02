@@ -262,14 +262,14 @@ public class DiffToChangeLog {
         return new DatabaseObjectComparator() {
             @Override
             public int compare(DatabaseObject o1, DatabaseObject o2) {
-                if (o1 instanceof Column && o1.getAttribute("order", Integer.class) != null && o2.getAttribute("order", Integer.class) != null) {
-                    int i = o1.getAttribute("order", Integer.class).compareTo(o2.getAttribute("order", Integer.class));
+                if (o1 instanceof Column && o1.getAttribute(ORDER_ATTRIBUTE, Integer.class) != null && o2.getAttribute(ORDER_ATTRIBUTE, Integer.class) != null) {
+                    int i = o1.getAttribute(ORDER_ATTRIBUTE, Integer.class).compareTo(o2.getAttribute(ORDER_ATTRIBUTE, Integer.class));
                     if (i != 0) {
                         return i;
                     }
-                } else if (o1 instanceof StoredDatabaseLogic && o1.getAttribute("order", Integer.class) != null
-                        && o2.getAttribute("order", Integer.class) != null) {
-                    int order = o1.getAttribute("order", Long.class).compareTo(o2.getAttribute("order", Long.class));
+                } else if (o1 instanceof StoredDatabaseLogic && o1.getAttribute(ORDER_ATTRIBUTE, Integer.class) != null
+                        && o2.getAttribute(ORDER_ATTRIBUTE, Integer.class) != null) {
+                    int order = o1.getAttribute(ORDER_ATTRIBUTE, Long.class).compareTo(o2.getAttribute(ORDER_ATTRIBUTE, Long.class));
                     if (order != 0) {
                         return order;
                     }

@@ -1,45 +1,43 @@
 package liquibase.util;
 
+import liquibase.Scope;
+import liquibase.resource.ClassLoaderResourceAccessor;
+import liquibase.resource.ResourceAccessor;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Properties;
 
 public class LiquibaseUtil {
+
+    private static Properties liquibaseBuildProperties;
+
     public static String getBuildVersion() {
-        String buildVersion = "UNKNOWN";
-        Properties buildInfo = new Properties();
-        ClassLoader classLoader = LiquibaseUtil.class.getClassLoader();
+        return getBuildInfo("build.version");
+    }
 
-        URL buildInfoFile = classLoader.getResource("buildinfo.properties");
-        InputStream in = null;
-        try {
-            if (buildInfoFile != null) {
-            	URLConnection connection = buildInfoFile.openConnection();
-            	connection.setUseCaches(false);
-                in = connection.getInputStream();
-                buildInfo.load(in);
-                String o = (String) buildInfo.get("build.version");
+    public static String getBuildTime() {
+        return getBuildInfo("build.timestamp");
+    }
 
-                if (o != null) {
-                    buildVersion = o;
+    // will extract the information from either liquibase.build.properties, which should be a properties file in
+    // the jar file, or from the jar file's MANIFEST.MF, which should also have similar information.
+    private static String getBuildInfo(String propertyId) {
+        if (liquibaseBuildProperties == null) {
+            try (InputStream buildProperties =StreamUtil.openStream("liquibase.build.properties", false, null, new ClassLoaderResourceAccessor(LiquibaseUtil.class.getClassLoader()))) {
+                liquibaseBuildProperties = new Properties();
+                if (buildProperties != null) {
+                    liquibaseBuildProperties.load(buildProperties);
                 }
-            }
-        } catch (IOException e) {
-            // This is not a fatal exception.
-            // Build info will be returned as 'UNKNOWN'        }
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // TODO Log this error and remove the RuntimeException.
-                    throw new RuntimeException("Failed to close InputStream in LiquibaseUtil.", e);
-                }
+            } catch (IOException e) {
+                Scope.getCurrentScope().getLog(LiquibaseUtil.class).severe("Cannot read liquibase.build.properties", e);
             }
         }
 
-        return buildVersion;
+        String value = liquibaseBuildProperties.getProperty(propertyId);
+        if (value == null) {
+            return "UNKNOWN";
+        }
+        return value;
     }
 }

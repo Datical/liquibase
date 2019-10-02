@@ -20,6 +20,8 @@ import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.Table;
 import liquibase.util.JdbcUtils;
 import liquibase.util.StringUtils;
+import liquibase.statement.core.RawSqlStatement;
+import liquibase.executor.ExecutorService;
 
 import java.math.BigInteger;
 import java.sql.ResultSet;
@@ -31,6 +33,7 @@ import java.util.*;
  * Encapsulates PostgreSQL database support.
  */
 public class PostgresDatabase extends AbstractJdbcDatabase {
+    private String dbFullVersion=null;
     public static final String PRODUCT_NAME = "PostgreSQL";
     public static final int MINIMUM_DBMS_MAJOR_VERSION = 9;
     public static final int MINIMUM_DBMS_MINOR_VERSION = 2;
@@ -195,25 +198,6 @@ public class PostgresDatabase extends AbstractJdbcDatabase {
 
     }
 
-    //    public void dropDatabaseObjects(String schema) throws DatabaseException {
-//        try {
-//            if (schema == null) {
-//                schema = getConnectionUsername();
-//            }
-//            new Executor(this).execute(new RawSqlStatement("DROP OWNED BY " + schema));
-//
-//            getConnection().commit();
-//
-//            changeLogTableExists = false;
-//            changeLogLockTableExists = false;
-//            changeLogCreateAttempted = false;
-//            changeLogLockCreateAttempted = false;
-//
-//        } catch (SQLException e) {
-//            throw new DatabaseException(e);
-//        }
-//    }
-
     @Override
     public String unescapeDataTypeName(String dataTypeName) {
         return dataTypeName.replace("\"", "");
@@ -374,7 +358,6 @@ public class PostgresDatabase extends AbstractJdbcDatabase {
         return CatalogAndSchema.CatalogAndSchemaCase.LOWER_CASE;
     }
 
-    @Override
     public String getDatabaseFullVersion() throws DatabaseException {
         if (getConnection() == null) {
             throw new DatabaseException("Connection not set. Can not get database version. " +

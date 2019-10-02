@@ -18,6 +18,7 @@ import liquibase.diff.output.DiffOutputControl;
 import liquibase.diff.output.ObjectChangeFilter;
 import liquibase.diff.output.StandardObjectChangeFilter;
 import liquibase.exception.*;
+import liquibase.license.*;
 import liquibase.lockservice.LockService;
 import liquibase.lockservice.LockServiceFactory;
 import liquibase.logging.LogService;
@@ -117,6 +118,7 @@ public class Main {
     protected String referenceSchemas;
     protected String schemas;
     protected String snapshotFormat;
+    protected String liquibaseProLicenseKey;
 
     /**
      * Entry point. This is what gets executes when starting this program from the command line. This is actually
@@ -128,7 +130,8 @@ public class Main {
         int errorLevel = 0;
         try {
             errorLevel = run(args);
-        } catch (LiquibaseException e) {
+        } catch (Throwable e) {
+            e.printStackTrace(System.err);
             System.exit(-1);
         }
         System.exit(errorLevel);
@@ -162,7 +165,7 @@ public class Main {
 
 
             Main main = new Main();
-            log.info(LogType.USER_MESSAGE, CommandLineUtils.getBanner());
+            log.info(LogType.LOG, CommandLineUtils.getBanner());
 
             if ((args.length == 1) && ("--" + OPTIONS.HELP).equals(args[0])) {
                 main.printHelp(System.out);
@@ -179,6 +182,24 @@ public class Main {
             } catch (CommandLineParsingException e) {
                 log.warning(LogType.USER_MESSAGE, coreBundle.getString("how.to.display.help"));
                 throw e;
+            }
+
+            LicenseService licenseService = LicenseServiceFactory.getInstance().getLicenseService();
+            if (licenseService != null) {
+                String licenseInfo = "No license key supplied. Please set liquibaseProLicenseKey on command line or in liquibase.properties to use Liquibase Pro features.";
+
+                if (main.liquibaseProLicenseKey != null) {
+                    Location licenseKeyLocation = new Location("property liquibaseProLicenseKey", LocationType.BASE64_STRING, main.liquibaseProLicenseKey);
+                    LicenseInstallResult result = licenseService.installLicense(licenseKeyLocation);
+                    if (result.code != 0) {
+                        String allMessages = String.join("\n", result.messages);
+                        log.warning(LogType.USER_MESSAGE, allMessages);
+                    }
+                    licenseInfo = licenseService.getLicenseInfo();
+                }
+                log.info(LogType.LOG, licenseInfo);
+            } else {
+                log.info(LogType.LOG, String.format("Liquibase Community %s by Datical", LiquibaseUtil.getBuildVersion()));
             }
 
             List<String> setupMessages = main.checkSetup();
@@ -215,6 +236,7 @@ public class Main {
                     log.severe(LogType.USER_MESSAGE,
                         (String.format(coreBundle.getString("unexpected.error"), message)), e);
                     log.severe(LogType.USER_MESSAGE, generateLogLevelWarningMessage(outputLoggingEnabled));
+
                 }
             } catch (IllegalFormatException e1) {
                 e1.printStackTrace();
@@ -719,6 +741,7 @@ public class Main {
      * @param stream the output stream to write the help text to
      */
     protected void printHelp(PrintStream stream) {
+        stream.println(CommandLineUtils.getBanner());
         String helpText = commandLineHelpBundle.getString("commandline-helptext");
         stream.println(helpText);
     }

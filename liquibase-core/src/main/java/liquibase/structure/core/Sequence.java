@@ -160,7 +160,6 @@ public class Sequence extends AbstractDatabaseObject {
     public String getDataType() {
         return getAttribute("dataType", String.class);
     }
-
     public Sequence setDataType(String dataType) {
         this.setAttribute("dataType", dataType);
         return this;

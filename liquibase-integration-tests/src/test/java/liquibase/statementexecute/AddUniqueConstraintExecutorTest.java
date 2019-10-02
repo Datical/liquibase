@@ -152,13 +152,12 @@ public class AddUniqueConstraintExecutorTest extends AbstractExecuteTest {
                 SybaseASADatabase.class, SybaseDatabase.class);
         assertCorrect("alter table [liquibasec].[liquibaseb].[adduqtest] add constraint [uq_test] unique " +
                 "([coltomakeuq])", MSSQLDatabase.class);
-        assertCorrect("alter table [adduqtest] add constraint [uq_test] unique ([coltomakeuq])", FirebirdDatabase.class);
+        assertCorrect("alter table [adduqtest] add constraint [uq_test] unique ([coltomakeuq])", FirebirdDatabase.class, Firebird3Database.class);
 
         assertCorrect("alter table [liquibaseb].[adduqtest] add constraint [uq_test] unique ([coltomakeuq])", HsqlDatabase.class);
         assertCorrect("alter table \"liquibasec\".[adduqtest] add constraint [uq_test] unique ([coltomakeuq])", DB2Database.class, Db2zDatabase.class);
         assertCorrect("alter table [liquibaseb].[adduqtest] add constraint [uq_test] unique ([coltomakeuq])", H2Database.class);
         assertCorrect("alter table [liquibaseb].[adduqtest] add constraint [uq_test] unique ([coltomakeuq])", Ingres9Database.class);
-
         assertCorrectOnRest("alter table [liquibasec].[adduqtest] add constraint [uq_test] unique ([coltomakeuq])");
 
     }

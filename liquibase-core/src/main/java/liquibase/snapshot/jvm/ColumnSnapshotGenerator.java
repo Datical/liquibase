@@ -34,11 +34,11 @@ import java.util.regex.Pattern;
 
 public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
 
-  /**
-   * This attribute indicates whether we need to process a column object. It is visible only
-   * in scope of snapshot process.
-   */
-  private static final String LIQUIBASE_COMPLETE = "liquibase-complete";
+    /**
+     * This attribute indicates whether we need to process a column object. It is visible only
+     * in scope of snapshot process.
+     */
+    private static final String LIQUIBASE_COMPLETE = "liquibase-complete";
     protected static final String COLUMN_DEF_COL = "COLUMN_DEF";
 
     private Pattern postgresStringValuePattern = Pattern.compile("'(.*)'::[\\w .]+");
@@ -80,15 +80,15 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
             JdbcDatabaseSnapshot.CachingDatabaseMetaData databaseMetaData =
                     ((JdbcDatabaseSnapshot) snapshot).getMetaDataFromCache();
 
-            List<CachedRow> metaDataColumns = databaseMetaData.getColumns(catalogName,schemaName,tableName, columnName);
+            List<CachedRow> metaDataColumns = databaseMetaData.getColumns(catalogName, schemaName, tableName, columnName);
             List<CachedRow> metaDataNotNullConst = databaseMetaData.getNotNullConst(catalogName, schemaName, tableName);
 
             if (!metaDataColumns.isEmpty()) {
-              CachedRow data = metaDataColumns.get(0);
-              column = readColumn(data, relation, database);
-              setAutoIncrementDetails(column, database, snapshot);
+                CachedRow data = metaDataColumns.get(0);
+                column = readColumn(data, relation, database);
+                setAutoIncrementDetails(column, database, snapshot);
 
-              populateValidateNullableIfNeeded(column, metaDataNotNullConst, database);
+                populateValidateNullableIfNeeded(column, metaDataNotNullConst, database);
             }
 
             example.setAttribute(LIQUIBASE_COMPLETE, null);
@@ -99,26 +99,26 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
             }
 
             return column;
-        } catch (DatabaseException|SQLException e) {
+        } catch (DatabaseException | SQLException e) {
             throw new DatabaseException(e);
         }
     }
 
     private void populateValidateNullableIfNeeded(Column column, List<CachedRow> metaDataNotNullConst, Database database) {
-        if(!(database instanceof OracleDatabase)) {
+        if (!(database instanceof OracleDatabase)) {
             return;
         }
         String name = column.getName();
-        for (CachedRow cachedRow: metaDataNotNullConst) {
+        for (CachedRow cachedRow : metaDataNotNullConst) {
             Object columnNameObj = cachedRow.get("COLUMN_NAME");
             if (columnNameObj == null) {
                 throw new AssertionError("Please check query to fetch data for notNullConst!. "
-                    + "I didn't fetch needed data");
+                        + "I didn't fetch needed data");
             }
-            if (name.equalsIgnoreCase(columnNameObj.toString())){
+            if (name.equalsIgnoreCase(columnNameObj.toString())) {
                 final String VALIDATE = "VALIDATED";
                 Object validated = cachedRow.get(VALIDATE);
-                if (validated== null) {
+                if (validated == null) {
                     break;
                 }
                 // Oracle returns NULLABLE=Y for columns that have not null constraints that are not validated
@@ -160,7 +160,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
             try {
 
                 JdbcDatabaseSnapshot.CachingDatabaseMetaData databaseMetaData =
-                    ((JdbcDatabaseSnapshot) snapshot).getMetaDataFromCache();
+                        ((JdbcDatabaseSnapshot) snapshot).getMetaDataFromCache();
 
                 Schema schema;
 
@@ -221,22 +221,22 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
 
     protected void setAutoIncrementDetails(Column column, Database database, DatabaseSnapshot snapshot) {
         if ((column.getAutoIncrementInformation() != null) &&
-            (database instanceof MSSQLDatabase) &&
-            (database
-            .getConnection() != null) && !(database.getConnection() instanceof OfflineConnection)) {
+                (database instanceof MSSQLDatabase) &&
+                (database
+                        .getConnection() != null) && !(database.getConnection() instanceof OfflineConnection)) {
             Map<String, Column.AutoIncrementInformation> autoIncrementColumns =
-                (Map) snapshot.getScratchData("autoIncrementColumns");
+                    (Map) snapshot.getScratchData("autoIncrementColumns");
             if (autoIncrementColumns == null) {
                 autoIncrementColumns = new HashMap<>();
                 Executor executor = ExecutorService.getInstance().getExecutor(database);
                 try {
                     List<Map<String, ?>> rows = executor.queryForList(
-                        new RawSqlStatement(
-                            "SELECT object_schema_name(object_id) AS schema_name, " +
-                                "object_name(object_id) AS table_name, name AS column_name, " +
-                                "CAST(seed_value AS bigint) AS start_value, " +
-                                "CAST(increment_value AS bigint) AS increment_by " +
-                                "FROM sys.identity_columns"));
+                            new RawSqlStatement(
+                                    "SELECT object_schema_name(object_id) AS schema_name, " +
+                                            "object_name(object_id) AS table_name, name AS column_name, " +
+                                            "CAST(seed_value AS bigint) AS start_value, " +
+                                            "CAST(increment_value AS bigint) AS increment_by " +
+                                            "FROM sys.identity_columns"));
                     for (Map row : rows) {
                         String schemaName = (String) row.get("SCHEMA_NAME");
                         String tableName = (String) row.get("TABLE_NAME");
@@ -245,7 +245,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
                         Long incrementBy = (Long) row.get("INCREMENT_BY");
 
                         Column.AutoIncrementInformation info =
-                            new Column.AutoIncrementInformation(startValue, incrementBy);
+                                new Column.AutoIncrementInformation(startValue, incrementBy);
                         autoIncrementColumns.put(schemaName + "." + tableName + "." + columnName, info);
                     }
                     snapshot.setScratchData("autoIncrementColumns", autoIncrementColumns);
@@ -255,8 +255,8 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
             }
             if ((column.getRelation() != null) && (column.getSchema() != null)) {
                 Column.AutoIncrementInformation autoIncrementInformation =
-                    autoIncrementColumns.get(column.getSchema().getName() + "." + column.getRelation().getName()
-                        + "." + column.getName());
+                        autoIncrementColumns.get(column.getSchema().getName() + "." + column.getRelation().getName()
+                                + "." + column.getName());
                 if (autoIncrementInformation != null) {
                     column.setAutoIncrementInformation(autoIncrementInformation);
                 }
@@ -265,7 +265,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
     }
 
     protected Column readColumn(CachedRow columnMetadataResultSet, Relation table, Database database)
-        throws SQLException, DatabaseException {
+            throws SQLException, DatabaseException {
         String rawTableName = (String) columnMetadataResultSet.get("TABLE_NAME");
         String rawColumnName = (String) columnMetadataResultSet.get("COLUMN_NAME");
         String rawSchemaName = StringUtils.trimToNull((String) columnMetadataResultSet.get("TABLE_SCHEM"));
@@ -397,7 +397,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
         // TODO Is uppercasing the potential function name always a good idea?
         // In theory, we could get a quoted function name (inprobable, but not impossible)
         if ((defaultValue != null) && (defaultValue instanceof DatabaseFunction) && ((DatabaseFunction) defaultValue)
-            .getValue().matches("\\w+")) {
+                .getValue().matches("\\w+")) {
             defaultValue = new DatabaseFunction(((DatabaseFunction) defaultValue).getValue().toUpperCase());
         }
         column.setDefaultValue(defaultValue);
@@ -477,7 +477,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
                 columnMetadataResultSet.set("COLUMN_SIZE", null);
                 columnMetadataResultSet.set("DECIMAL_DIGITS", null);
             } else if ("datetimeoffset".equalsIgnoreCase(columnTypeName)
-                || "time".equalsIgnoreCase(columnTypeName)) {
+                    || "time".equalsIgnoreCase(columnTypeName)) {
                 columnMetadataResultSet.set("COLUMN_SIZE", columnMetadataResultSet.getInt("DECIMAL_DIGITS"));
                 columnMetadataResultSet.set("DECIMAL_DIGITS", null);
             }
@@ -495,27 +495,27 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
         }
 
         if ((database instanceof MySQLDatabase) && ("ENUM".equalsIgnoreCase(columnTypeName) || "SET".equalsIgnoreCase
-            (columnTypeName))) {
+                (columnTypeName))) {
             try {
                 String boilerLength;
                 if ("ENUM".equalsIgnoreCase(columnTypeName)) {
                     boilerLength = "7";
-                } else  {
+                } else {
                     // SET
                     boilerLength = "6";
                 }
                 List<String> enumValues = ExecutorService.getInstance().getExecutor(database).queryForList(
-                    new RawSqlStatement(
-                        "SELECT DISTINCT SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(COLUMN_TYPE, " + boilerLength +
-                            ", LENGTH(COLUMN_TYPE) - " + boilerLength +
-                            " - 1 ), \"','\", 1 + units.i + tens.i * 10) , \"','\", -1)\n" +
-                            "FROM INFORMATION_SCHEMA.COLUMNS\n" +
-                            "CROSS JOIN (SELECT 0 AS i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 " +
-                            "UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) units\n" +
-                            "CROSS JOIN (SELECT 0 AS i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 " +
-                            "UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) tens\n" +
-                            "WHERE TABLE_NAME = '" + column.getRelation().getName() + "' \n" +
-                            "AND COLUMN_NAME = '" + column.getName() + "'"), String.class);
+                        new RawSqlStatement(
+                                "SELECT DISTINCT SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING(COLUMN_TYPE, " + boilerLength +
+                                        ", LENGTH(COLUMN_TYPE) - " + boilerLength +
+                                        " - 1 ), \"','\", 1 + units.i + tens.i * 10) , \"','\", -1)\n" +
+                                        "FROM INFORMATION_SCHEMA.COLUMNS\n" +
+                                        "CROSS JOIN (SELECT 0 AS i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 " +
+                                        "UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) units\n" +
+                                        "CROSS JOIN (SELECT 0 AS i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 " +
+                                        "UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) tens\n" +
+                                        "WHERE TABLE_NAME = '" + column.getRelation().getName() + "' \n" +
+                                        "AND COLUMN_NAME = '" + column.getName() + "'"), String.class);
                 String enumClause = "";
                 for (String enumValue : enumValues) {
                     enumClause += "'" + enumValue + "', ";
@@ -549,7 +549,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
         if (database instanceof AbstractDb2Database) {
             String typeName = columnMetadataResultSet.getString("TYPE_NAME");
             if (("DBCLOB".equalsIgnoreCase(typeName) || "GRAPHIC".equalsIgnoreCase(typeName)
-                || "VARGRAPHIC".equalsIgnoreCase(typeName)) &&(columnSize != null)) {
+                    || "VARGRAPHIC".equalsIgnoreCase(typeName)) && (columnSize != null)) {
                 //Stored as double length chars
                 columnSize = columnSize / 2;
             }
@@ -568,7 +568,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
         // but when creating a column, LONG BINARY must not have parameters.
         // The same applies to LONG(...) VARCHAR.
         if (database instanceof SybaseASADatabase
-            && ("LONG BINARY".equalsIgnoreCase(columnTypeName) || "LONG VARCHAR".equalsIgnoreCase(columnTypeName))) {
+                && ("LONG BINARY".equalsIgnoreCase(columnTypeName) || "LONG VARCHAR".equalsIgnoreCase(columnTypeName))) {
             columnSize = null;
         }
 
@@ -594,7 +594,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
                 type.setColumnSize(null);
             } else {
                 type.setColumnSize((decimalDigits != database.getDefaultFractionalDigitsForTimestamp()) ?
-                    decimalDigits : null
+                        decimalDigits : null
                 );
             }
 
@@ -624,13 +624,13 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
             columnMetadataResultSet.set(COLUMN_DEF_COL, columnMetadataResultSet.get("DATA_DEFAULT"));
 
             if ((columnMetadataResultSet.get(COLUMN_DEF_COL) != null) && "NULL".equalsIgnoreCase((String)
-                columnMetadataResultSet.get(COLUMN_DEF_COL))) {
+                    columnMetadataResultSet.get(COLUMN_DEF_COL))) {
                 columnMetadataResultSet.set(COLUMN_DEF_COL, null);
             }
 
             Object columnDef = columnMetadataResultSet.get(COLUMN_DEF_COL);
             if ("CHAR".equalsIgnoreCase(columnInfo.getType().getTypeName()) && (columnDef instanceof String) && !
-                ((String) columnDef).startsWith("'") && !((String) columnDef).endsWith("'")) {
+                    ((String) columnDef).startsWith("'") && !((String) columnDef).endsWith("'")) {
                 return new DatabaseFunction((String) columnDef);
             }
 
@@ -669,9 +669,9 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
         }
 
         if (
-            (database instanceof AbstractDb2Database) &&
-                ((columnMetadataResultSet.get(COLUMN_DEF_COL) != null) &&
-                    "NULL".equalsIgnoreCase((String) columnMetadataResultSet.get(COLUMN_DEF_COL)))) {
+                (database instanceof AbstractDb2Database) &&
+                        ((columnMetadataResultSet.get(COLUMN_DEF_COL) != null) &&
+                                "NULL".equalsIgnoreCase((String) columnMetadataResultSet.get(COLUMN_DEF_COL)))) {
             columnMetadataResultSet.set(COLUMN_DEF_COL, null);
         }
 
@@ -689,440 +689,4 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
     private boolean looksLikeFunction(String columnName) {
         return columnName.contains("(");
     }
-
-    //START CODE FROM SQLITEDatabaseSnapshotGenerator
-
-////    @Override
-////    protected void readColumns(DatabaseSnapshot snapshot, String schema, DatabaseMetaData databaseMetaData) throws SQLException, DatabaseException {
-////        Database database = snapshot.getDatabase();
-////        updateListeners("Reading columns for " + database.toString() + " ...");
-////
-////        if (database instanceof SQLiteDatabase) {
-////            // ...work around for SQLite
-////            for (Table cur_table : snapshot.getTables()) {
-////                Statement selectStatement = null;
-////                ResultSet rs = null;
-////                try {
-////                    selectStatement = ((JdbcConnection) database.getConnection()).getUnderlyingConnection().createStatement();
-////                    rs = databaseMetaData.getColumns(database.convertRequestedSchemaToCatalog(schema), database.convertRequestedSchemaToSchema(schema), cur_table.getName(), null);
-////                    if (rs == null) {
-////                        rs = databaseMetaData.getColumns(database.convertRequestedSchemaToCatalog(schema), database.convertRequestedSchemaToSchema(schema), cur_table.getName(), null);
-////                    }
-////                    while ((rs != null) && rs.next()) {
-////                        readColumnInfo(snapshot, schema, rs);
-////                    }
-////                } finally {
-////                    if (rs != null) {
-////                        try {
-////                            rs.close();
-////                        } catch (SQLException ignored) {
-////                        }
-////                    }
-////                    if (selectStatement != null) {
-////                        selectStatement.close();
-////                    }
-////                }
-////            }
-////        } else {
-////            // ...if it is no SQLite database
-////            Statement selectStatement = null;
-////            ResultSet rs = null;
-////            try {
-////                selectStatement = ((JdbcConnection) database.getConnection()).getUnderlyingConnection().createStatement();
-////                rs = databaseMetaData.getColumns(database.convertRequestedSchemaToCatalog(schema), database.convertRequestedSchemaToSchema(schema), null, null);
-////                while (rs.next()) {
-////                    readColumnInfo(snapshot, schema, rs);
-////                }
-////            } finally {
-////                if (rs != null) {
-////                    try {
-////                        rs.close();
-////                    } catch (SQLException ignored) {
-////                    }
-////                }
-////                if (selectStatement != null) {
-////                    selectStatement.close();
-////                }
-////            }
-////        }
-////    }
-//
-////    private Column readColumnInfo(DatabaseSnapshot snapshot, String schema, ResultSet rs) throws SQLException, DatabaseException {
-////        Database database = snapshot.getDatabase();
-////        Column columnInfo = new Column();
-////
-////        String tableName = rs.getString("TABLE_NAME");
-////        String columnName = rs.getString("COLUMN_NAME");
-////        String schemaName = rs.getString("TABLE_SCHEM");
-////        String catalogName = rs.getString("TABLE_CAT");
-////
-////        String upperCaseTableName = tableName.toUpperCase(Locale.ENGLISH);
-////
-////        if (database.isSystemTable(catalogName, schemaName, upperCaseTableName) ||
-////                database.isLiquibaseTable(upperCaseTableName)) {
-////            return null;
-////        }
-////
-////        Table table = snapshot.getTable(tableName);
-////        if (table == null) {
-////            View view = snapshot.getView(tableName);
-////            if (view == null) {
-////                LogFactory.getLogger().debug("Could not find table or view " + tableName + " for column " + columnName);
-////                return null;
-////            } else {
-////                columnInfo.setView(view);
-////                view.getColumns().add(columnInfo);
-////            }
-////        } else {
-////            columnInfo.setTable(table);
-////            table.getColumns().add(columnInfo);
-////        }
-////
-////        columnInfo.setName(columnName);
-////        columnInfo.setDataType(rs.getInt("DATA_TYPE"));
-////        columnInfo.setColumnSize(rs.getInt("COLUMN_SIZE"));
-////        columnInfo.setDecimalDigits(rs.getInt("DECIMAL_POINTS"));
-////        Object defaultValue = rs.getObject("COLUMN_DEF");
-//////        try {
-////            //todo columnInfo.setDefaultValue(TypeConverterFactory.getInstance().findTypeConverter(database).convertDatabaseValueToObject(defaultValue, columnInfo.getDataType(), columnInfo.getColumnSize(), columnInfo.getDecimalDigits(), database));
-//////        } catch (ParseException e) {
-//////            throw new DatabaseException(e);
-//////        }
-////
-////        int nullable = rs.getInt("NULLABLE");
-////        if (nullable == DatabaseMetaData.columnNoNulls) {
-////            columnInfo.setNullable(false);
-////        } else if (nullable == DatabaseMetaData.columnNullable) {
-////            columnInfo.setNullable(true);
-////        }
-////
-////        columnInfo.setPrimaryKey(snapshot.isPrimaryKey(columnInfo));
-////        columnInfo.setAutoIncrement(isColumnAutoIncrement(database, schema, tableName, columnName));
-////        String typeName = rs.getString("TYPE_NAME");
-////        if (columnInfo.isAutoIncrement()) {
-////            typeName += "{autoIncrement:true}";
-////        }
-////        columnInfo.setType(DataTypeFactory.getInstance().parse(typeName));
-////
-////        return columnInfo;
-////    }
-    //END CODE FROM SQLiteDatabaseSnapshotGenerator
-
-
-    //method was from DerbyDatabaseSnapshotGenerator
-//    @Override
-//    protected Object readDefaultValue(Map<String, Object> columnMetadataResultSet, Column columnInfo, Database database) throws SQLException, DatabaseException {
-//        Object val = columnMetadataResultSet.get("COLUMN_DEF");
-//
-//        if (val instanceof String && "GENERATED_BY_DEFAULT".equals(val)) {
-//            return null;
-//        }
-//        return super.readDefaultValue(columnMetadataResultSet, columnInfo, database);
-//    }
-
-
-    //START CODE FROM MysqlDatabaseSnapshotGenerator
-
-
-    //    @Override
-//    protected Object readDefaultValue(Column columnInfo, ResultSet rs, Database database) throws SQLException, DatabaseException {
-//            try {
-//                Object tmpDefaultValue = columnInfo.getType().toLiquibaseType().sqlToObject(tableSchema.get(columnName).get(1), database);
-//                // this just makes explicit the following implicit behavior defined in the mysql docs:
-//                // "If an ENUM column is declared to permit NULL, the NULL value is a legal value for
-//                // the column, and the default value is NULL. If an ENUM column is declared NOT NULL,
-//                // its default value is the first element of the list of permitted values."
-//                if (tmpDefaultValue == null && columnInfo.isNullable()) {
-//                    columnInfo.setDefaultValue("NULL");
-//                }
-//                // column is NOT NULL, and this causes no "DEFAULT VALUE XXX" to be generated at all. per
-//                // the above from MySQL docs, this will cause the first value in the enumeration to be the
-//                // default.
-//                else if (tmpDefaultValue == null) {
-//                    columnInfo.setDefaultValue(null);
-//                } else {
-//                    columnInfo.setDefaultValue("'" + database.escapeStringForDatabase(tmpDefaultValue) + "'");
-//                }
-//            } catch (ParseException e) {
-//                throw new DatabaseException(e);
-//            }
-//
-//            // TEXT and BLOB column types always have null as default value
-//        } else if (columnTypeName.toLowerCase().equals("text") || columnTypeName.toLowerCase().equals("blob")) {
-//            columnInfo.setType(new DatabaseDataType(columnTypeName));
-//            columnInfo.setDefaultValue(null);
-//
-//            // Parsing TIMESTAMP database.convertDatabaseValueToObject() produces incorrect results
-//            // eg. for default value 0000-00-00 00:00:00 we have 0002-11-30T00:00:00.0 as parsing result
-//        } else if (columnTypeName.toLowerCase().equals("timestamp") && !"CURRENT_TIMESTAMP".equals(tableSchema.get(columnName).get(1))) {
-//            columnInfo.setType(new DatabaseDataType(columnTypeName));
-//            columnInfo.setDefaultValue(tableSchema.get(columnName).get(1));
-//        } else {
-//            super.readDefaultValue(columnInfo, rs, database);
-//        }
-//
-//    }
-
-//    @Override
-//    protected DatabaseDataType readDataType(ResultSet rs, Database database) throws SQLException {
-//    	String columnTypeName = rs.getString("TYPE_NAME");
-//        String columnName     = rs.getString("COLUMN_NAME");
-//        String tableName      = rs.getString("TABLE_NAME");
-//        String schemaName     = rs.getString("TABLE_CAT");
-//
-//        Map<String, List<String>> tableSchema = new HashMap<String, List<String>>();
-//
-//        if (!schemaCache.containsKey(tableName)) {
-//
-//            Statement selectStatement = null;
-//            ResultSet rsColumnType = null;
-//            try {
-//                selectStatement = ((JdbcConnection) database.getConnection()).getUnderlyingConnection().createStatement();
-//                rsColumnType = selectStatement.executeQuery("DESC "+database.escapeTableName(schemaName, tableName));
-//
-//                while(rsColumnType.next()) {
-//                    List<String> colSchema = new ArrayList<String>();
-//                    colSchema.add(rsColumnType.getString("Type"));
-//                    colSchema.add(rsColumnType.getString("Default"));
-//                    tableSchema.put(rsColumnType.getString("Field"), colSchema);
-//                }
-//            } finally {
-//                if (rsColumnType != null) {
-//                    try {
-//                        rsColumnType.close();
-//                    } catch (SQLException ignore) { }
-//                }
-//                if (selectStatement != null) {
-//                    try {
-//                        selectStatement.close();
-//                    } catch (SQLException ignore) { }
-//                }
-//            }
-//
-//
-//            schemaCache.put(tableName, tableSchema);
-//
-//        }
-//
-//        tableSchema = schemaCache.get(tableName);
-//
-//        // Parse ENUM and SET column types correctly
-//        if (columnTypeName.toLowerCase().startsWith("enum") || columnTypeName.toLowerCase().startsWith("set")) {
-//
-//            DatabaseDataType dataType = new DatabaseDataType(tableSchema.get(columnName).get(0));
-//        	try {
-//                Object tmpDefaultValue = dataType.toLiquibaseType().sqlToObject(tableSchema.get(columnName).get(1), database);
-//                // this just makes explicit the following implicit behavior defined in the mysql docs:
-//                // "If an ENUM column is declared to permit NULL, the NULL value is a legal value for
-//                // the column, and the default value is NULL. If an ENUM column is declared NOT NULL,
-//                // its default value is the first element of the list of permitted values."
-//                if (tmpDefaultValue == null && columnInfo.isNullable()) {
-//                    columnInfo.setDefaultValue("NULL");
-//                }
-//                // column is NOT NULL, and this causes no "DEFAULT VALUE XXX" to be generated at all. per
-//                // the above from MySQL docs, this will cause the first value in the enumeration to be the
-//                // default.
-//                else if (tmpDefaultValue == null) {
-//                    columnInfo.setDefaultValue(null);
-//                } else {
-//                    columnInfo.setDefaultValue("'" + database.escapeStringForDatabase(tmpDefaultValue) + "'");
-//                }
-//        	} catch (ParseException e) {
-//        		throw new DatabaseException(e);
-//        	}
-//
-//        // TEXT and BLOB column types always have null as default value
-//        } else if (columnTypeName.toLowerCase().equals("text") || columnTypeName.toLowerCase().equals("blob")) {
-//        	columnInfo.setType(new DatabaseDataType(columnTypeName));
-//        	columnInfo.setDefaultValue(null);
-//
-//        // Parsing TIMESTAMP database.convertDatabaseValueToObject() produces incorrect results
-//        // eg. for default value 0000-00-00 00:00:00 we have 0002-11-30T00:00:00.0 as parsing result
-//        } else if (columnTypeName.toLowerCase().equals("timestamp") && !"CURRENT_TIMESTAMP".equals(tableSchema.get(columnName).get(1))) {
-//        	columnInfo.setType(new DatabaseDataType(columnTypeName));
-//        	columnInfo.setDefaultValue(tableSchema.get(columnName).get(1));
-//        } else {
-//        	super.readDefaultValue(columnInfo, rs, database);
-//        }
-//    }
-
-
-//    @Override
-//    protected ForeignKeyInfo readForeignKey(ResultSet importedKeyMetadataResultSet) throws DatabaseException, SQLException {
-//        ForeignKeyInfo fkinfo= super.readForeignKey(importedKeyMetadataResultSet);
-//        //MySQL in reality doesn't has schemas. It has databases that can have relations like schemas.
-//        fkinfo.setPkTableSchema(cleanObjectNameFromDatabase(importedKeyMetadataResultSet.getString("PKTABLE_CAT")));
-//        fkinfo.setFkSchema(cleanObjectNameFromDatabase(importedKeyMetadataResultSet.getString("FKTABLE_CAT")));
-//        return fkinfo;
-//    }
-//END CODE FROM MySQLDatabaseSNapshotGenerator
-
-    //START CODE from InformixSnapshotGenerator
-//    private static final Map<Integer, String> qualifiers = new HashMap<Integer, String>();
-//
-//    static {
-//        qualifiers.put(0, "YEAR");
-//        qualifiers.put(2, "MONTH");
-//        qualifiers.put(4, "DAY");
-//        qualifiers.put(6, "HOUR");
-//        qualifiers.put(8, "MINUTE");
-//        qualifiers.put(10, "SECOND");
-//        qualifiers.put(11, "FRACTION(1)");
-//        qualifiers.put(12, "FRACTION(2)");
-//        qualifiers.put(13, "FRACTION(3)");
-//        qualifiers.put(14, "FRACTION(4)");
-//        qualifiers.put(15, "FRACTION(5)");
-//    }
-//    protected DataType readDataType(Map<String, Object> rs, Column column, Database database) throws SQLException {
-//        // See http://publib.boulder.ibm.com/infocenter/idshelp/v115/topic/com.ibm.sqlr.doc/sqlr07.htm
-//        String typeName = ((String) rs.get("TYPE_NAME")).toUpperCase();
-//        if ("DATETIME".equals(typeName) || "INTERVAL".equals(typeName)) {
-//            int collength = (Integer) rs.get("COLUMN_SIZE");
-//            //int positions = collength / 256;
-//            int firstQualifierType = (collength % 256) / 16;
-//            int lastQualifierType = (collength % 256) % 16;
-//            String type = "DATETIME".equals(typeName) ? "DATETIME" : "INTERVAL";
-//            String firstQualifier = qualifiers.get(firstQualifierType);
-//            String lastQualifier = qualifiers.get(lastQualifierType);
-//            DataType dataTypeMetaData = new DataType(type + " " + firstQualifier + " TO " + lastQualifier);
-//            dataTypeMetaData.setColumnSizeUnit(DataType.ColumnSizeUnit.BYTE);
-//
-//            return dataTypeMetaData;
-//        } else {
-//            return super.readDataType(rs, column, database);
-//        }
-//    }
-    //END CODE FROM InformaixSnapshotGenerator
-
-    //Code below was from OracleDatabaseSnapshotGenerator
-    //    @Override
-//    protected void readColumns(DatabaseSnapshot snapshot, String schema, DatabaseMetaData databaseMetaData) throws SQLException, DatabaseException {
-//        findIntegerColumns(snapshot, schema);
-//        super.readColumns(snapshot, schema, databaseMetaData);
-//
-//        /*
-//          * Code Description:
-//          * Finding all 'tablespace' attributes of column's PKs
-//          * */
-//        Database database = snapshot.getDatabase();
-//        Statement statement = null;
-//        ResultSet rs = null;
-//        try {
-//            statement = ((JdbcConnection) database.getConnection()).getUnderlyingConnection().createStatement();
-//
-//            // Setting default schema name. Needed for correct statement generation
-//            if (schema == null)
-//                schema = database.convertRequestedSchemaToSchema(schema);
-//
-//            String query = "select ui.tablespace_name TABLESPACE, ucc.table_name TABLE_NAME, ucc.column_name COLUMN_NAME FROM all_indexes ui , all_constraints uc , all_cons_columns ucc where uc.constraint_type = 'P' and ucc.constraint_name = uc.constraint_name and uc.index_name = ui.index_name and uc.owner = '" + schema + "' and ui.table_owner = '" + schema + "' and ucc.owner = '" + schema + "'";
-//            rs = statement.executeQuery(query);
-//
-//            while (rs.next()) {
-//                Column column = snapshot.getColumn(rs.getString("TABLE_NAME"), rs.getString("COLUMN_NAME"));
-//                // setting up tablespace property to column, to configure it's PK-index
-//                if (column == null) {
-//                    continue; //probably a different schema
-//                }
-//                column.setTablespace(rs.getString("TABLESPACE"));
-//            }
-//        } finally {
-//            if (rs != null) {
-//                try {
-//                    rs.close();
-//                } catch (SQLException ignore) {
-//                }
-//            }
-//            if (statement != null) {
-//                try {
-//                    statement.close();
-//                } catch (SQLException ignore) {
-//                }
-//            }
-//        }
-//
-//    }
-//
-//    /**
-//     * Method finds all INTEGER columns in snapshot's database
-//     *
-//     * @param snapshot current database snapshot
-//     * @return String list with names of all INTEGER columns
-//     * @throws java.sql.SQLException execute statement error
-//     */
-//    private List<String> findIntegerColumns(DatabaseSnapshot snapshot, String schema) throws SQLException, DatabaseException {
-//
-//        Database database = snapshot.getDatabase();
-//        // Setting default schema name. Needed for correct statement generation
-//        if (schema == null) {
-//            schema = database.convertRequestedSchemaToSchema(schema);
-//        }
-//        Statement statement = ((JdbcConnection) database.getConnection()).getUnderlyingConnection().createStatement();
-//        ResultSet integerListRS = null;
-//        // Finding all columns created as 'INTEGER'
-//        try {
-//            integerListRS = statement.executeQuery("select TABLE_NAME, COLUMN_NAME from all_tab_columns where data_precision is null and data_scale = 0 and data_type = 'NUMBER' and owner = '" + schema + "'");
-//            while (integerListRS.next()) {
-//                integerList.add(integerListRS.getString("TABLE_NAME") + "." + integerListRS.getString("COLUMN_NAME"));
-//            }
-//        } finally {
-//            if (integerListRS != null) {
-//                try {
-//                    integerListRS.close();
-//                } catch (SQLException ignore) {
-//                }
-//            }
-//
-//            if (statement != null) {
-//                try {
-//                    statement.close();
-//                } catch (SQLException ignore) {
-//                }
-//            }
-//        }
-//
-//
-//        return integerList;
-//    }
-//
-////    @Override
-////    protected DatabaseDataType readDataType(ResultSet rs, Database database) throws SQLException {
-////        if (integerList.contains(column.getTable().getName() + "." + column.getName())) {
-////            column.setDataType(Types.INTEGER);
-////        } else {
-////            column.setDataType(rs.getInt("DATA_TYPE"));
-////        }
-////        column.setColumnSize(rs.getInt("COLUMN_SIZE"));
-////        column.setDecimalDigits(rs.getInt("DECIMAL_DIGITS"));
-////
-////        // Set true, if precision should be initialize
-////        column.setInitPrecision(
-////                !((column.getDataType() == Types.DECIMAL ||
-////                        column.getDataType() == Types.NUMERIC ||
-////                        column.getDataType() == Types.REAL) && rs.getString("DECIMAL_DIGITS") == null)
-////        );
-////    }
-//
-//
-    ////    @Override
-////    protected Object readDefaultValue(Column columnInfo, ResultSet rs, Database database) throws SQLException, DatabaseException {
-////        super.readDefaultValue(columnInfo, rs, database);
-////
-////        // Exclusive setting for oracle INTEGER type
-////        // Details:
-////        // INTEGER means NUMBER type with 'data_precision IS NULL and scale = 0'
-////        if (columnInfo.getDataType() == Types.INTEGER) {
-////            columnInfo.setType(DataTypeFactory.getInstance().parse("INTEGER"));
-////        }
-////
-////        String columnTypeName = rs.getString("TYPE_NAME");
-////        if ("VARCHAR2".equals(columnTypeName)) {
-////            int charOctetLength = rs.getInt("CHAR_OCTET_LENGTH");
-////            int columnSize = rs.getInt("COLUMN_SIZE");
-////            if (columnSize == charOctetLength) {
-////                columnInfo.setLengthSemantics(Column.ColumnSizeUnit.BYTE);
-////            } else {
-////                columnInfo.setLengthSemantics(Column.ColumnSizeUnit.CHAR);
-////            }
-////        }
-////    }
 }
