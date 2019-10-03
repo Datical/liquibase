@@ -46,7 +46,7 @@ public class CreateProcedureGenerator extends AbstractSqlGenerator<CreateProcedu
 
         String schemaName = statement.getSchemaName();
         if ((schemaName == null) && LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration.class)
-            .getAlwaysOverrideStoredLogicSchema()) {
+                .getAlwaysOverrideStoredLogicSchema()) {
             schemaName = database.getDefaultSchemaName();
         }
 
@@ -63,7 +63,7 @@ public class CreateProcedureGenerator extends AbstractSqlGenerator<CreateProcedu
             StringClauses.ClauseIterator clauseIterator = parsedSql.getClauseIterator();
             Object next = "START";
             while ((next != null) && !("create".equalsIgnoreCase(next.toString()) || "alter".equalsIgnoreCase(next
-                .toString())) && clauseIterator.hasNext()) {
+                    .toString())) && clauseIterator.hasNext()) {
                 next = clauseIterator.nextNonWhitespace();
             }
             clauseIterator.replace("ALTER");
@@ -74,7 +74,7 @@ public class CreateProcedureGenerator extends AbstractSqlGenerator<CreateProcedu
         procedureText = removeTrailingDelimiter(procedureText, statement.getEndDelimiter());
 
         if ((database instanceof MSSQLDatabase) && procedureText.toLowerCase().contains("merge") && !procedureText
-            .endsWith(";")) { //mssql "AS MERGE" procedures need a trailing ; (regardless of the end delimiter)
+                .endsWith(";")) { //mssql "AS MERGE" procedures need a trailing ; (regardless of the end delimiter)
             StringClauses parsed = SqlParser.parse(procedureText);
             StringClauses.ClauseIterator clauseIterator = parsed.getClauseIterator();
             boolean reallyMerge = false;
@@ -128,8 +128,7 @@ public class CreateProcedureGenerator extends AbstractSqlGenerator<CreateProcedu
             if (database instanceof OracleDatabase) {
                 sql.add(0, new UnparsedSql("ALTER SESSION SET CURRENT_SCHEMA=" + database.escapeObjectName(schemaName, Schema.class)));
                 sql.add(new UnparsedSql("ALTER SESSION SET CURRENT_SCHEMA=" + database.escapeObjectName(defaultSchema, Schema.class)));
-            }
-            else if (database instanceof AbstractDb2Database) {
+            } else if (database instanceof AbstractDb2Database) {
                 sql.add(0, new UnparsedSql("SET CURRENT SCHEMA " + schemaName));
                 sql.add(new UnparsedSql("SET CURRENT SCHEMA " + defaultSchema));
             }
@@ -154,7 +153,15 @@ public class CreateProcedureGenerator extends AbstractSqlGenerator<CreateProcedu
                 next = clauseIterator.nextNonWhitespace();
             }
             if ((next != null) && clauseIterator.hasNext()) {
-                Object procNameClause = clauseIterator.nextNonWhitespace();
+
+                //sometimes people don't include a space before the function name, like `create procedure[test]`
+                boolean hasWhitespaceBeforeName = false;
+                Object procNameClause = clauseIterator.next();
+                if (procNameClause instanceof StringClauses.Whitespace || procNameClause instanceof StringClauses.Comment) {
+                    procNameClause = clauseIterator.nextNonWhitespace();
+                    hasWhitespaceBeforeName = true;
+                }
+
                 if (procNameClause instanceof String) {
                     String[] nameParts = ((String) procNameClause).split("\\.");
                     String finalName;
@@ -166,6 +173,9 @@ public class CreateProcedureGenerator extends AbstractSqlGenerator<CreateProcedu
                         finalName = nameParts[0] + "." + database.escapeObjectName(schemaName, Schema.class) + "." + nameParts[2];
                     } else {
                         finalName = (String) procNameClause; //just go with what was there
+                    }
+                    if (!hasWhitespaceBeforeName) {
+                        finalName = " " + finalName;
                     }
                     clauseIterator.replace(finalName);
                 }
