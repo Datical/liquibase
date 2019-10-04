@@ -991,14 +991,12 @@ public abstract class AbstractJdbcDatabase implements Database {
     @Override
     public String escapeObjectName(String objectName, final Class<? extends DatabaseObject> objectType) {
         if (objectName != null) {
-            if (LiquibaseConfiguration.getInstance().getConfiguration(GlobalConfiguration.class).getTrimIdentifiers()) {
-                objectName = objectName.trim();
-            }
             if (mustQuoteObjectName(objectName, objectType)) {
-                return quoteObject(objectName, objectType);
+                return quoteObject(objectName, objectType).trim();
             } else if (quotingStrategy == ObjectQuotingStrategy.QUOTE_ALL_OBJECTS) {
-                return quoteObject(objectName, objectType);
+                return quoteObject(objectName, objectType).trim();
             }
+            objectName = objectName.trim();
         }
         return objectName;
     }
