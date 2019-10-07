@@ -107,11 +107,9 @@ public class CreateSequenceStatement extends AbstractSqlStatement {
         this.cacheSize = cacheSize;
         return this;
     }
-
     public String getDataType() {
         return dataType;
     }
-
     public CreateSequenceStatement setDataType(String dataType) {
         this.dataType = dataType;
         return this;
