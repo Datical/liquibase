@@ -1432,7 +1432,7 @@ public class Main {
                 throw e;
             }
         } else {
-            return new OutputStreamWriter(System.out, charsetName);
+            return new OutputStreamWriter(System.err, charsetName);
         }
     }
 
