@@ -711,9 +711,7 @@ public class Main {
                             && !cmdParm.startsWith("--" + OPTIONS.EXCLUDE_OBJECTS)
                             && !cmdParm.startsWith("--" + OPTIONS.INCLUDE_OBJECTS)
                             && !cmdParm.startsWith("--" + OPTIONS.DIFF_TYPES)
-                            && !cmdParm.startsWith("--" + OPTIONS.SNAPSHOT_FORMAT)
-                            && !cmdParm.startsWith("--" + OPTIONS.LOG_FILE)
-                            && !cmdParm.startsWith("--" + OPTIONS.LOG_LEVEL)) {
+                            && !cmdParm.startsWith("--" + OPTIONS.SNAPSHOT_FORMAT)) {
                         messages.add(String.format(coreBundle.getString("unexpected.command.parameter"), cmdParm));
                     }
                 }
@@ -727,9 +725,7 @@ public class Main {
                         && !cmdParm.startsWith("--" + OPTIONS.INCLUDE_CATALOG)
                         && !cmdParm.startsWith("--" + OPTIONS.INCLUDE_TABLESPACE)
                         && !cmdParm.startsWith("--" + OPTIONS.SCHEMAS)
-                        && !cmdParm.startsWith("--" + OPTIONS.SNAPSHOT_FORMAT)
-                        && !cmdParm.startsWith("--" + OPTIONS.LOG_FILE)
-                        && !cmdParm.startsWith("--" + OPTIONS.LOG_LEVEL)) {
+                        && !cmdParm.startsWith("--" + OPTIONS.SNAPSHOT_FORMAT)) {
                     messages.add(String.format(coreBundle.getString("unexpected.command.parameter"), cmdParm));
                 }
             }
