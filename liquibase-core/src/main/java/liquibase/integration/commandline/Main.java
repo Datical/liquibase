@@ -196,7 +196,7 @@ public class Main {
 
             List<String> setupMessages = main.checkSetup();
             if (!setupMessages.isEmpty()) {
-                main.printHelp(setupMessages, System.err);
+                main.printHelp(setupMessages, isStandardOutputRequired(main.command) ? System.err : System.out);
                 return 1;
             }
 
@@ -301,7 +301,7 @@ public class Main {
         logMessagePattern.setPattern("%d{HH:mm:ss.SSS} %-5level [%logger]: %message%n");
         logMessagePattern.start();
 
-        if (this.command.toLowerCase().endsWith("sql") || this.command.toLowerCase().startsWith("snapshot")) {
+        if (isStandardOutputRequired(this.command)) {
             consoleAppender.setTarget(ConsoleTarget.SystemErr.getName());
         }
 
@@ -388,6 +388,30 @@ public class Main {
 
         splitArg[0] = splitArg[0].replaceFirst("--", "");
         return splitArg;
+    }
+
+    /**
+     * Returns true if the given command requires stdout
+     *
+     * @param command the command to check
+     * @return true if stdout needs for a command, false if not
+     */
+    private static boolean isStandardOutputRequired(String command) {
+        return COMMANDS.SNAPSHOT.equalsIgnoreCase(command)
+                || COMMANDS.EXECUTE_SQL.equalsIgnoreCase(command)
+                || COMMANDS.SNAPSHOT_REFERENCE.equalsIgnoreCase(command)
+                || COMMANDS.UNEXPECTED_CHANGESETS.equalsIgnoreCase(command)
+                || COMMANDS.CHANGELOG_SYNC_SQL.equalsIgnoreCase(command)
+                || COMMANDS.MARK_NEXT_CHANGESET_RAN_SQL.equalsIgnoreCase(command)
+                || COMMANDS.UPDATE_COUNT_SQL.equalsIgnoreCase(command)
+                || COMMANDS.UPDATE_TO_TAG_SQL.equalsIgnoreCase(command)
+                || COMMANDS.UPDATE_SQL.equalsIgnoreCase(command)
+                || COMMANDS.ROLLBACK_SQL.equalsIgnoreCase(command)
+                || COMMANDS.ROLLBACK_TO_DATE_SQL.equalsIgnoreCase(command)
+                || COMMANDS.ROLLBACK_COUNT_SQL.equalsIgnoreCase(command)
+                || COMMANDS.FUTURE_ROLLBACK_SQL.equalsIgnoreCase(command)
+                || COMMANDS.FUTURE_ROLLBACK_COUNT_SQL.equalsIgnoreCase(command)
+                || COMMANDS.FUTURE_ROLLBACK_FROM_TAG_SQL.equalsIgnoreCase(command);
     }
 
     /**
@@ -689,7 +713,9 @@ public class Main {
                             && !cmdParm.startsWith("--" + OPTIONS.EXCLUDE_OBJECTS)
                             && !cmdParm.startsWith("--" + OPTIONS.INCLUDE_OBJECTS)
                             && !cmdParm.startsWith("--" + OPTIONS.DIFF_TYPES)
-                            && !cmdParm.startsWith("--" + OPTIONS.SNAPSHOT_FORMAT)) {
+                            && !cmdParm.startsWith("--" + OPTIONS.SNAPSHOT_FORMAT)
+                            && !cmdParm.startsWith("--" + OPTIONS.LOG_FILE)
+                            && !cmdParm.startsWith("--" + OPTIONS.LOG_LEVEL)) {
                         messages.add(String.format(coreBundle.getString("unexpected.command.parameter"), cmdParm));
                     }
                 }
@@ -703,7 +729,9 @@ public class Main {
                         && !cmdParm.startsWith("--" + OPTIONS.INCLUDE_CATALOG)
                         && !cmdParm.startsWith("--" + OPTIONS.INCLUDE_TABLESPACE)
                         && !cmdParm.startsWith("--" + OPTIONS.SCHEMAS)
-                        && !cmdParm.startsWith("--" + OPTIONS.SNAPSHOT_FORMAT)) {
+                        && !cmdParm.startsWith("--" + OPTIONS.SNAPSHOT_FORMAT)
+                        && !cmdParm.startsWith("--" + OPTIONS.LOG_FILE)
+                        && !cmdParm.startsWith("--" + OPTIONS.LOG_LEVEL)) {
                     messages.add(String.format(coreBundle.getString("unexpected.command.parameter"), cmdParm));
                 }
             }
@@ -1647,6 +1675,8 @@ public class Main {
         private static final String HELP = "help";
         private static final String VERSION = "version";
         private static final String SNAPSHOT_FORMAT = "snapshotFormat";
+        private static final String LOG_FILE = "logFile";
+        private static final String LOG_LEVEL = "logLevel";
     }
 
     private static class ConsoleFilter extends Filter<ILoggingEvent> {
