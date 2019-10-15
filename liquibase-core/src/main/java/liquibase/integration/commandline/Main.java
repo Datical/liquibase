@@ -126,6 +126,9 @@ public class Main {
     protected String snapshotFormat;
     private Boolean managingLogConfig = null;
     private boolean outputsLogMessages = false;
+    protected String sqlFile;
+    protected String delimiter;
+    protected String rollbackScript;
 
     /**
      * Entry point. This is what gets executes when starting this program from the command line. This is actually
