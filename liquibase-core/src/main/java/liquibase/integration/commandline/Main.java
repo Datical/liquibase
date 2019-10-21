@@ -160,6 +160,8 @@ public class Main {
 
         Logger log = LogService.getLog(Main.class);
 
+        log.info(LogType.USER_MESSAGE, "Changes which help to detect if we are using correct version of liquibase on Jenkins!!!");
+
         try {
             GlobalConfiguration globalConfiguration = LiquibaseConfiguration.getInstance().getConfiguration
                     (GlobalConfiguration.class);
