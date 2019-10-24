@@ -130,6 +130,8 @@ public class Main {
     private Boolean managingLogConfig = null;
     private boolean outputsLogMessages = false;
     private String sqlFile;
+    protected String delimiter;
+    protected String rollbackScript;
 
     /**
      * Entry point. This is what gets executes when starting this program from the command line. This is actually
@@ -773,7 +775,8 @@ public class Main {
                         && !cmdParm.startsWith("--" + OPTIONS.INCLUDE_CATALOG)
                         && !cmdParm.startsWith("--" + OPTIONS.INCLUDE_TABLESPACE)
                         && !cmdParm.startsWith("--" + OPTIONS.SCHEMAS)
-                        && !cmdParm.startsWith("--" + OPTIONS.SNAPSHOT_FORMAT)) {
+                        && !cmdParm.startsWith("--" + OPTIONS.SNAPSHOT_FORMAT)
+                        && !cmdParm.startsWith("--" + OPTIONS.OUTPUT_SCHEMAS_AS)) {
                     messages.add(String.format(coreBundle.getString("unexpected.command.parameter"), cmdParm));
                 }
             }

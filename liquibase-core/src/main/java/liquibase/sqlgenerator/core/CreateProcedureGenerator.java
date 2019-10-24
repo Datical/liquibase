@@ -157,7 +157,15 @@ public class CreateProcedureGenerator extends AbstractSqlGenerator<CreateProcedu
                 next = clauseIterator.nextNonWhitespace();
             }
             if ((next != null) && clauseIterator.hasNext()) {
-                Object procNameClause = clauseIterator.nextNonWhitespace();
+
+                //sometimes people don't include a space before the function name, like `create procedure[test]`
+                boolean hasWhitespaceBeforeName = false;
+                Object procNameClause = clauseIterator.next();
+                if (procNameClause instanceof StringClauses.Whitespace || procNameClause instanceof StringClauses.Comment) {
+                    procNameClause = clauseIterator.nextNonWhitespace();
+                    hasWhitespaceBeforeName = true;
+                }
+
                 if (procNameClause instanceof String) {
                     String[] nameParts = ((String) procNameClause).split("\\.");
                     String finalName;
@@ -169,6 +177,9 @@ public class CreateProcedureGenerator extends AbstractSqlGenerator<CreateProcedu
                         finalName = nameParts[0] + "." + database.escapeObjectName(schemaName, Schema.class) + "." + nameParts[2];
                     } else {
                         finalName = (String) procNameClause; //just go with what was there
+                    }
+                    if (!hasWhitespaceBeforeName) {
+                        finalName = " " + finalName;
                     }
                     clauseIterator.replace(finalName);
                 }
