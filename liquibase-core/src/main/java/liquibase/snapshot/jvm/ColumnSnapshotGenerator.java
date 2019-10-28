@@ -15,7 +15,6 @@ import liquibase.logging.LogType;
 import liquibase.logging.Logger;
 import liquibase.snapshot.CachedRow;
 import liquibase.snapshot.DatabaseSnapshot;
-import liquibase.snapshot.InvalidExampleException;
 import liquibase.snapshot.JdbcDatabaseSnapshot;
 import liquibase.statement.DatabaseFunction;
 import liquibase.statement.core.RawSqlStatement;
@@ -34,11 +33,6 @@ import java.util.regex.Pattern;
 
 public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
 
-  /**
-   * This attribute indicates whether we need to process a column object. It is visible only
-   * in scope of snapshot process.
-   */
-  private static final String LIQUIBASE_COMPLETE = "liquibase-complete";
     protected static final String COLUMN_DEF_COL = "COLUMN_DEF";
 
     private Pattern postgresStringValuePattern = Pattern.compile("'(.*)'::[\\w .]+");
@@ -51,31 +45,30 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
 
     @Override
     protected DatabaseObject snapshotObject(DatabaseObject example, DatabaseSnapshot snapshot) throws DatabaseException {
-        if ((((Column) example).getComputed() != null) && ((Column) example).getComputed()) {
-            return example;
-        }
+        Column column = (Column) example;
         Database database = snapshot.getDatabase();
+        Relation relation = column.getRelation();
 
-        Relation relation = ((Column) example).getRelation();
-        if (((Column) example).getComputed() != null && ((Column) example).getComputed()) {
-            return example;
+        if ((column.getComputed() != null) && (column.getComputed())) {
+            if (column.getAttribute(LIQUIBASE_COMPLETE, false)) {
+                column.setComputed(null);
+                column.setAttribute(LIQUIBASE_COMPLETE, null);
+            }
+            return column;
         }
 
         Schema schema = relation.getSchema();
         try {
-            Column column = null;
 
-            if (example.getAttribute(LIQUIBASE_COMPLETE, false)) {
-                column = (Column) example;
-                example.setAttribute(LIQUIBASE_COMPLETE, null);
-
+            if (column.getAttribute(LIQUIBASE_COMPLETE, false)) {
+                column.setAttribute(LIQUIBASE_COMPLETE, null);
                 return column;
             }
 
             String catalogName = ((AbstractJdbcDatabase) database).getJdbcCatalogName(schema);
             String schemaName = ((AbstractJdbcDatabase) database).getJdbcSchemaName(schema);
             String tableName = relation.getName();
-            String columnName = example.getName();
+            String columnName = column.getName();
 
             JdbcDatabaseSnapshot.CachingDatabaseMetaData databaseMetaData =
                     ((JdbcDatabaseSnapshot) snapshot).getMetaDataFromCache();

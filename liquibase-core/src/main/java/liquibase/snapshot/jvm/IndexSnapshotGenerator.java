@@ -23,6 +23,7 @@ import java.util.Map;
  * Analyses the properties of a database index and creates an object representation ("snapshot").
  */
 public class IndexSnapshotGenerator extends JdbcSnapshotGenerator {
+
     public IndexSnapshotGenerator() {
         super(Index.class, new Class[]{Table.class, View.class, ForeignKey.class, UniqueConstraint.class});
     }
@@ -61,6 +62,7 @@ public class IndexSnapshotGenerator extends JdbcSnapshotGenerator {
                         continue;
                     }
 
+                    Column column = null;
                     Index index = foundIndexes.get(indexName);
                     if (index == null) {
                         index = new Index();
@@ -85,7 +87,11 @@ public class IndexSnapshotGenerator extends JdbcSnapshotGenerator {
                     }
                     Boolean descending = "D".equals(ascOrDesc) ? Boolean.TRUE : ("A".equals(ascOrDesc) ? Boolean
                             .FALSE : null);
-                    index.addColumn(new Column(row.getString("COLUMN_NAME")).setComputed(false).setDescending(descending).setRelation(index.getRelation()));
+                    boolean computed = descending != null && descending;
+                    index.addColumn(new Column(row.getString("COLUMN_NAME"))
+                            .setComputed(computed)
+                            .setDescending(descending)
+                            .setRelation(index.getRelation()));
                 }
 
                 //add clustered indexes first, than all others in case there is a clustered and non-clustered version of the same index. Prefer the clustered version
@@ -282,16 +288,31 @@ public class IndexSnapshotGenerator extends JdbcSnapshotGenerator {
                         // Is this column a simple column (definition == null)
                         // or is it a computed expression (definition != null)
                         if (definition == null) {
-                        String ascOrDesc;
-                        if (database instanceof Db2zDatabase) {
-                            ascOrDesc = row.getString("ORDER");
-                        } else {
-                            ascOrDesc = row.getString("ASC_OR_DESC");
-                        }
+                            String ascOrDesc;
+                            if (database instanceof Db2zDatabase) {
+                                ascOrDesc = row.getString("ORDER");
+                            } else {
+                                ascOrDesc = row.getString("ASC_OR_DESC");
+                            }
                             Boolean descending = "D".equals(ascOrDesc) ? Boolean.TRUE : ("A".equals(ascOrDesc) ?
                                 Boolean.FALSE : null);
-                            returnIndex.getColumns().set(position - 1, new Column(columnName)
-                                    .setDescending(descending).setRelation(returnIndex.getRelation()));
+
+                            boolean computed = false;
+                            if (descending != null && descending) {
+                                computed = descending;
+                            }
+
+                            Column column = new Column()
+                                    .setName(row.getString("COLUMN_NAME"))
+                                    .setRelation(returnIndex.getRelation())
+                                    .setDescending(descending)
+                                    .setComputed(computed);
+
+                            if (computed) {
+                                column.setAttribute(LIQUIBASE_COMPLETE, true);
+                            }
+
+                            returnIndex.getColumns().set(position - 1, column);
                         } else {
                             returnIndex.getColumns().set(position - 1, new Column()
                                     .setRelation(returnIndex.getRelation()).setName(definition, true));

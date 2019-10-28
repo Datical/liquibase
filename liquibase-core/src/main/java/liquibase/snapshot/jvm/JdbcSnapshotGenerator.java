@@ -23,6 +23,15 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class JdbcSnapshotGenerator implements SnapshotGenerator {
+
+    /**
+     * This attribute indicates whether we need to process an object. It is visible only
+     * in scope of snapshot process.
+     * need to go through "snapshotting" the object even if it was previously populated in addTo.
+     * Use the "liquibase-complete" attribute to track that it doesn't need to be fully snapshotted
+     */
+    protected static final String LIQUIBASE_COMPLETE = "liquibase-complete";
+
     private Set<DiffStatusListener> statusListeners = new HashSet<>();
 
     private Class<? extends DatabaseObject> defaultFor;
