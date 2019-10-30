@@ -147,7 +147,10 @@ public class CreateProcedureGenerator extends AbstractSqlGenerator<CreateProcedu
             StringClauses.ClauseIterator clauseIterator = parsedSql.getClauseIterator();
             Object next = "START";
             while ((next != null) && !next.toString().equalsIgnoreCase(keywordBeforeName) && clauseIterator.hasNext()) {
-                if (!"PACKAGE".equalsIgnoreCase(keywordBeforeName) && "PACKAGE".equalsIgnoreCase((String) next)) {
+
+                //don't add schema to CREATE PROCEDURE statements inside PACKAGE/PACKAGE-BODY sql
+                if ("PACKAGE".equalsIgnoreCase((String) next) &&
+                        !("PACKAGE".equalsIgnoreCase(keywordBeforeName) || "BODY".equalsIgnoreCase(keywordBeforeName))) {
                     return procedureText;
                 }
                 next = clauseIterator.nextNonWhitespace();
