@@ -308,10 +308,6 @@ public class IndexSnapshotGenerator extends JdbcSnapshotGenerator {
                                     .setDescending(descending)
                                     .setComputed(computed);
 
-                            if (computed) {
-                                column.setAttribute(LIQUIBASE_COMPLETE, true);
-                            }
-
                             returnIndex.getColumns().set(position - 1, column);
                         } else {
                             returnIndex.getColumns().set(position - 1, new Column()
@@ -326,8 +322,7 @@ public class IndexSnapshotGenerator extends JdbcSnapshotGenerator {
         }
 
         if (exampleName != null) {
-            Index index = foundIndexes.get(exampleName);
-            return index;
+            return foundIndexes.get(exampleName);
         } else {
             //prefer clustered version of the index
             List<Index> nonClusteredIndexes = new ArrayList<>();

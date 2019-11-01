@@ -50,10 +50,6 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
         Relation relation = column.getRelation();
 
         if ((column.getComputed() != null) && (column.getComputed())) {
-            if (column.getAttribute(LIQUIBASE_COMPLETE, false)) {
-                column.setComputed(null);
-                column.setAttribute(LIQUIBASE_COMPLETE, null);
-            }
             return column;
         }
 
