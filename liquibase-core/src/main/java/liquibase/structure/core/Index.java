@@ -84,11 +84,11 @@ public class Index extends AbstractDatabaseObject {
     }
 
     public Relation getRelation() {
-    	return getAttribute("table", Relation.class);
+    	return getAttribute("relation", Relation.class);
     }
 
     public Index setRelation(Relation relation) {
-    	this.setAttribute("table", relation);
+    	this.setAttribute("relation", relation);
         return this;
     }
 
