@@ -631,6 +631,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
             Object columnDef = columnMetadataResultSet.get(COLUMN_DEF_COL);
             if ("CHAR".equalsIgnoreCase(columnInfo.getType().getTypeName()) && (columnDef instanceof String) && !
                 ((String) columnDef).startsWith("'") && !((String) columnDef).endsWith("'")) {
+                columnMetadataResultSet.set(COLUMN_DEF_COL, null);
                 return new DatabaseFunction((String) columnDef);
             }
 
