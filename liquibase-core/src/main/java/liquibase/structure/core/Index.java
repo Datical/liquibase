@@ -113,7 +113,7 @@ public class Index extends AbstractDatabaseObject {
     }
 
     public Index setColumns(List<Column> columns) {
-        if (getRelation() instanceof Table) {
+        if (getAttribute("relation", Object.class) instanceof Table) {
             for (Column column :columns) {
                 column.setRelation(getRelation());
             }
