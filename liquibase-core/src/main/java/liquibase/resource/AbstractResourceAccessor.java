@@ -79,7 +79,7 @@ public abstract class AbstractResourceAccessor implements ResourceAccessor {
         return rootStrings;
     }
 
-    protected void getContents(File rootFile, boolean recursive, boolean includeFiles, boolean includeDirectories, String basePath, Set<String> returnSet) {
+    protected void getContents(File rootFile, boolean recursive, boolean includeFiles, boolean includeDirectories, String basePath, Set<String> returnSet) throws IOException {
         File[] files = rootFile.listFiles();
         if (files == null) {
             return;
@@ -87,14 +87,14 @@ public abstract class AbstractResourceAccessor implements ResourceAccessor {
         for (File file : files) {
             if (file.isDirectory()) {
                 if (includeDirectories) {
-                    returnSet.add(convertToPath(file.getAbsolutePath()));
+                    returnSet.add(convertToPath(file.getCanonicalPath()));
                 }
                 if (recursive) {
                     getContents(file, recursive, includeFiles, includeDirectories, basePath, returnSet);
                 }
             } else {
                 if (includeFiles) {
-                    returnSet.add(convertToPath(file.getAbsolutePath()));
+                    returnSet.add(convertToPath(file.getCanonicalPath()));
                 }
             }
         }
