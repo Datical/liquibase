@@ -191,7 +191,7 @@ public class SequenceSnapshotGenerator extends JdbcSnapshotGenerator {
                     "     ELSE CASE WHEN min_value=(-999999999999999999999999999) THEN NULL else min_value END\n" +
                     "END AS min_value, \n" +
                     "CASE WHEN increment_by > 0 \n" +
-                    "     THEN CASE WHEN max_value=999999999999999999999999999 THEN NULL ELSE max_value END\n" +
+                    "     THEN CASE WHEN max_value=9999999999999999999999999999 THEN NULL ELSE max_value END\n" +
                     "     ELSE CASE WHEN max_value=last_number THEN NULL else max_value END \n" +
                     "END  AS max_value, \n" +
                     "CASE WHEN increment_by = 1 THEN NULL ELSE increment_by END AS increment_by, \n" +
