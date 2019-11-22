@@ -1,5 +1,6 @@
 package liquibase.database.core;
 
+import java.math.BigInteger;
 import liquibase.CatalogAndSchema;
 import liquibase.Scope;
 import liquibase.database.AbstractJdbcDatabase;
@@ -34,8 +35,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.ResourceBundle.getBundle;
-
 /**
  * Encapsulates Oracle database support.
  */
@@ -43,7 +42,6 @@ public class OracleDatabase extends AbstractJdbcDatabase {
     private static final Pattern PROXY_USER = Pattern.compile(".*(?:thin|oci)\\:(.+)/@.*");
 
     public static final String PRODUCT_NAME = "oracle";
-    private static ResourceBundle coreBundle = getBundle("liquibase/i18n/liquibase-core");
     protected final int SHORT_IDENTIFIERS_LENGTH = 30;
     protected final int LONG_IDENTIFIERS_LEGNTH = 128;
     public static final int ORACLE_12C_MAJOR_VERSION = 12;
@@ -74,6 +72,26 @@ public class OracleDatabase extends AbstractJdbcDatabase {
         super.sequenceNextValueFunction = "%s.nextval";
         //noinspection HardCodedStringLiteral
         super.sequenceCurrentValueFunction = "%s.currval";
+
+        super.sequenceDefaultValues = this.getDefaultValuesForSequence();
+    }
+
+    private Map<String, Object> getDefaultValuesForSequence() {
+        Map<String, Object> defaultValues = new HashMap<>();
+        //MIN_VALUE
+        defaultValues.put("minValueMax", BigInteger.ONE);
+        defaultValues.put("minValueMin", new BigInteger("-999999999999999999999999999"));
+        //MAX_VALUE
+        defaultValues.put("maxValueMax", new BigInteger("9999999999999999999999999999"));
+        //INCREMENT_BY
+        defaultValues.put("incrementBy", BigInteger.ONE);
+        //CYCLE
+        defaultValues.put("cycle", Boolean.FALSE);
+        //ORDERED
+        defaultValues.put("ordered", Boolean.FALSE);
+        //CACHE_SIZE
+        defaultValues.put("cacheSize", new BigInteger("20"));
+        return defaultValues;
     }
 
     @Override
