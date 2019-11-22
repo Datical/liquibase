@@ -1,5 +1,6 @@
 package liquibase.diff.output.changelog.core;
 
+import java.math.BigInteger;
 import liquibase.change.Change;
 import liquibase.change.core.CreateSequenceChange;
 import liquibase.database.Database;
@@ -42,14 +43,55 @@ public class MissingSequenceChangeGenerator extends AbstractChangeGenerator impl
         if (control.getIncludeSchema()) {
             change.setSchemaName(sequence.getSchema().getName());
         }
-        change.setStartValue(sequence.getStartValue());
-        change.setIncrementBy(sequence.getIncrementBy());
-        change.setMinValue(sequence.getMinValue());
-        change.setMaxValue(sequence.getMaxValue());
-        change.setCacheSize(sequence.getCacheSize());
-        change.setCycle(sequence.getWillCycle());
-        change.setOrdered(sequence.getOrdered());
+
+        BigInteger incrementBy = sequence.getIncrementBy();
+        Object incrementByDefault = comparisonDatabase.getDefaultValueForSequence("incrementBy", null);
+        if (incrementBy != null && !(incrementBy.equals(incrementByDefault))) {
+            change.setIncrementBy(incrementBy);
+        }
+
+        BigInteger maxValue = sequence.getMaxValue();
+        Object lastNumber = sequence.getStartValue();
+        Object maxValueDefaultMax = comparisonDatabase.getDefaultValueForSequence("maxValue", true);
+        if (maxValue != null) {
+            if((incrementBy != null) && (incrementBy.longValue() > 0) && !(maxValue.equals(maxValueDefaultMax))) {
+                change.setMaxValue(maxValue);
+            } else if((incrementBy != null) && (incrementBy.longValue() < 0) && !(maxValue.equals(lastNumber))) {
+                change.setMaxValue(maxValue);
+            }
+        }
+
+        BigInteger minValue = sequence.getMinValue();
+        Object minValueDefaultMax = comparisonDatabase.getDefaultValueForSequence("minValue", true);
+        Object minValueDefaultMin = comparisonDatabase.getDefaultValueForSequence("minValue", false);
+        if (minValue != null) {
+            if((incrementBy != null) && (incrementBy.longValue() > 0) && !(minValue.equals(minValueDefaultMax))) {
+                change.setMinValue(minValue);
+            } else if((incrementBy != null) && (incrementBy.longValue() < 0) && !(minValue.equals(minValueDefaultMin))) {
+                change.setMinValue(minValue);
+            }
+        }
+
+        Boolean cycle  = sequence.getWillCycle();
+        Object cycleDefaultValue  = comparisonDatabase.getDefaultValueForSequence("cycle", null);
+        if ((cycle != null) && !(cycle.equals(cycleDefaultValue))) {
+            change.setCycle(cycle);
+        }
+
+        Boolean ordered  = sequence.getOrdered();
+        Object orderedDefaultValue  = comparisonDatabase.getDefaultValueForSequence("ordered", null);
+        if ((ordered != null) && !(ordered.equals(orderedDefaultValue))) {
+            change.setOrdered(ordered);
+        }
+
+        BigInteger cacheSize = sequence.getCacheSize();
+        Object cacheSizeDefaultValue = comparisonDatabase.getDefaultValueForSequence("cacheSize", null);
+        if ((cacheSize != null) && !(cacheSize.equals(cacheSizeDefaultValue))) {
+            change.setCacheSize(cacheSize);
+        }
+
         change.setDataType(sequence.getDataType());
+        change.setStartValue(sequence.getStartValue());
 
         return new Change[] { change };
 
