@@ -65,7 +65,7 @@ public class DateType extends LiquibaseDataType {
         try {
             DateFormat dateFormat = getDateFormat(database);
 
-            if ((database instanceof OracleDatabase) && value.matches("to_date\\('\\d+\\-\\d+\\-\\d+', " +
+            if ((database instanceof OracleDatabase) && value.matches("(to_date)|(TO_DATE)\\('\\d+\\-\\d+\\-\\d+', " +
                 "'YYYY\\-MM\\-DD'\\)")) {
                 dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 value = value.replaceFirst(".*?'", "").replaceFirst("',.*","");
