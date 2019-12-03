@@ -1027,7 +1027,8 @@
             <xsd:attribute name="splitStatements" type="booleanExp"/>
             <xsd:attribute name="endDelimiter" type="xsd:string"/>
             <xsd:attribute name="dbms" type="xsd:string" />
-        </xsd:complexType>
+        <xsd:anyAttribute namespace="##other" processContents="lax"/>
+		</xsd:complexType>
     </xsd:element>
 
     <xsd:element name="createProcedure">
