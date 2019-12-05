@@ -90,7 +90,6 @@ public class MSSQLDatabase extends AbstractJdbcDatabase {
 
         // Information obtained from:
         // https://docs.microsoft.com/en-us/sql/t-sql/data-types/precision-scale-and-length-transact-sql
-        defaultDataTypeParameters.put("datetime", 3);
         defaultDataTypeParameters.put("datetime2", 7);
         defaultDataTypeParameters.put("datetimeoffset", 7);
         defaultDataTypeParameters.put("time", 7);
@@ -102,6 +101,8 @@ public class MSSQLDatabase extends AbstractJdbcDatabase {
         defaultDataTypeParameters.put("tinyint", 0);
         defaultDataTypeParameters.put("money", 4);
         defaultDataTypeParameters.put("smallmoney", 0);
+
+        unmodifiableDataTypes.add("datetime");
 
         addReservedWords(createReservedWordsCollection());
     }
