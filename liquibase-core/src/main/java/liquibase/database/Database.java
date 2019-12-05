@@ -459,5 +459,14 @@ public interface Database extends PrioritizedService {
     String unescapeDataTypeString(String dataTypeString);
 
     ValidationErrors validate();
+
+    /**
+     * Returns default value for sequence attribute
+     * @param attribute attribute name
+     * @param max true if you need to get max value for a same attribute, false if min value, null if an attribute has single default value
+     * @return default value of attribute or null if database does not have defaults
+     */
+    Object getDefaultValueForSequence(String attribute, Boolean max);
+
 }
 

@@ -795,6 +795,11 @@ public class MockDatabase implements Database, InternalDatabase {
     }
 
     @Override
+    public Object getDefaultValueForSequence(String attribute, Boolean max) {
+        return null;
+    }
+
+    @Override
     public boolean supportsNotNullConstraintNames() {
         return false;
     }

@@ -127,6 +127,8 @@ public abstract class AbstractJdbcDatabase implements Database {
     private Map<String, Object> attributes = new HashMap<>();
     protected String dbFullVersion;
 
+    protected Map<String, Object> sequenceDefaultValues = new HashMap<>();
+
     public String getName() {
         return toString();
     }
@@ -1645,4 +1647,17 @@ public abstract class AbstractJdbcDatabase implements Database {
     public CatalogAndSchema.CatalogAndSchemaCase getSchemaAndCatalogCase() {
         return CatalogAndSchema.CatalogAndSchemaCase.UPPER_CASE;
     }
+
+    @Override
+    public Object getDefaultValueForSequence(String attribute, Boolean max) {
+        if (max != null) {
+            if (max) {
+                attribute = attribute.concat("Max");
+            } else {
+                attribute = attribute.concat("Min");
+            }
+        }
+        return sequenceDefaultValues.getOrDefault(attribute, null);
+    }
+
 }

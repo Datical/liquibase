@@ -7,6 +7,7 @@ import liquibase.exception.DatabaseException;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.executor.ExecutorService;
 import liquibase.logging.LogFactory;
+import liquibase.logging.LogService;
 import liquibase.logging.Logger;
 import liquibase.snapshot.DatabaseSnapshot;
 import liquibase.snapshot.InvalidExampleException;
@@ -25,7 +26,17 @@ import java.util.Map;
  */
 public class SequenceSnapshotGenerator extends JdbcSnapshotGenerator {
 
-    private Logger log = LogFactory.getInstance().getLog(SequenceSnapshotGenerator.class.getSimpleName());
+    private final Logger log = LogService.getLog(SequenceSnapshotGenerator.class);
+
+    private static final String SEQUENCE_NAME = "SEQUENCE_NAME";
+    private static final String START_VALUE = "START_VALUE";
+    private static final String MIN_VALUE = "MIN_VALUE";
+    private static final String MAX_VALUE = "MAX_VALUE";
+    private static final String CACHE_SIZE = "CACHE_SIZE";
+    private static final String INCREMENT_BY = "INCREMENT_BY";
+    private static final String WILL_CYCLE = "WILL_CYCLE";
+    private static final String IS_ORDERED = "IS_ORDERED";
+    private static final String SEQ_TYPE = "SEQ_TYPE";
 
     public SequenceSnapshotGenerator() {
         super(Sequence.class, new Class[]{Schema.class});
@@ -82,7 +93,7 @@ public class SequenceSnapshotGenerator extends JdbcSnapshotGenerator {
 
     private DatabaseObject getSequences(DatabaseObject example, Database database, List<Map<String, ?>> sequences) {
         for (Map<String, ?> sequenceRow : sequences) {
-            String name = cleanNameFromDatabase((String) sequenceRow.get("SEQUENCE_NAME"), database);
+            String name = cleanNameFromDatabase((String) sequenceRow.get(SEQUENCE_NAME), database);
             if (((database.isCaseSensitive() && name.equals(example.getName())) || (!database.isCaseSensitive() &&
                 name.equalsIgnoreCase(example.getName())))) {
                 return mapToSequence(sequenceRow, example.getSchema(), database);
@@ -92,24 +103,24 @@ public class SequenceSnapshotGenerator extends JdbcSnapshotGenerator {
     }
 
     private Sequence mapToSequence(Map<String, ?> sequenceRow, Schema schema, Database database) {
-        String name = cleanNameFromDatabase((String) sequenceRow.get("SEQUENCE_NAME"), database);
-        Sequence seq = new Sequence();
-        seq.setName(name);
-        seq.setSchema(schema);
-        seq.setStartValue(toBigInteger(sequenceRow.get("START_VALUE"), database));
-        seq.setMinValue(toBigInteger(sequenceRow.get("MIN_VALUE"), database));
-        seq.setMaxValue(toBigInteger(sequenceRow.get("MAX_VALUE"), database));
-        seq.setCacheSize(toBigInteger(sequenceRow.get("CACHE_SIZE"), database));
-        seq.setIncrementBy(toBigInteger(sequenceRow.get("INCREMENT_BY"), database));
-        seq.setWillCycle(toBoolean(sequenceRow.get("WILL_CYCLE"), database));
-        seq.setOrdered(toBoolean(sequenceRow.get("IS_ORDERED"), database));
-        seq.setDataType((String) sequenceRow.get("SEQ_TYPE"));
+        String name = cleanNameFromDatabase((String) sequenceRow.get(SEQUENCE_NAME), database);
+        Sequence seq = new Sequence()
+            .setName(name)
+            .setSchema(schema)
+            .setStartValue(toBigInteger(sequenceRow.get(START_VALUE)))
+            .setMinValue(toBigInteger(sequenceRow.get(MIN_VALUE)))
+            .setMaxValue(toBigInteger(sequenceRow.get(MAX_VALUE)))
+            .setCacheSize(toBigInteger(sequenceRow.get(CACHE_SIZE)))
+            .setIncrementBy(toBigInteger(sequenceRow.get(INCREMENT_BY)))
+            .setWillCycle(toBoolean(sequenceRow.get(WILL_CYCLE)))
+            .setOrdered(toBoolean(sequenceRow.get(IS_ORDERED)))
+            .setDataType((String) sequenceRow.get(SEQ_TYPE));
         seq.setAttribute(LIQUIBASE_COMPLETE, true);
 
         return seq;
     }
 
-    protected Boolean toBoolean(Object value, Database database) {
+    protected Boolean toBoolean(Object value) {
         if (value == null) {
             return null;
         }
@@ -131,7 +142,7 @@ public class SequenceSnapshotGenerator extends JdbcSnapshotGenerator {
         }
     }
 
-    protected BigInteger toBigInteger(Object value, Database database) {
+    protected BigInteger toBigInteger(Object value) {
         if (value == null) {
             return null;
         }
@@ -177,29 +188,7 @@ public class SequenceSnapshotGenerator extends JdbcSnapshotGenerator {
         } else if (database instanceof InformixDatabase) {
             return "SELECT tabname AS SEQUENCE_NAME FROM systables t, syssequences s WHERE s.tabid = t.tabid AND t.owner = '" + schema.getName() + "'";
         } else if (database instanceof OracleDatabase) {
-            /*
-             * Return an SQL statement that only returns the non-default values so the output changeLog is cleaner
-             * and less polluted with unnecessary values.
-             * The the following pages for the defaults (consistent for all supported releases ATM):
-             * 12cR2: http://docs.oracle.com/database/122/SQLRF/CREATE-SEQUENCE.htm
-             * 12cR1: http://docs.oracle.com/database/121/SQLRF/statements_6017.htm
-             * 11gR2: http://docs.oracle.com/cd/E11882_01/server.112/e41084/statements_6015.htm
-             */
-            return "SELECT sequence_name, \n" +
-                    "CASE WHEN increment_by > 0 \n" +
-                    "     THEN CASE WHEN min_value=1 THEN NULL ELSE min_value END\n" +
-                    "     ELSE CASE WHEN min_value=(-999999999999999999999999999) THEN NULL else min_value END\n" +
-                    "END AS min_value, \n" +
-                    "CASE WHEN increment_by > 0 \n" +
-                    "     THEN CASE WHEN max_value=999999999999999999999999999 THEN NULL ELSE max_value END\n" +
-                    "     ELSE CASE WHEN max_value=last_number THEN NULL else max_value END \n" +
-                    "END  AS max_value, \n" +
-                    "CASE WHEN increment_by = 1 THEN NULL ELSE increment_by END AS increment_by, \n" +
-                    "CASE WHEN cycle_flag = 'N' THEN NULL ELSE cycle_flag END AS will_cycle, \n" +
-                    "CASE WHEN order_flag = 'N' THEN NULL ELSE order_flag END AS is_ordered, \n" +
-                    "LAST_NUMBER as START_VALUE, \n" +
-                    "CASE WHEN cache_size = 20 THEN NULL ELSE cache_size END AS cache_size \n" +
-                    "FROM ALL_SEQUENCES WHERE SEQUENCE_OWNER = '" + schema.getCatalogName() + "'";
+            return "SELECT SEQUENCE_NAME AS SEQUENCE_NAME, MIN_VALUE, MAX_VALUE, INCREMENT_BY, CYCLE_FLAG AS WILL_CYCLE, ORDER_FLAG AS IS_ORDERED, LAST_NUMBER as START_VALUE, CACHE_SIZE FROM ALL_SEQUENCES WHERE SEQUENCE_OWNER = '" + schema.getCatalogName() + "'";
         } else if (database instanceof PostgresDatabase) {
             int version = 9;
             try {
