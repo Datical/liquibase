@@ -1,5 +1,6 @@
 package liquibase.sqlgenerator.core;
 
+import java.util.regex.Pattern;
 import liquibase.database.Database;
 import liquibase.database.core.MSSQLDatabase;
 import liquibase.exception.Warnings;
@@ -61,7 +62,7 @@ public abstract class AbstractSqlGenerator<T extends SqlStatement> implements Sq
      */
     public boolean looksLikeFunctionCall(String value, Database database) {
         // TODO: SYSIBM looks DB2-specific, we should move that out of AbstractSqlGenerator into a DB2-specific class.
-        return value.startsWith("\"SYSIBM\"") || value.startsWith("to_date(") ||
+        return value.startsWith("\"SYSIBM\"") || value.toUpperCase().startsWith("TO_DATE\\(") ||
             value.equalsIgnoreCase(database.getCurrentDateTimeFunction());
     }
 

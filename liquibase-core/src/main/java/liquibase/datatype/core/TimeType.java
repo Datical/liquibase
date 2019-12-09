@@ -96,7 +96,7 @@ public class TimeType  extends LiquibaseDataType {
         try {
             DateFormat timeFormat = getTimeFormat(database);
 
-            if ((database instanceof OracleDatabase) && value.matches("to_date\\('\\d+:\\d+:\\d+', 'HH24:MI:SS'\\)")) {
+            if ((database instanceof OracleDatabase) && value.toUpperCase().matches("TO_DATE\\('\\d+:\\d+:\\d+', 'HH24:MI:SS'\\)")) {
                 timeFormat = new SimpleDateFormat("HH:mm:s");
                 value = value.replaceFirst(".*?'", "").replaceFirst("',.*","");
             }

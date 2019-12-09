@@ -178,7 +178,7 @@ public class DateTimeType extends LiquibaseDataType {
         try {
             DateFormat dateTimeFormat = getDateTimeFormat(database);
 
-            if ((database instanceof OracleDatabase) && value.matches("to_date\\('\\d+\\-\\d+\\-\\d+ \\d+:\\d+:\\d+'," +
+            if ((database instanceof OracleDatabase) && value.toUpperCase().matches("TO_DATE\\('\\d+\\-\\d+\\-\\d+ \\d+:\\d+:\\d+'," +
                 " 'YYYY\\-MM\\-DD HH24:MI:SS'\\)")) {
                 dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:s");
                 value = value.replaceFirst(".*?'", "").replaceFirst("',.*","");
