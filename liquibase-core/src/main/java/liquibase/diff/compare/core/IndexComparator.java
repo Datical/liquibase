@@ -3,17 +3,19 @@ package liquibase.diff.compare.core;
 import liquibase.database.Database;
 import liquibase.diff.ObjectDifferences;
 import liquibase.diff.compare.CompareControl;
-import liquibase.structure.DatabaseObject;
-import liquibase.structure.core.Column;
-import liquibase.structure.core.Index;
 import liquibase.diff.compare.DatabaseObjectComparator;
 import liquibase.diff.compare.DatabaseObjectComparatorChain;
 import liquibase.diff.compare.DatabaseObjectComparatorFactory;
+import liquibase.structure.DatabaseObject;
+import liquibase.structure.core.Column;
+import liquibase.structure.core.Index;
 import liquibase.structure.core.Relation;
-import liquibase.structure.core.Table;
 import liquibase.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 public class IndexComparator implements DatabaseObjectComparator {
     @Override
@@ -78,7 +80,8 @@ public class IndexComparator implements DatabaseObjectComparator {
                         return false;
                     }
                 }
-                return true;
+
+                return DefaultDatabaseObjectComparator.nameMatches(databaseObject1, databaseObject2, accordingTo);
             }
         } else {
             if (thisIndexSize > 0 && otherIndexSize > 0 && thisIndexSize != otherIndexSize) {
