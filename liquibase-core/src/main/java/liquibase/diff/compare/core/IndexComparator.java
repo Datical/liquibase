@@ -70,11 +70,7 @@ public class IndexComparator implements DatabaseObjectComparator {
                     return DefaultDatabaseObjectComparator.nameMatches(databaseObject1, databaseObject2, accordingTo);
                 }
 
-                if (accordingTo instanceof MSSQLDatabase) {
-                    return DefaultDatabaseObjectComparator.nameMatches(databaseObject1, databaseObject2, accordingTo);
-                }
-
-                if (thisIndexSize > 0 && otherIndexSize > 0 && thisIndexSize != otherIndexSize) {
+                if (thisIndexSize != otherIndexSize) {
                     return false;
                 }
 
@@ -83,6 +79,10 @@ public class IndexComparator implements DatabaseObjectComparator {
                     if (!DatabaseObjectComparatorFactory.getInstance().isSameObject(thisIndex.getColumns().get(i), otherIndex.getColumns().get(i), chain.getSchemaComparisons(), accordingTo)) {
                         return false;
                     }
+                }
+
+                if (accordingTo instanceof MSSQLDatabase) {
+                    return DefaultDatabaseObjectComparator.nameMatches(databaseObject1, databaseObject2, accordingTo);
                 }
 
                 return true;
