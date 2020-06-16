@@ -1,6 +1,7 @@
 package liquibase.diff.compare.core;
 
 import liquibase.database.Database;
+import liquibase.database.core.MSSQLDatabase;
 import liquibase.diff.ObjectDifferences;
 import liquibase.diff.compare.CompareControl;
 import liquibase.diff.compare.DatabaseObjectComparator;
@@ -69,6 +70,9 @@ public class IndexComparator implements DatabaseObjectComparator {
                     return DefaultDatabaseObjectComparator.nameMatches(databaseObject1, databaseObject2, accordingTo);
                 }
 
+                if (accordingTo instanceof MSSQLDatabase) {
+                    return DefaultDatabaseObjectComparator.nameMatches(databaseObject1, databaseObject2, accordingTo);
+                }
 
                 if (thisIndexSize > 0 && otherIndexSize > 0 && thisIndexSize != otherIndexSize) {
                     return false;
@@ -81,7 +85,7 @@ public class IndexComparator implements DatabaseObjectComparator {
                     }
                 }
 
-                return DefaultDatabaseObjectComparator.nameMatches(databaseObject1, databaseObject2, accordingTo);
+                return true;
             }
         } else {
             if (thisIndexSize > 0 && otherIndexSize > 0 && thisIndexSize != otherIndexSize) {
