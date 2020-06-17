@@ -81,7 +81,7 @@ public class IndexComparator implements DatabaseObjectComparator {
                     }
                 }
 
-                if (accordingTo instanceof MSSQLDatabase) {
+                if (accordingTo instanceof MSSQLDatabase && databaseObject1.getName() != null && databaseObject2.getName() != null) {
                     return DefaultDatabaseObjectComparator.nameMatches(databaseObject1, databaseObject2, accordingTo);
                 }
 
