@@ -28,6 +28,7 @@ import java.util.*;
  */
 public class PostgresDatabase extends AbstractJdbcDatabase {
     public static final String PRODUCT_NAME = "PostgreSQL";
+    public static final String EDB_PRODUCT_NAME = "EnterpriseDB";
 
     private Set<String> systemTablesAndViews = new HashSet<String>();
 
@@ -88,13 +89,21 @@ public class PostgresDatabase extends AbstractJdbcDatabase {
 
     @Override
     public boolean isCorrectDatabaseImplementation(DatabaseConnection conn) throws DatabaseException {
-        return PRODUCT_NAME.equalsIgnoreCase(conn.getDatabaseProductName());
+        boolean matches = PRODUCT_NAME.equalsIgnoreCase(conn.getDatabaseProductName());
+        if (matches) {
+            return true;
+        }
+        matches = EDB_PRODUCT_NAME.equals(conn.getDatabaseProductName());
+        return matches;
     }
 
     @Override
     public String getDefaultDriver(String url) {
         if (url.startsWith("jdbc:postgresql:")) {
             return "org.postgresql.Driver";
+        }
+        else if (url.startsWith("jdbc:edb")) {
+            return "com.edb.Driver";
         }
         return null;
     }
