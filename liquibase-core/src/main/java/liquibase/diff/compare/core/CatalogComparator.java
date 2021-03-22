@@ -60,6 +60,10 @@ public class CatalogComparator extends CommonCatalogSchemaComparator {
             return otherSchema.getCatalogName() == null;
         }
 
+        if(databaseObject1 instanceof Catalog && databaseObject2 instanceof Catalog){
+            return true;
+        }
+
         if (equalsSchemas(accordingTo,object1Name,  object2Name)) return true;
 
         //check with schemaComparisons
