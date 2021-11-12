@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.io.InputStream;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,6 +23,7 @@ import liquibase.parser.NamespaceDetailsFactory;
 import liquibase.resource.ResourceAccessor;
 import liquibase.serializer.LiquibaseSerializer;
 
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(NamespaceDetailsFactory.class)
 public class LiquibaseSchemaResolverTest {
