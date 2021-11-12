@@ -23,7 +23,6 @@ import liquibase.parser.NamespaceDetailsFactory;
 import liquibase.resource.ResourceAccessor;
 import liquibase.serializer.LiquibaseSerializer;
 
-@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(NamespaceDetailsFactory.class)
 public class LiquibaseSchemaResolverTest {

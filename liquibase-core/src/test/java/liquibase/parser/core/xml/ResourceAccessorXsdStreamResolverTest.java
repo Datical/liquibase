@@ -19,7 +19,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import liquibase.resource.ResourceAccessor;
 import liquibase.util.StreamUtil;
 
-@Ignore("temp ignored in scope of migration to java 11")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(StreamUtil.class)
 public class ResourceAccessorXsdStreamResolverTest {

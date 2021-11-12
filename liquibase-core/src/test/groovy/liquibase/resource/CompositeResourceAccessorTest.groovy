@@ -5,7 +5,6 @@ import spock.lang.Specification
 
 import static org.junit.Assert.assertNull
 
-@Ignore
 public class CompositeResourceAccessorTest extends Specification {
     
     def ResourceAccessor first;

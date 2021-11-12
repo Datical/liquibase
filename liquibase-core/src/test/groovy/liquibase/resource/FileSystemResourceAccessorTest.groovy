@@ -3,7 +3,6 @@ package liquibase.resource
 import spock.lang.Specification
 import spock.lang.Ignore
 
-@Ignore
 public class FileSystemResourceAccessorTest extends Specification {
 
     def createResourceAccessor() {

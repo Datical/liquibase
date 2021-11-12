@@ -22,7 +22,6 @@ import liquibase.serializer.LiquibaseSerializer;
 import liquibase.util.StreamUtil;
 import liquibase.util.file.FilenameUtils;
 
-@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ LiquibaseEntityResolver.class, StreamUtil.class })
 public class LiquibaseEntityResolverTest {
