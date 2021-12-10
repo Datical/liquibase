@@ -399,8 +399,10 @@ public class JdbcExecutor extends AbstractExecutor {
                     stmt.setEscapeProcessing(false);
                 }
                 try {
+                    // if this executes successfully then we don't need any value to check  that it was a success.
+                    // if it isn't a success then it will cause an exception
                     stmt.execute(statement);
-                } catch (Throwable e) {
+                } catch (SQLException e) {
                     throw new DatabaseException(e.getMessage()+ " [Failed SQL: "+statement+"]", e);
                 }
             }

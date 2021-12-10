@@ -1271,10 +1271,12 @@ public abstract class AbstractJdbcDatabase implements Database {
     @Override
     public void executeStatements(final Change change, final DatabaseChangeLog changeLog, final List<SqlVisitor> sqlVisitors) throws LiquibaseException {
         SqlStatement[] statements = change.generateStatements(this);
-
+        change.getChangeSet().setAttribute()
         execute(statements, sqlVisitors);
     }
 
+    String SQL_RESULT_TEMPLATE = " %d \n  (1 row affected) \n";
+    StringBuilder commandOutputBuilder = new StringBuilder();
     /*
      * Executes the statements passed
      *
@@ -1291,6 +1293,14 @@ public abstract class AbstractJdbcDatabase implements Database {
             LogFactory.getLogger().debug("Executing Statement: " + statement);
             try {
                 ExecutorService.getInstance().getExecutor(this).execute(statement, sqlVisitors);
+                // setting value of executed to true to identify statements that got executed successfully
+                // again not that any value which causes an issue is identified by DatabaseException raised in
+                // ExecuteStatementCallback
+                if (statement instanceof RawSqlStatement) {
+                    String sql = ((RawSqlStatement) statement).getSql();
+                    String result = SQL_RESULT_TEMPLATE.format(sql);
+                    commandOutputBuilder.append(result);
+                }
             } catch (DatabaseException e) {
                 if (statement.continueOnError()) {
                     LogFactory.getLogger().severe("Error executing statement '"+statement.toString()+"', but continuing", e);

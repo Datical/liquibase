@@ -480,6 +480,8 @@ public class ChangeSet implements Conditional, ChangeLogChild {
      *
      * @return should change set be marked as ran
      */
+    // important note ChangeExecListener contains all information about ChangeImpact in it's
+    // reference variable changeImpacts
     public ExecType execute(DatabaseChangeLog databaseChangeLog, ChangeExecListener listener, Database database) throws MigrationFailedException {
         if (validationFailed) {
             return ExecType.MARK_RAN;
