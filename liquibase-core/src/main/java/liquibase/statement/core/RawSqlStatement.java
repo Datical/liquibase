@@ -6,7 +6,7 @@ public class RawSqlStatement extends AbstractSqlStatement {
 
     private String sql;
     private String endDelimiter  = ";";
-    private boolean isExecuted;
+    private String outputResult;
 
 
     public RawSqlStatement(String sql) {
@@ -40,4 +40,13 @@ public class RawSqlStatement extends AbstractSqlStatement {
     public String toString() {
         return sql;
     }
+
+    public String getOutputResult() {
+        return outputResult;
+    }
+
+    public void setOutputResult(String executionResult) {
+        this.outputResult = executionResult;
+    }
+
 }
