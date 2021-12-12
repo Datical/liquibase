@@ -1271,7 +1271,7 @@ public abstract class AbstractJdbcDatabase implements Database {
     @Override
     public void executeStatements(final Change change, final DatabaseChangeLog changeLog, final List<SqlVisitor> sqlVisitors) throws LiquibaseException {
         SqlStatement[] statements = change.generateStatements(this);
-
+        //test
         execute(statements, sqlVisitors);
     }
 
