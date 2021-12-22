@@ -141,7 +141,7 @@
             <dependency>
                 <groupId>javax.enterprise</groupId>
                 <artifactId>cdi-api</artifactId>
-                <version>1.0-SP4</version>
+                <version>1.2</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -370,7 +370,7 @@
                     <version>1.4</version>
                     <configuration>
                         <providerSelection>2.0</providerSelection>
-                        <source />
+                        <source/>
                     </configuration>
                     <executions>
                         <execution>
