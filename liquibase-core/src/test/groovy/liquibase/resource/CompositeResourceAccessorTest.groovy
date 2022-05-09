@@ -1,5 +1,6 @@
 package liquibase.resource
 
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import static org.junit.Assert.assertNull

@@ -1,6 +1,7 @@
 package liquibase.resource
 
 import spock.lang.Specification
+import spock.lang.Ignore
 
 public class FileSystemResourceAccessorTest extends Specification {
 
@@ -11,7 +12,7 @@ public class FileSystemResourceAccessorTest extends Specification {
         
         return new FileSystemResourceAccessor(packageDirectory);
     }
-    
+
     def onlyAcceptsDirectories() {
         when:
         File thisClassFile = new File(new URI(this.getClass().getClassLoader().getResource("liquibase/resource/FileSystemResourceAccessor.class").toExternalForm()));
