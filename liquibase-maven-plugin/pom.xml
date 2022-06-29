@@ -39,7 +39,7 @@
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
-            <version>10.10.1.1</version><!--$NO-MVN-MAN-VER$-->
+            <version>10.14.2.0</version><!--$NO-MVN-MAN-VER$-->
             <scope>test</scope>
         </dependency>
     </dependencies>
