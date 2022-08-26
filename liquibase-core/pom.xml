@@ -31,6 +31,7 @@
     </project.version>
   </properties>
   <dependencies>
+    <!-- COMPILE dependencies START -->
     <dependency>
       <groupId>
         commons-cli
@@ -43,105 +44,52 @@
       </optional>
     </dependency>
     <dependency>
-      <groupId>
-        junit
-      </groupId>
-      <artifactId>
-        junit
-      </artifactId>
-      <scope>
-        compile
-      </scope>
-      <optional>
-        true
-      </optional>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+    </dependency>
+    <!-- COMPILE dependencies END -->
+    <!-- PROVIDED dependencies START -->
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>
-        org.hamcrest
-      </groupId>
-      <artifactId>
-        hamcrest-library
-      </artifactId>
-      <scope>
-        test
-      </scope>
+      <groupId>org.osgi</groupId>
+      <artifactId>osgi.core</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>
-        org.powermock
-      </groupId>
-      <artifactId>
-        powermock-module-junit4
-      </artifactId>
-      <scope>
-        test
-      </scope>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>
-        org.powermock
-      </groupId>
-      <artifactId>
-        powermock-api-mockito
-      </artifactId>
-      <scope>
-        test
-      </scope>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <!-- PROVIDED dependencies END -->
+    <!-- TEST dependencies START -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>
-        org.mockito
-      </groupId>
-      <artifactId>
-        mockito-all
-      </artifactId>
-      <scope>
-        test
-      </scope>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>
-        org.apache.ant
-      </groupId>
-      <artifactId>
-        ant
-      </artifactId>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>
-        javax.servlet
-      </groupId>
-      <artifactId>
-        servlet-api
-      </artifactId>
-    </dependency>
-    <dependency>
-      <groupId>
-        org.springframework
-      </groupId>
-      <artifactId>
-        spring
-      </artifactId>
-    </dependency>
-    <dependency>
-      <groupId>
-        org.hsqldb
-      </groupId>
-      <artifactId>
-        hsqldb
-      </artifactId>
-      <scope>
-        test
-      </scope>
-    </dependency>
-    <dependency>
-      <groupId>
-        org.yaml
-      </groupId>
-      <artifactId>
-        snakeyaml
-      </artifactId>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito2</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>
@@ -221,16 +169,11 @@
       </scope>
     </dependency>
     <dependency>
-      <groupId>
-        org.osgi
-      </groupId>
-      <artifactId>
-        org.osgi.core
-      </artifactId>
-      <scope>
-        provided
-      </scope>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <scope>test</scope>
     </dependency>
+    <!-- TEST dependencies END -->
   </dependencies>
   <build>
     <finalName>
@@ -314,12 +257,10 @@
               </goal>
             </goals>
             <configuration>
-              <sourcepath>
-                ../liquibase-core/src/main/java
-              </sourcepath>
-              <encoding>
-                UTF-8
-              </encoding>
+              <sourcepath>../liquibase-core/src/main/java</sourcepath>
+              <sourceFileIncludes>
+                <include>liquibase/util/grammar</include>
+              </sourceFileIncludes>
             </configuration>
           </execution>
         </executions>
@@ -537,15 +478,8 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>
-          org.codehaus.mojo
-        </groupId>
-        <artifactId>
-          javacc-maven-plugin
-        </artifactId>
-        <version>
-          2.6
-        </version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
         <executions>
           <execution>
             <id>
@@ -567,14 +501,13 @@
           </execution>
         </executions>
       </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-                <source>8</source>
-                <target>8</target>
-            </configuration>
-        </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <release>11</release>
+          </configuration>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
