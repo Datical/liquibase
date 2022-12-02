@@ -63,7 +63,7 @@ public class CreateProcedureGenerator extends AbstractSqlGenerator<CreateProcedu
             mssqlSetStatementsAfter = mssqlSplitStatements.getSetStatementsAfter();
         }
 
-        if (statement.getReplaceIfExists() != null && statement.getReplaceIfExists()) {
+        if (statement.getReplaceIfExists() != null && statement.getReplaceIfExists() && database instanceof MSSQLDatabase) {
             String fullyQualifiedName = database.escapeObjectName(statement.getProcedureName(), StoredProcedure.class);
             if (schemaName != null) {
                 fullyQualifiedName = database.escapeObjectName(schemaName, Schema.class) + "." + fullyQualifiedName;

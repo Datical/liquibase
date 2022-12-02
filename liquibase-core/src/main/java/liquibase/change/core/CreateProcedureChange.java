@@ -7,14 +7,12 @@ import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.database.Database;
 import liquibase.database.DatabaseList;
 import liquibase.database.core.AbstractDb2Database;
+import liquibase.database.core.Db2zDatabase;
 import liquibase.database.core.HsqlDatabase;
 import liquibase.database.core.MSSQLDatabase;
 import liquibase.database.core.OracleDatabase;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.exception.ValidationErrors;
-import liquibase.parser.core.ParsedNode;
-import liquibase.parser.core.ParsedNodeException;
-import liquibase.resource.ResourceAccessor;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.CreateProcedureStatement;
 import liquibase.util.StreamUtil;
@@ -23,7 +21,6 @@ import liquibase.util.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.io.UnsupportedEncodingException;
 
@@ -172,7 +169,7 @@ public class CreateProcedureChange extends AbstractChange implements DbmsTargete
         }
 
         if (this.getReplaceIfExists() != null && (DatabaseList.definitionMatches(getDbms(), database, true))) {
-            if (database instanceof MSSQLDatabase) {
+            if (database instanceof MSSQLDatabase || database instanceof Db2zDatabase) {
                 if (this.getReplaceIfExists() && this.getProcedureName() == null) {
                     validate.addError("procedureName is required if replaceIfExists = true");
                 }
