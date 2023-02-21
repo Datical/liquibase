@@ -22,6 +22,7 @@ public class SnapshotCommand extends AbstractCommand<SnapshotCommand.SnapshotCom
     private String serializerFormat;
     private SnapshotListener snapshotListener;
     private Map<String, Object> snapshotMetadata;
+    private List<String> excludeList;
 
     @Override
     public String getName() {
@@ -86,9 +87,17 @@ public class SnapshotCommand extends AbstractCommand<SnapshotCommand.SnapshotCom
         this.snapshotMetadata = snapshotMetadata;
     }
 
+    public List<String> getExcludeList() {
+        return excludeList;
+    }
+
+    public void setExcludeList(List<String> excludeList) {
+        this.excludeList = excludeList;
+    }
+
     @Override
     protected SnapshotCommandResult run() throws Exception {
-        SnapshotControl snapshotControl = new SnapshotControl(database);
+        SnapshotControl snapshotControl = new SnapshotControl(database, excludeList);
         snapshotControl.setSnapshotListener(snapshotListener);
 
         CatalogAndSchema[] schemas = this.schemas;
