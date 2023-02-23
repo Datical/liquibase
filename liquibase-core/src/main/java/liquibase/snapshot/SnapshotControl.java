@@ -16,7 +16,7 @@ public class SnapshotControl implements LiquibaseSerializable {
     private Set<Class<? extends DatabaseObject>> types;
     private SnapshotListener snapshotListener;
 
-    private Set<Class<? extends DatabaseObject>> excludedTypes;
+    private Set<Class<? extends DatabaseObject>> excludedTypes = new HashSet<>();
 
     public SnapshotControl(Database database) {
         setTypes(DatabaseObjectFactory.getInstance().getStandardTypes(), database);
@@ -115,10 +115,11 @@ public class SnapshotControl implements LiquibaseSerializable {
     }
 
     public boolean addType(Class<? extends DatabaseObject> type, Database database) {
-        boolean added = false;
-        if (excludedTypes == null || !excludedTypes.contains(type)) {
-            added = this.types.add(type);
+        if (!excludedTypes.contains(type)) {
+            return false;
         }
+
+        boolean added = this.types.add(type);
         if (added) {
             for (Class<? extends DatabaseObject> container : SnapshotGeneratorFactory.getInstance().getContainerTypes(type, database)) {
                 addType(container, database);
