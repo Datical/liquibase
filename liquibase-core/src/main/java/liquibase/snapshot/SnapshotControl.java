@@ -115,7 +115,7 @@ public class SnapshotControl implements LiquibaseSerializable {
     }
 
     public boolean addType(Class<? extends DatabaseObject> type, Database database) {
-        if (!excludedTypes.contains(type)) {
+        if (excludedTypes.contains(type)) {
             return false;
         }
 
