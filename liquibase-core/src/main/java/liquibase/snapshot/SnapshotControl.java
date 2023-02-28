@@ -7,7 +7,6 @@ import liquibase.parser.core.ParsedNodeException;
 import liquibase.resource.ResourceAccessor;
 import liquibase.serializer.LiquibaseSerializable;
 import liquibase.structure.DatabaseObject;
-import liquibase.structure.core.Data;
 import liquibase.structure.core.DatabaseObjectFactory;
 
 import java.util.*;
@@ -17,16 +16,15 @@ public class SnapshotControl implements LiquibaseSerializable {
     private Set<Class<? extends DatabaseObject>> types;
     private SnapshotListener snapshotListener;
 
+    private Set<Class<? extends DatabaseObject>> excludedTypes = new HashSet<>();
+
     public SnapshotControl(Database database) {
         setTypes(DatabaseObjectFactory.getInstance().getStandardTypes(), database);
     }
 
     public SnapshotControl(Database database, List<String> excludeList) {
-        Set<Class<? extends DatabaseObject>> excludeTypes = Collections.emptySet();
-        if (excludeList != null) {
-            excludeTypes = DatabaseObjectFactory.getInstance().parseTypes(String.join(",", excludeList));
-        }
-        setTypes(DatabaseObjectFactory.getInstance().getStandardTypes(), database, excludeTypes);
+        setExcludeTypes(excludeList);
+        setTypes(DatabaseObjectFactory.getInstance().getStandardTypes(), database);
     }
 
     public SnapshotControl(Database database, Class<? extends DatabaseObject>... types) {
@@ -100,32 +98,36 @@ public class SnapshotControl implements LiquibaseSerializable {
     }
 
     private void setTypes(Set<Class<? extends DatabaseObject>> types, Database database) {
-        setTypes(types, database, Collections.emptySet());
-    }
-
-    private void setTypes(Set<Class<? extends DatabaseObject>> types, Database database, Set<Class<? extends DatabaseObject>> excludeTypes ) {
         this.types = new HashSet<Class<? extends DatabaseObject>>();
         for (Class<? extends DatabaseObject> type : types) {
-            addType(type, database, excludeTypes);
+            addType(type, database);
         }
     }
 
-    public boolean addType(Class<? extends DatabaseObject> type, Database database) {
-        return addType(type, database, Collections.emptySet());
+    private void setExcludeTypes(List<String> excludeList) {
+        if (excludeList != null) {
+            excludedTypes = DatabaseObjectFactory.getInstance().parseTypes(String.join(",", excludeList));
+        }
     }
 
-    public boolean addType(Class<? extends DatabaseObject> type, Database database, Set<Class<? extends DatabaseObject>> excludeTypes) {
-        if (excludeTypes.contains(type)) {
+    public Set<Class<? extends DatabaseObject>> getExcludedTypes() {
+        return excludedTypes;
+    }
+
+    public boolean addType(Class<? extends DatabaseObject> type, Database database) {
+        if (excludedTypes.contains(type)) {
             return false;
         }
 
         boolean added = this.types.add(type);
         if (added) {
             for (Class<? extends DatabaseObject> container : SnapshotGeneratorFactory.getInstance().getContainerTypes(type, database)) {
-                addType(container, database, excludeTypes);
+                addType(container, database);
             }
         }
+
         return added;
+
     }
 
     public Set<Class<? extends DatabaseObject>> getTypesToInclude() {
