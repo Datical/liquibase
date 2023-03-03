@@ -105,7 +105,7 @@ public class SnapshotControl implements LiquibaseSerializable {
     }
 
     private void setExcludeTypes(List<String> excludeList) {
-        if (excludeList != null) {
+        if (excludeList != null && !excludeList.isEmpty()) {
             excludedTypes = DatabaseObjectFactory.getInstance().parseTypes(String.join(",", excludeList));
         }
     }
