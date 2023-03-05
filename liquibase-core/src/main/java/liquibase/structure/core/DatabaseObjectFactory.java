@@ -9,6 +9,7 @@ import liquibase.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class DatabaseObjectFactory {
@@ -52,6 +53,31 @@ public class DatabaseObjectFactory {
             }
             return returnSet;
         }
+    }
+
+    public Set<Class<? extends DatabaseObject>> parseExcludeTypes(List<String> excludeList) {
+        if (excludeList == null || excludeList.isEmpty()) {
+            return new HashSet<>();
+        }
+
+        String typesString = String.join(",", excludeList);
+        if (StringUtils.trimToNull(typesString) == null) {
+            return new HashSet<>();
+        }
+        Set<Class<? extends DatabaseObject>> returnSet = new HashSet<Class<? extends DatabaseObject>>();
+
+        Set<String> typesToInclude = new HashSet<String>(Arrays.asList(typesString.toLowerCase().split("\\s*,\\s*")));
+
+        Class<? extends DatabaseObject>[] classes = ServiceLocator.getInstance().findClasses(DatabaseObject.class);
+        for (Class<? extends DatabaseObject> clazz : classes) {
+            if (typesToInclude.contains(clazz.getSimpleName().toLowerCase())
+                    || typesToInclude.contains(clazz.getSimpleName().toLowerCase()+"s")
+                    || typesToInclude.contains(clazz.getSimpleName().toLowerCase()+"es") //like indexes
+            ) {
+                returnSet.add(clazz);
+            }
+        }
+        return returnSet;
     }
 
     public Set<Class<? extends DatabaseObject>> getStandardTypes() {
