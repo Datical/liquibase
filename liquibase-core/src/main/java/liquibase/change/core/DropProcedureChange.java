@@ -69,9 +69,8 @@ public class DropProcedureChange extends AbstractChange {
 
     @Override
     public SqlStatement[] generateStatements(Database database) {
-        DropProcedureStatement statement = new DropProcedureStatement(getCatalogName(), getSchemaName(), getProcedureName());
-        statement.setDropName(getDropName());
-        statement.setProcedureArguments(getProcedureArguments());
+        DropProcedureStatement statement = new DropProcedureStatement(getCatalogName(), getSchemaName(),
+                getProcedureName(), getDropName(), getProcedureArguments());
         return new SqlStatement[]{statement};
     }
 
