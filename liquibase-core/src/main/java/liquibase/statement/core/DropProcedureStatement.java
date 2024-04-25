@@ -10,10 +10,12 @@ public class DropProcedureStatement extends AbstractSqlStatement {
     private String dropName;
     private String procedureArguments;
 
-    public DropProcedureStatement(String catalogName, String schemaName, String procedureName) {
+    public DropProcedureStatement(String catalogName, String schemaName, String procedureName, String dropName, String procedureArguments) {
         this.catalogName = catalogName;
         this.schemaName = schemaName;
         this.procedureName = procedureName;
+        this.dropName = dropName;
+        this.procedureArguments = procedureArguments;
     }
 
     public String getCatalogName() {

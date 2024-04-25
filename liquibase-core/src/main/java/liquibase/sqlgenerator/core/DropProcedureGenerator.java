@@ -11,13 +11,11 @@ import liquibase.structure.core.Schema;
 import liquibase.structure.core.StoredProcedure;
 import liquibase.util.StringUtils;
 
-import static liquibase.structure.core.StoredProcedure.PROCEDURE_NAME_KEY;
-
 public class DropProcedureGenerator extends AbstractSqlGenerator<DropProcedureStatement> {
     @Override
     public ValidationErrors validate(DropProcedureStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         ValidationErrors validationErrors = new ValidationErrors();
-        validationErrors.checkRequiredField(PROCEDURE_NAME_KEY, statement.getProcedureName());
+        validationErrors.checkRequiredField("procedureName", statement.getProcedureName());
         return validationErrors;
     }
 

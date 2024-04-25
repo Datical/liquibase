@@ -1,7 +1,7 @@
 package liquibase.structure.core;
 
 public class StoredProcedure extends StoredDatabaseLogic<StoredProcedure> {
-    public static final String PROCEDURE_NAME_KEY = "procedureName";
+    private static final String PROCEDURE_NAME_KEY = "procedureName";
     private static final String ARGS_KEY = "arg";
     private static final String DROP_NAME_KEY = "dropName";
 
