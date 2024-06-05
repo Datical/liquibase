@@ -47,6 +47,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
     private static final Long SECS_IN_MILLIS = 1000L;
     private static final Long MIN_IN_MILLIS = SECS_IN_MILLIS * 60;
     private static final Long HOUR_IN_MILLIS = MIN_IN_MILLIS * 60;
+    private static final int KILLED_PROCESS_RETURN_CODE = 143;  // return code when we kill process after timeout
 
     protected Integer maxStreamGobblerOutput = null;
 
@@ -265,7 +266,8 @@ public class ExecuteShellCommandChange extends AbstractChange {
                 // check if we timed out or not
                 if (timedOut.get()) {
                     String timeoutStr = timeout != null ? timeout : timeoutInMillis + " ms";
-                    throw new TimeoutException("Process timed out (" + timeoutStr + ")");
+                    LogFactory.getInstance().getLog().severe("Process timed out (" + timeoutStr + ")");
+                    return KILLED_PROCESS_RETURN_CODE;
                 }
             } catch (InterruptedException ignore) {
                 // check again
