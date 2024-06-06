@@ -240,7 +240,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
      * @param timeoutInMillis waits for specified timeoutInMillis before destroying the process.
      *                        It will wait indefinitely if timeoutInMillis is 0.
      */
-    private int waitForOrKill(final Process process, final long timeoutInMillis) throws ExecutionException, TimeoutException {
+    private int waitForOrKill(final Process process, final long timeoutInMillis) {
         int processExitCode = -1;
 
         Timer timer = new Timer();
