@@ -242,19 +242,20 @@ public class ExecuteShellCommandChange extends AbstractChange {
      */
     private int waitForOrKill(final Process process, final long timeoutInMillis) throws ExecutionException, TimeoutException {
         int processExitCode = -1;
-        final AtomicBoolean timedOut = new AtomicBoolean(false);
+
         Timer timer = new Timer();
         if (timeoutInMillis > 0) {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    // timed out
-                    timedOut.set(true);
                     process.destroy();
+                    String timeoutStr = timeout != null ? timeout : timeoutInMillis + " ms";
+                    LogFactory.getInstance().getLog().severe("Process timed out (" + timeoutStr + ")");
                 }
             }, timeoutInMillis);
         }
 
+        // Looks like the loop was added for an additional retry in case of InterruptedException (although I wasn't able to find exact reason why)
         boolean stop = false;
         while (!stop) {
             try {
@@ -262,12 +263,6 @@ public class ExecuteShellCommandChange extends AbstractChange {
                 stop = true;
                 // if process already returned, then cancel the killer task if it is still running
                 timer.cancel();
-                // check if we timed out or not
-                if (timedOut.get()) {
-                    String timeoutStr = timeout != null ? timeout : timeoutInMillis + " ms";
-                    LogFactory.getInstance().getLog().severe("Process timed out (" + timeoutStr + ") with exit code " + processExitCode);
-                    return processExitCode;
-                }
             } catch (InterruptedException ex) {
                 // check again
                 // Restore interrupted state...
