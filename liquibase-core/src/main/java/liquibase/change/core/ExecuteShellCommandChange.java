@@ -276,7 +276,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
             }
         }
 
-            return processExitCode;
+        return processExitCode;
     }
 
     /**
