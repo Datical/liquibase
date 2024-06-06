@@ -261,13 +261,14 @@ public class ExecuteShellCommandChange extends AbstractChange {
             try {
                 processExitCode = process.waitFor();
                 stop = true;
-                // if process already returned, then cancel the killer task if it is still running
-                timer.cancel();
             } catch (InterruptedException ex) {
                 // check again
                 // Restore interrupted state...
                 LogFactory.getInstance().getLog().severe("Process interrupted due to ", ex);
                 Thread.currentThread().interrupt();
+            } finally {
+                // if process already returned, then cancel the killer task if it is still running
+                timer.cancel();
             }
         }
 
