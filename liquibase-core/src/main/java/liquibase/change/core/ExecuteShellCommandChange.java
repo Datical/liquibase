@@ -242,6 +242,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
      */
     private int waitForOrKill(final Process process, final long timeoutInMillis) {
         int processExitCode = -1;
+        final AtomicBoolean timedOut = new AtomicBoolean(false);
 
         Timer timer = new Timer();
         if (timeoutInMillis > 0) {
@@ -249,6 +250,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
                 @Override
                 public void run() {
                     process.destroy();
+                    timedOut.set(true);
                     String timeoutStr = timeout != null ? timeout : timeoutInMillis + " ms";
                     LogFactory.getInstance().getLog().severe("Process timed out (" + timeoutStr + ")");
                 }
@@ -270,6 +272,13 @@ public class ExecuteShellCommandChange extends AbstractChange {
                 // if process already returned, then cancel the killer task if it is still running
                 timer.cancel();
             }
+        }
+
+        // [DAT-17735] Adding this if statement because when sqlcmd is killed it still returns 0 as exit code
+        if (timedOut.get() && processExitCode == 0) {
+            LogFactory.getInstance().getLog().warning("Changing exit code to 143 from 0 as the process was timed out and killed, " +
+                    "but exit code was 0 (which is a default behaviour for sqlcmd)");
+            processExitCode = 143;
         }
 
         return processExitCode;
