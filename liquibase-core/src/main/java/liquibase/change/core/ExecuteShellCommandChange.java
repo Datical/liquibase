@@ -415,7 +415,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
                 copy(processStream, outputStream);
             } catch (IOException e) {
                 // [DAT-17735] Instead of printing stack trace logging as warn as IOException is expected if process was timed out
-                LogFactory.getInstance().getLog().warning("Exception was thrown when tried to finish InputStream from native tool (expected if process was timed out)", e);
+                LogFactory.getInstance().getLog().warning("Exception was thrown when tried to close native tool's InputStream (expected if process was timed out)", e);
             }
 
         }
