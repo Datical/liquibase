@@ -47,6 +47,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
     private static final Long SECS_IN_MILLIS = 1000L;
     private static final Long MIN_IN_MILLIS = SECS_IN_MILLIS * 60;
     private static final Long HOUR_IN_MILLIS = MIN_IN_MILLIS * 60;
+    private static final int KILLED_PROCESS_EXIT_CODE = 143;  // exit code when we kill process after timeout
 
     protected Integer maxStreamGobblerOutput = null;
 
@@ -276,9 +277,9 @@ public class ExecuteShellCommandChange extends AbstractChange {
 
         // [DAT-17735] Adding this if statement because when sqlcmd is killed it still returns 0 as exit code
         if (timedOut.get() && processExitCode == 0) {
-            LogFactory.getInstance().getLog().warning("Changing exit code to 143 from 0 as the process was timed out and killed, " +
-                    "but exit code was 0 (which is a default behaviour for sqlcmd)");
-            processExitCode = 143;
+            LogFactory.getInstance().getLog().warning("Changing exit code to " + KILLED_PROCESS_EXIT_CODE +
+                    " from 0 as the process was timed out and killed, but exit code was 0 (which is a default behaviour for sqlcmd)");
+            processExitCode = KILLED_PROCESS_EXIT_CODE;
         }
 
         return processExitCode;
@@ -325,7 +326,11 @@ public class ExecuteShellCommandChange extends AbstractChange {
      */
     protected void processResult(int returnCode, String errorStreamOut, String infoStreamOut, Database database) {
         if (returnCode != 0) {
-            throw new RuntimeException(getCommandString() + " returned a code of " + returnCode);
+            String errorMessage = getCommandString() + " returned a code of " + returnCode;
+            if (returnCode == KILLED_PROCESS_EXIT_CODE) {
+                errorMessage += " (process timed out)";
+            }
+            throw new RuntimeException(errorMessage);
         }
     }
 
@@ -407,7 +412,11 @@ public class ExecuteShellCommandChange extends AbstractChange {
             this.processStream = null;
 
             try {
-                copy(processStream, outputStream);
+                // [DAT-17735] Verification if stream is available is added to prevent IOException
+                // in case when we try to read bytes from already closed stream (when we kill process after timeout)
+                if (processStream.available() > 0) {
+                    copy(processStream, outputStream);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
