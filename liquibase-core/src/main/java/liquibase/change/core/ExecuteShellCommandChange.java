@@ -412,13 +412,10 @@ public class ExecuteShellCommandChange extends AbstractChange {
             this.processStream = null;
 
             try {
-                // [DAT-17735] Verification if stream is available is added to prevent IOException
-                // in case when we try to read bytes from already closed stream (when we kill process after timeout)
-                if (processStream.available() > 0) {
-                    copy(processStream, outputStream);
-                }
+                copy(processStream, outputStream);
             } catch (IOException e) {
-                e.printStackTrace();
+                // [DAT-17735] Instead of printing stack trace logging as warn as IOException is expected if process was timed out
+                LogFactory.getInstance().getLog().warning("Exception was thrown when tried to finish InputStream from native tool (expected if process was timed out)", e);
             }
 
         }
