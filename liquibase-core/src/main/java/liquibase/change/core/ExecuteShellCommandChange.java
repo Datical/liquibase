@@ -47,7 +47,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
     private static final Long SECS_IN_MILLIS = 1000L;
     private static final Long MIN_IN_MILLIS = SECS_IN_MILLIS * 60;
     private static final Long HOUR_IN_MILLIS = MIN_IN_MILLIS * 60;
-    private static final int KILLED_PROCESS_EXIT_CODE = 143;  // exit code when we kill process after timeout
+    protected static final int KILLED_PROCESS_EXIT_CODE = 143;  // exit code when we kill process after timeout
 
     protected Integer maxStreamGobblerOutput = null;
 
