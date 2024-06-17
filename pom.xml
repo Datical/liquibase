@@ -7,6 +7,8 @@
     <version>3.5.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+
+
     <name>Liquibase Parent Configuration</name>
     <description>Liquibase is a tool for managing and executing database changes.</description>
     <url>http://www.liquibase.org</url>
