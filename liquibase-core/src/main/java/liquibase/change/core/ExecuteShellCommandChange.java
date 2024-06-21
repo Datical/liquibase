@@ -50,7 +50,9 @@ public class ExecuteShellCommandChange extends AbstractChange {
     private static final Long HOUR_IN_MILLIS = MIN_IN_MILLIS * 60;
 
     protected Integer maxStreamGobblerOutput = null;
-    protected final AtomicBoolean timedOut = new AtomicBoolean(false);
+    // It is impossible to tell if process was timed out just by an exit code because some tools return 0 exit code
+    // when they are killed in Linux (e.g. sqlcmd) and on Windows when the process is killed it just returns 1
+    protected boolean isShellCommandTimedOut = false;
 
     @Override
     public boolean generateStatementsVolatile(Database database) {
@@ -244,7 +246,9 @@ public class ExecuteShellCommandChange extends AbstractChange {
      */
     private int waitForOrKill(final Process process, final long timeoutInMillis, Database database) throws TimeoutException {
         int processExitCode = -1;
+        final AtomicBoolean timedOut = new AtomicBoolean(false);
         Timer timer = new Timer();
+
         if (timeoutInMillis > 0) {
             timer.schedule(new TimerTask() {
                 @Override
@@ -264,6 +268,8 @@ public class ExecuteShellCommandChange extends AbstractChange {
                 processExitCode = process.waitFor();
                 stop = true;
                 if (timedOut.get()) {
+                    // Having specifying class variable from AtomicBoolean instead of just using AtomicBoolean because AtomicBoolean is not serializable
+                    isShellCommandTimedOut = true;
                     // DAT-17735 Fix for PostgreSQL and EDB only because other native tools have different issues if we don't throw TimeoutException.
                     // A common fix will be applied in next releases (target is 8.8).
                     if (database instanceof PostgresDatabase) {
@@ -328,7 +334,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
     protected void processResult(int returnCode, String errorStreamOut, String infoStreamOut, Database database) {
         if (returnCode != 0) {
             String errorMessage = getCommandString() + " returned a code of " + returnCode;
-            if (timedOut.get()) {
+            if (isShellCommandTimedOut) {
                 errorMessage += " (process timed out)";
             }
             throw new RuntimeException(errorMessage);
