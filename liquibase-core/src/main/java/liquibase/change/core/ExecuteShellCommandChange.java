@@ -7,6 +7,7 @@ import liquibase.change.DatabaseChangeProperty;
 import liquibase.configuration.GlobalConfiguration;
 import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.database.Database;
+import liquibase.database.core.PostgresDatabase;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.exception.ValidationErrors;
 import liquibase.exception.Warnings;
@@ -47,9 +48,9 @@ public class ExecuteShellCommandChange extends AbstractChange {
     private static final Long SECS_IN_MILLIS = 1000L;
     private static final Long MIN_IN_MILLIS = SECS_IN_MILLIS * 60;
     private static final Long HOUR_IN_MILLIS = MIN_IN_MILLIS * 60;
-    protected static final int KILLED_PROCESS_EXIT_CODE = 143;  // exit code when we kill process after timeout
 
     protected Integer maxStreamGobblerOutput = null;
+    protected final AtomicBoolean timedOut = new AtomicBoolean(false);
 
     @Override
     public boolean generateStatementsVolatile(Database database) {
@@ -198,7 +199,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
             // can't use Process's new api with timeout, so just workaround it for now
             long timeoutInMillis = getTimeoutInMillis();
             if (timeoutInMillis > 0) {
-                returnCode = waitForOrKill(p, timeoutInMillis);
+                returnCode = waitForOrKill(p, timeoutInMillis, database);
             } else {
                 // do default behavior for any value equal to or less than 0
                 returnCode = p.waitFor();
@@ -241,10 +242,8 @@ public class ExecuteShellCommandChange extends AbstractChange {
      * @param timeoutInMillis waits for specified timeoutInMillis before destroying the process.
      *                        It will wait indefinitely if timeoutInMillis is 0.
      */
-    private int waitForOrKill(final Process process, final long timeoutInMillis) {
+    private int waitForOrKill(final Process process, final long timeoutInMillis, Database database) throws TimeoutException {
         int processExitCode = -1;
-        final AtomicBoolean timedOut = new AtomicBoolean(false);
-
         Timer timer = new Timer();
         if (timeoutInMillis > 0) {
             timer.schedule(new TimerTask() {
@@ -264,6 +263,15 @@ public class ExecuteShellCommandChange extends AbstractChange {
             try {
                 processExitCode = process.waitFor();
                 stop = true;
+                if (timedOut.get()) {
+                    // DAT-17735 Fix for PostgreSQL and EDB only because other native tools have different issues if we don't throw TimeoutException.
+                    // A common fix will be applied in next releases (target is 8.8).
+                    if (database instanceof PostgresDatabase) {
+                        return processExitCode;
+                    }
+                    String timeoutStr = timeout != null ? timeout : timeoutInMillis + " ms";
+                    throw new TimeoutException("Process timed out (" + timeoutStr + ")");
+                }
             } catch (InterruptedException ex) {
                 // check again
                 // Restore interrupted state...
@@ -273,13 +281,6 @@ public class ExecuteShellCommandChange extends AbstractChange {
                 // if process already returned, then cancel the killer task if it is still running
                 timer.cancel();
             }
-        }
-
-        // [DAT-17735] Adding this if statement because when sqlcmd is killed it still returns 0 as exit code
-        if (timedOut.get() && processExitCode == 0) {
-            LogFactory.getInstance().getLog().warning("Changing exit code to " + KILLED_PROCESS_EXIT_CODE +
-                    " from 0 as the process was timed out and killed, but exit code was 0 (which is a default behaviour for sqlcmd)");
-            processExitCode = KILLED_PROCESS_EXIT_CODE;
         }
 
         return processExitCode;
@@ -327,7 +328,7 @@ public class ExecuteShellCommandChange extends AbstractChange {
     protected void processResult(int returnCode, String errorStreamOut, String infoStreamOut, Database database) {
         if (returnCode != 0) {
             String errorMessage = getCommandString() + " returned a code of " + returnCode;
-            if (returnCode == KILLED_PROCESS_EXIT_CODE) {
+            if (timedOut.get()) {
                 errorMessage += " (process timed out)";
             }
             throw new RuntimeException(errorMessage);
