@@ -17,7 +17,7 @@ jobs:
 
   combine-fossa-reports:
     runs-on: ubuntu-latest
-    needs: [ fossa-scan ]
+#    needs: [ fossa-scan ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
