@@ -1,0 +1,15 @@
+name: Fossa Report Generation
+
+on:
+  workflow_dispatch:
+  push:
+    #testing phase
+    branches:
+      - DAT-18147
+
+jobs:
+  fossa-scan:
+    uses: liquibase/build-logic/.github/workflows/fossa.yml@DAT-18147
+    secrets: inherit
+    with:
+      org: datical
