@@ -31,7 +31,7 @@ jobs:
 
       - name: Download reports from S3 and Rearrange CSV files
         run: |
-          mkdir /home/runner/work/enterprise/fossa_reports_s3
+          mkdir -p /home/runner/work/enterprise/fossa_reports_s3
           aws s3 cp --recursive s3://liquibaseorg-origin/enterprise_fossa_report/ /home/runner/work/enterprise/fossa_reports_s3/ 
           ls -l /home/runner/work/enterprise/fossa_reports_s3
           
@@ -63,13 +63,13 @@ jobs:
           done
           
           #Process the FOSSA report line by line and remove the ignored dependencies
-          cat /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique |eval $grepCmd > liquibase_pro-${{ steps.get_tag.outputs.tag_name }}-${{ steps.get_tag.outputs.release_date }}.csv
+          cat /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique |eval $grepCmd > enterprise_report.csv
 
       - name: Upload CSV to Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: enterprise-report
-          path: liquibase_pro-${{ steps.get_tag.outputs.tag_name }}-${{ steps.get_tag.outputs.release_date }}.csv
+          path: enterprise_report.csv
 
       - name: Upload merged CSV to S3
-        run: aws s3 cp liquibase_pro-${{ steps.get_tag.outputs.tag_name }}-${{ steps.get_tag.outputs.release_date }}.csv s3://liquibaseorg-origin/enterprise_fossa_report/
+        run: aws s3 cp enterprise_report.csv s3://liquibaseorg-origin/enterprise_fossa_report/
