@@ -2,22 +2,27 @@ name: Fossa Report Generation
 
 on:
   workflow_dispatch:
+    inputs:
+      combine_reports:
+        description: 'Flag to specify if the reports need to be combined'
+        required: false
+        default: 'false'
+        type: boolean
   push:
     #testing phase
     branches:
       - DAT-18147
 
 jobs:
-#  fossa-scan:
-#    uses: liquibase/build-logic/.github/workflows/fossa.yml@DAT-18147
-#    secrets: inherit
-#    with:
-#      org: datical
-
+  fossa-scan:
+    uses: liquibase/build-logic/.github/workflows/fossa.yml@DAT-18147
+    secrets: inherit
+    with:
+      org: datical
 
   combine-fossa-reports:
     runs-on: ubuntu-latest
-#    needs: [ fossa-scan ]
+    if: ${{ inputs.combine_reports == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
