@@ -19,7 +19,6 @@ jobs:
 #  # https://github.com/Codex-/return-dispatch/blob/main/README.md?plain=1#L35
 #  display-distinct-id:
 #    runs-on: ubuntu-latest
-#    needs: fossa-scan
 #    steps:
 #      -   name: echo distinct ID ${{ github.event.inputs.distinct_id }}
 #          run: echo ${{ github.event.inputs.distinct_id }}
