@@ -68,7 +68,7 @@ jobs:
         run: echo ${{ steps.return_dispatch.outputs.run_id }}
 
       - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
-        id: wait
+        id: wait_1
         uses: Codex-/await-remote-run@v1
         with:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
@@ -77,7 +77,7 @@ jobs:
           poll_interval_ms: 60000 # 60 seconds Frequency to poll the run for a status.
 
 #      - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
-#        id: wait
+#        id: wait_2
 #        uses: Codex-/await-remote-run@v1
 #        with:
 #          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
@@ -86,7 +86,7 @@ jobs:
 #          poll_interval_ms: 60000 # 60 seconds Frequency to poll the run for a status.
 
       - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
-        id: wait
+        id: wait_3
         uses: Codex-/await-remote-run@v1
         with:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
