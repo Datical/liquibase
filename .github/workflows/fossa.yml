@@ -14,20 +14,6 @@ jobs:
     with:
       org: datical
 
-  # trigger runs in other repositories for fossa report generation. Repositories are specified in the matrix
-#  trigger-fossa-report-generation:
-#    runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        repo: [ 'Datical/DaticalDB-installer', 'Datical/drivers', 'liquibase/ephemeral-database', 'Datical/protoclub', 'Datical/datical-sqlparser', 'Datical/storedlogic', 'Datical/AppDBA', 'Datical/liquibase-bundle']
-#    steps:
-#     - name: Dispatch event to PRO repository
-#       uses: peter-evans/repository-dispatch@v3
-#       with:
-#         token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
-#         repository: ${{ matrix.repo }}
-#         event-type: FOSSA_Scan_Enterprise
-
   wait-for-fossa-report-generation:
     runs-on: ubuntu-latest
     strategy:
@@ -41,7 +27,7 @@ jobs:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
           ref: "DAT-18147"
           repo: ${{ matrix.repo }}
-          owner: liquibase
+          owner: Datical
           workflow: fossa.yml
 
 #      - name: Dispatch an action and get the run ID for protoclub
