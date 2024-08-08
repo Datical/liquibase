@@ -35,7 +35,7 @@ jobs:
         repo: [ "Datical/DaticalDB-installer", "Datical/drivers", "liquibase/ephemeral-database", "Datical/protoclub", "Datical/datical-sqlparser", "Datical/storedlogic", "Datical/AppDBA", "Datical/liquibase-bundle"]
     steps:
       - name: Dispatch an action and get the run ID
-        uses: codex-/return-dispatch@v1
+        uses: codex-/return-dispatch@v1.14.0
         id: return_dispatch
         with:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }} // change this secret
