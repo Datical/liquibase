@@ -21,7 +21,7 @@ jobs:
         repo: [ "DaticalDB-installer", "drivers", "protoclub", "datical-sqlparser", "storedlogic", "AppDBA", "liquibase-bundle"]
     steps:
       - name: Dispatch an action and get the run ID
-        uses: codex-/return-dispatch@v1.12.2
+        uses: codex-/return-dispatch@v1.13.0
         id: return_dispatch_1
         with:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
@@ -31,7 +31,7 @@ jobs:
           workflow: fossa.yml
 
 #      - name: Dispatch an action and get the run ID for protoclub
-#        uses: codex-/return-dispatch@v1.12.2
+#        uses: codex-/return-dispatch@v1.13.0
 #        id: return_dispatch_2
 #        with:
 #          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
@@ -41,7 +41,7 @@ jobs:
 #          workflow: fossa.yml
 
       - name: Dispatch an action and get the run ID for ephemeral-database
-        uses: codex-/return-dispatch@v1.12.2
+        uses: codex-/return-dispatch@v1.13.0
         id: return_dispatch_3
         with:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
