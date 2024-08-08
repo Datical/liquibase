@@ -25,8 +25,8 @@ jobs:
        uses: peter-evans/repository-dispatch@v3
        with:
          token: ${{ secrets.LIQUIBOT_PAT }}
-       repository: ${{ matrix.repo }}
-       event-type: FOSSA_Scan_Enterprise
+         repository: ${{ matrix.repo }}
+         event-type: FOSSA_Scan_Enterprise
 
   wait-for-fossa-report-generation:
     runs-on: ubuntu-latest
