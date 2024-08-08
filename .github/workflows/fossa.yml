@@ -70,7 +70,7 @@ jobs:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
           run_id: ${{ steps.return_dispatch_1.outputs.run_id }}
           run_timeout_seconds: 420 # 7 minutes Time until giving up on the run
-          poll_interval_ms: 60000 # 60 seconds Frequency to poll the run for a status.
+          poll_interval_ms: 120000 # 2min Frequency to poll the run for a status.
 
 #      - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
 #        id: wait_2
