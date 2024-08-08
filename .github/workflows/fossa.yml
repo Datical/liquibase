@@ -30,7 +30,7 @@ jobs:
 
   wait-for-fossa-report-generation:
     runs-on: ubuntu-latest
-    needs: trigger-fossa-report-generation
+#    needs: trigger-fossa-report-generation
     strategy:
       matrix:
         repo: [ 'Datical/DaticalDB-installer', 'Datical/drivers', 'liquibase/ephemeral-database', 'Datical/protoclub', 'Datical/datical-sqlparser', 'Datical/storedlogic', 'Datical/AppDBA', 'Datical/liquibase-bundle']
