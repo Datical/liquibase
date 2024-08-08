@@ -32,6 +32,7 @@ jobs:
     steps:
       - name: Dispatch an action and get the run ID
         uses: codex-/return-dispatch@v1
+        if: matrix.repo == 'DaticalDB-installer' || matrix.repo == 'drivers' || matrix.repo == 'protoclub' || matrix.repo == 'datical-sqlparser' || matrix.repo == 'storedlogic' || matrix.repo == 'AppDBA' || matrix.repo == 'liquibase-bundle'
         id: return_dispatch_1
         with:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
@@ -42,6 +43,7 @@ jobs:
 
 #      - name: Dispatch an action and get the run ID for protoclub
 #        uses: codex-/return-dispatch@v1
+#        if: matrix.repo == 'protoclub'
 #        id: return_dispatch_2
 #        with:
 #          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
@@ -52,11 +54,12 @@ jobs:
 
       - name: Dispatch an action and get the run ID for ephemeral-database
         uses: codex-/return-dispatch@v1
+        if: matrix.repo == 'ephemeral-database'
         id: return_dispatch_3
         with:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
           ref: "DAT-18147"
-          repo: "liquibase/ephemeral-database"
+          repo: "ephemeral-database"
           owner: liquibase
           workflow: fossa.yml
 
@@ -64,6 +67,7 @@ jobs:
         run: echo ${{ steps.return_dispatch.outputs.run_id }}
 
       - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
+        if: matrix.repo == 'DaticalDB-installer' || matrix.repo == 'drivers' || matrix.repo == 'protoclub' || matrix.repo == 'datical-sqlparser' || matrix.repo == 'storedlogic' || matrix.repo == 'AppDBA' || matrix.repo == 'liquibase-bundle'
         id: wait_1
         uses: Codex-/await-remote-run@v1
         with:
@@ -72,23 +76,25 @@ jobs:
           run_timeout_seconds: 420 # 7 minutes Time until giving up on the run
           poll_interval_ms: 120000 # 2min Frequency to poll the run for a status.
 
-#      - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
-#        id: wait_2
-#        uses: Codex-/await-remote-run@v1
-#        with:
-#          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
-#          run_id: ${{ steps.return_dispatch_2.outputs.run_id }}
-#          run_timeout_seconds: 420 # 7 minutes Time until giving up on the run
-#          poll_interval_ms: 60000 # 60 seconds Frequency to poll the run for a status.
+      - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
+        if: matrix.repo == 'protoclub'
+        id: wait_2
+        uses: Codex-/await-remote-run@v1
+        with:
+          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
+          run_id: ${{ steps.return_dispatch_2.outputs.run_id }}
+          run_timeout_seconds: 420 # 7 minutes Time until giving up on the run
+          poll_interval_ms: 120000 # 2min Frequency to poll the run for a status.
 
       - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
+        if: matrix.repo == 'ephemeral-database'
         id: wait_3
         uses: Codex-/await-remote-run@v1
         with:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
           run_id: ${{ steps.return_dispatch_3.outputs.run_id }}
           run_timeout_seconds: 420 # 7 minutes Time until giving up on the run
-          poll_interval_ms: 60000 # 60 seconds Frequency to poll the run for a status.
+          poll_interval_ms: 120000 # 2min Frequency to poll the run for a status.
 
 
   combine-fossa-reports:
