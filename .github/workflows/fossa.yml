@@ -9,7 +9,7 @@ on:
     branches:
       - DAT-18147
 
-#jobs:
+jobs:
 #  fossa-scan:
 #    uses: liquibase/build-logic/.github/workflows/fossa.yml@DAT-18147
 #    secrets: inherit
