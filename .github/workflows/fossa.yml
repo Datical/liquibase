@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        repo: [ 'Datical/DaticalDB-installer', 'Datical/drivers', 'Datical/ephemeral-database', 'Datical/protoclub', 'Datical/datical-sqlparser', 'Datical/storedlogic', 'Datical/AppDBA', 'Datical/liquibase-bundle']
+        repo: [ 'Datical/DaticalDB-installer', 'Datical/drivers', 'liquibase/ephemeral-database', 'Datical/protoclub', 'Datical/datical-sqlparser', 'Datical/storedlogic', 'Datical/AppDBA', 'Datical/liquibase-bundle']
     steps:
      - name: Dispatch event to PRO repository
        uses: peter-evans/repository-dispatch@v3
