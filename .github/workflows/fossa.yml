@@ -63,6 +63,7 @@ jobs:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
           run_id: ${{ steps.return_dispatch.outputs.run_id }}
           repo: ${{ matrix.repo.name }}
+          owner: ${{ matrix.repo.owner }}
           run_timeout_seconds: 420 # 7 minutes Time until giving up on the run
           poll_interval_ms: 120000 # 2 minutes Frequency to poll the run for a status.
 
