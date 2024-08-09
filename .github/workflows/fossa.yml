@@ -27,73 +27,40 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        repo: [ "DaticalDB-installer", "drivers", "protoclub", "datical-sqlparser", "storedlogic", "AppDBA", "liquibase-bundle"]
+        repo: [
+            {name:"datical-service", ref:"master",owner:"Datical"},
+            {name:"DaticalDB-installer", ref:"master",owner:"Datical"},
+            {name:"ephemeral-database", ref:"DAT-18147",owner:"liquibase"},
+            {name:"drivers", ref:"master",owner:"liquibase"},
+            {name:"protoclub" ref:"develop",owner:"Datical"},
+            {name:"datical-sqlparser", ref:"master",owner:"Datical"},
+            {name:"storedlogic", ref:"master",owner:"Datical"},
+            {name:"AppDBA", ref:"master",owner:"Datical"},
+            {name:"liquibase-bundle", ref:"master",owner:"Datical"}
+#            {name:"liquibase", ref:"master",owner:"liquibase"},
+            ]
+
     steps:
       - name: Dispatch an action and get the run ID
         uses: codex-/return-dispatch@v1
-        if: matrix.repo == 'DaticalDB-installer' || matrix.repo == 'drivers' || matrix.repo == 'protoclub' || matrix.repo == 'datical-sqlparser' || matrix.repo == 'storedlogic' || matrix.repo == 'AppDBA' || matrix.repo == 'liquibase-bundle'
         id: return_dispatch_1
         with:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
-          ref: "DAT-18147"
-          repo: ${{ matrix.repo }}
-          owner: Datical
-          workflow: fossa.yml
-
-#      - name: Dispatch an action and get the run ID for protoclub
-#        uses: codex-/return-dispatch@v1
-#        if: matrix.repo == 'protoclub'
-#        id: return_dispatch_2
-#        with:
-#          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
-#          ref: "develop"
-#          repo: "protoclub"
-#          owner: Datical
-#          workflow: fossa.yml
-
-      - name: Dispatch an action and get the run ID for ephemeral-database
-        uses: codex-/return-dispatch@v1
-        if: matrix.repo == 'ephemeral-database'
-        id: return_dispatch_3
-        with:
-          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
-          ref: "DAT-18147"
-          repo: "ephemeral-database"
-          owner: liquibase
+          ref: ${{ matrix.repo.ref }}
+          repo: ${{ matrix.repo.name }}
+          owner: ${{ matrix.repo.owner }}
           workflow: fossa.yml
 
       - name: Display run ID
         run: echo ${{ steps.return_dispatch.outputs.run_id }}
 
       - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
-        if: matrix.repo == 'DaticalDB-installer' || matrix.repo == 'drivers' || matrix.repo == 'protoclub' || matrix.repo == 'datical-sqlparser' || matrix.repo == 'storedlogic' || matrix.repo == 'AppDBA' || matrix.repo == 'liquibase-bundle'
-        id: wait_1
         uses: Codex-/await-remote-run@v1
         with:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
           run_id: ${{ steps.return_dispatch_1.outputs.run_id }}
           run_timeout_seconds: 420 # 7 minutes Time until giving up on the run
-          poll_interval_ms: 120000 # 2min Frequency to poll the run for a status.
-
-      - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
-        if: matrix.repo == 'protoclub'
-        id: wait_2
-        uses: Codex-/await-remote-run@v1
-        with:
-          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
-          run_id: ${{ steps.return_dispatch_2.outputs.run_id }}
-          run_timeout_seconds: 420 # 7 minutes Time until giving up on the run
-          poll_interval_ms: 120000 # 2min Frequency to poll the run for a status.
-
-      - name: Await Run ID ${{ steps.return_dispatch.outputs.run_id }}
-        if: matrix.repo == 'ephemeral-database'
-        id: wait_3
-        uses: Codex-/await-remote-run@v1
-        with:
-          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
-          run_id: ${{ steps.return_dispatch_3.outputs.run_id }}
-          run_timeout_seconds: 420 # 7 minutes Time until giving up on the run
-          poll_interval_ms: 120000 # 2min Frequency to poll the run for a status.
+          poll_interval_ms: 120000 # 2 minutes Frequency to poll the run for a status.
 
 
   combine-fossa-reports:
