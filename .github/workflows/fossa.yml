@@ -31,7 +31,7 @@ jobs:
             {name: "datical-service", ref: "DAT-18147",owner: "Datical"},
             {name: "DaticalDB-installer", ref: "DAT-18147",owner: "Datical"},
 #            {name: "ephemeral-database", ref: "DAT-18147",owner: "liquibase"},
-            {name: "drivers", ref: "DAT-18147",owner: "liquibase"},
+            {name: "drivers", ref: "DAT-18147",owner: "Datical"},
             {name: "protoclub", ref: "DAT-18147",owner: "Datical"},
             {name: "datical-sqlparser", ref: "DAT-18147",owner: "Datical"},
             {name: "storedlogic", ref: "DAT-18147",owner: "Datical"},
