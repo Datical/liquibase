@@ -36,7 +36,7 @@ jobs:
             {name: "datical-sqlparser", ref: "DAT-18147",owner: "Datical"},
             {name: "storedlogic", ref: "DAT-18147",owner: "Datical"},
             {name: "AppDBA", ref: "DAT-18147",owner: "Datical"},
-            {name: "liquibase-bundle", ref: "DAT-18147",owner: "Datical"}
+            {name: "liquibase-bundle", ref: "DAT-18147",owner: "Datical"},
             {name: "liquibase", ref: "DAT-18147",owner: "liquibase"}
             ]
 
