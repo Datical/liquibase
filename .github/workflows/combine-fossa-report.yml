@@ -12,11 +12,10 @@ jobs:
     strategy:
       matrix:
         repo: [
-          {name: "datical-service", ref: "DAT-18147",owner: "Datical"},
           {name: "DaticalDB-installer", ref: "DAT-18147",owner: "Datical"},
-          #            {name: "ephemeral-database", ref: "DAT-18147",owner: "liquibase"},
+#         {name: "ephemeral-database", ref: "DAT-18147",owner: "liquibase"},
           {name: "drivers", ref: "DAT-18147",owner: "Datical"},
-          {name: "protoclub", ref: "DAT-18147",owner: "Datical"},
+#         {name: "protoclub", ref: "DAT-18147",owner: "Datical"},
           {name: "datical-sqlparser", ref: "DAT-18147",owner: "Datical"},
           {name: "storedlogic", ref: "DAT-18147",owner: "Datical"},
           {name: "AppDBA", ref: "DAT-18147",owner: "Datical"},
@@ -111,3 +110,21 @@ jobs:
 
       - name: Upload merged CSV to S3
         run: aws s3 cp enterprise_report.csv s3://liquibaseorg-origin/enterprise_fossa_report/
+
+  trigger-datical-service:
+  runs-on: ubuntu-latest
+  jobs:
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Dispatch an action for datical-service
+        uses: codex-/return-dispatch@v1
+        id: return_dispatch
+        continue-on-error: true
+        with:
+          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
+          ref: DAT-18147
+          repo: datical-service
+          owner: Datical
+          workflow: fossa.yml
