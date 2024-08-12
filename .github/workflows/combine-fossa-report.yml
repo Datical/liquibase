@@ -101,6 +101,9 @@ jobs:
           
           #Process the FOSSA report line by line and remove the ignored dependencies
           cat /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique |eval $grepCmd > enterprise_report.csv
+  
+          #Remove the last lines from the CSV that contain unwanted headers
+          head -n -2 /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique > enterprise_report.csv
 
       - name: Upload CSV to Artifacts
         uses: actions/upload-artifact@v2
