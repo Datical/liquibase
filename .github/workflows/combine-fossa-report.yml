@@ -118,12 +118,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Dispatch an action for datical-service
-        uses: codex-/return-dispatch@v1
-        id: return_dispatch
-        continue-on-error: true
+        uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
-          ref: DAT-18147
-          repo: datical-service
-          owner: Datical
-          workflow: fossa.yml
+          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
+          repository: Datical/datical-service
+          event-type: trigger-fossa-report-generation
+          client-payload: '{"ref": "DAT-18147"}'
