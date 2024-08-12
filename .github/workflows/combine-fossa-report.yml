@@ -112,18 +112,18 @@ jobs:
         run: aws s3 cp enterprise_report.csv s3://liquibaseorg-origin/enterprise_fossa_report/
 
   trigger-datical-service:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Dispatch an action for datical-service
-      uses: codex-/return-dispatch@v1
-      id: return_dispatch
-      continue-on-error: true
-      with:
-        token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
-        ref: DAT-18147
-        repo: datical-service
-        owner: Datical
-        workflow: fossa.yml
+      - name: Dispatch an action for datical-service
+        uses: codex-/return-dispatch@v1
+        id: return_dispatch
+        continue-on-error: true
+        with:
+          token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION  }}
+          ref: DAT-18147
+          repo: datical-service
+          owner: Datical
+          workflow: fossa.yml
