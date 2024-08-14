@@ -5,14 +5,9 @@ on:
     inputs:
       distinct_id:
 
-#  push:
-#    #testing phase
-#    branches:
-#      - DAT-18147
-
 jobs:
   fossa-scan:
-    uses: liquibase/build-logic/.github/workflows/fossa.yml@DAT-18147
+    uses: liquibase/build-logic/.github/workflows/fossa.yml@main
     secrets: inherit
     with:
       org: Datical
