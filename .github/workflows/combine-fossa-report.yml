@@ -2,25 +2,22 @@ name: Combine FOSSA Reports
 
 on:
   workflow_dispatch:
-  push:
-    #testing phase
-    branches:
-      - DAT-18147
+
 jobs:
   wait-for-fossa-report-generation:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         repo: [
-          {name: "DaticalDB-installer", ref: "DAT-18147",owner: "Datical"},
-#         {name: "ephemeral-database", ref: "DAT-18147",owner: "liquibase"},
-          {name: "drivers", ref: "DAT-18147",owner: "Datical"},
-#         {name: "protoclub", ref: "DAT-18147",owner: "Datical"},
-          {name: "datical-sqlparser", ref: "DAT-18147",owner: "Datical"},
-          {name: "storedlogic", ref: "DAT-18147",owner: "Datical"},
-          {name: "AppDBA", ref: "DAT-18147",owner: "Datical"},
-          {name: "liquibase-bundle", ref: "DAT-18147",owner: "Datical"},
-          {name: "liquibase", ref: "DAT-18147",owner: "Datical"}
+          {name: "DaticalDB-installer", ref: "master",owner: "Datical"},
+#         {name: "ephemeral-database", ref: "DAT-18147",owner: "liquibase"}, #TODO: producing html report instead of csv. CSV report already uploaded in s3 to unblock the combine-fossa-reports job
+          {name: "drivers", ref: "master",owner: "Datical"},
+#         {name: "protoclub", ref: "DAT-18147",owner: "Datical"}, #TODO: producing html report instead of csv. CSV report already uploaded in s3 to unblock the combine-fossa-reports job
+          {name: "datical-sqlparser", ref: "master",owner: "Datical"},
+          {name: "storedlogic", ref: "master",owner: "Datical"},
+          {name: "AppDBA", ref: "master",owner: "Datical"},
+          {name: "liquibase-bundle", ref: "master",owner: "Datical"},
+          {name: "liquibase", ref: "ddb",owner: "Datical"}
         ]
 
     steps:
@@ -126,4 +123,4 @@ jobs:
           token: ${{ secrets.FOSSA_TRIGGER_REPORT_GENERATION }}
           repository: Datical/datical-service
           event-type: trigger-fossa-report-generation
-          client-payload: '{"ref": "DAT-18147"}'
+          client-payload: '{"ref": "master"}'
