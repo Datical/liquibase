@@ -65,42 +65,50 @@ jobs:
 
       - name: Download reports from S3 and Rearrange CSV files
         run: |
+          # Create a directory to store downloaded reports from S3
           mkdir -p /home/runner/work/enterprise/fossa_reports_s3
+          
+          # Download all files from the specified S3 bucket to the created directory
           aws s3 cp --recursive s3://liquibaseorg-origin/enterprise_fossa_report/ /home/runner/work/enterprise/fossa_reports_s3/ 
+
+          # List the contents of the directory to confirm successful download
           ls -l /home/runner/work/enterprise/fossa_reports_s3
+
+          # Define an array of CSV file names
+          csv_files=("DaticalDB-installer" "drivers" "ephemeral-database" "protoclub" "datical-sqlparser" "storedlogic" "AppDBA" "liquibase-bundle" "liquibase")
+
+          # Loop through each CSV file and remove headers
+          for file in "${csv_files[@]}"; do
+            tail -n +3 /home/runner/work/enterprise/fossa_reports_s3/${file}.csv >> /home/runner/work/enterprise/fossa_reports_s3/${file}_no_header.csv
+          done
+
+          # Concatenate all CSV files without headers, sort, and remove duplicates
+          cat /home/runner/work/enterprise/fossa_reports_s3/*_no_header.csv | sort | uniq > /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique.csv
           
-          tail -n +3 /home/runner/work/enterprise/fossa_reports_s3/DaticalDB-installer.csv >> /home/runner/work/enterprise/fossa_reports_s3/DaticalDB-installer_no_header.csv
-          tail -n +3 /home/runner/work/enterprise/fossa_reports_s3/drivers.csv >> /home/runner/work/enterprise/fossa_reports_s3/drivers_no_header.csv
-          tail -n +3 /home/runner/work/enterprise/fossa_reports_s3/ephemeral-database.csv >> /home/runner/work/enterprise/fossa_reports_s3/ephemeral-database_no_header.csv       
-          tail -n +3 /home/runner/work/enterprise/fossa_reports_s3/protoclub.csv >> /home/runner/work/enterprise/fossa_reports_s3/protoclub_no_header.csv
-          tail -n +3 /home/runner/work/enterprise/fossa_reports_s3/datical-sqlparser.csv >> /home/runner/work/enterprise/fossa_reports_s3/datical-sqlparser_no_header.csv
-          tail -n +3 /home/runner/work/enterprise/fossa_reports_s3/storedlogic.csv >> /home/runner/work/enterprise/fossa_reports_s3/storedlogic_no_header.csv
-          tail -n +3 /home/runner/work/enterprise/fossa_reports_s3/AppDBA.csv >> /home/runner/work/enterprise/fossa_reports_s3/AppDBA_no_header.csv
-          tail -n +3 /home/runner/work/enterprise/fossa_reports_s3/liquibase-bundle.csv >> /home/runner/work/enterprise/fossa_reports_s3/liquibase-bundle_no_header.csv
-          tail -n +3 /home/runner/work/enterprise/fossa_reports_s3/liquibase.csv >> /home/runner/work/enterprise/fossa_reports_s3/liquibase_no_header.csv
-          
-          cat /home/runner/work/enterprise/fossa_reports_s3/DaticalDB-installer_no_header.csv /home/runner/work/enterprise/fossa_reports_s3/drivers_no_header.csv /home/runner/work/enterprise/fossa_reports_s3/ephemeral-database_no_header.csv /home/runner/work/enterprise/fossa_reports_s3/protoclub_no_header.csv /home/runner/work/enterprise/fossa_reports_s3/datical-sqlparser_no_header.csv /home/runner/work/enterprise/fossa_reports_s3/storedlogic_no_header.csv /home/runner/work/enterprise/fossa_reports_s3/AppDBA_no_header.csv /home/runner/work/enterprise/fossa_reports_s3/liquibase-bundle_no_header.csv /home/runner/work/enterprise/fossa_reports_s3/liquibase_no_header.csv | sort | uniq > /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique.csv
-          
-          echo 'Provider,Version,License Type,License' | cat - /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique.csv > temp && mv temp /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique
-          
-          #Read ignored dependencies from a file
+          # Add a header to the final CSV file, placing it above the sorted and unique data
+          echo 'Provider,Version,License Type,License' | cat - /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique.csv > temp && mv temp /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique.csv
+
+          # Read ignored dependencies from a file
           ignoredLibsFile=$(cat ${{ github.workspace }}/.github/ignore_dependencies_fossa.txt)
-          
-          #Split the ignored dependencies into an array
+
+          # Split the ignored dependencies into an array
           IFS=',' read -r -a ignoredLibs <<< "$ignoredLibsFile"
-          
+
+          # Create a temporary file
           tempfile=$(mktemp)
-          
+
+          # Build the grep command to filter out ignored dependencies
           grepCmd="grep -iv"
           for lib in "${ignoredLibs[@]}"; do
             grepCmd="$grepCmd -e \"$lib\""
           done
-          
-          #Process the FOSSA report line by line and remove the ignored dependencies
-          cat /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique |eval $grepCmd > enterprise_report.csv
-  
-          #Remove the last lines from the CSV that contain unwanted headers
-          head -n -2 /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique > enterprise_report.csv
+
+          # Process the FOSSA report to remove ignored dependencies
+          cat /home/runner/work/enterprise/fossa_reports_s3/enterprise_unique.csv | eval $grepCmd > enterprise_report.csv
+
+          # Remove the last lines from the final CSV that contain unwanted headers
+          head -n -2 enterprise_report.csv > temp && mv temp enterprise_report.csv
+      
 
       - name: Upload CSV to Artifacts
         uses: actions/upload-artifact@v2
