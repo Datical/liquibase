@@ -2,7 +2,8 @@ name: Combine FOSSA Reports
 
 on:
   workflow_dispatch:
-
+  push:
+    - DAT-18174
 jobs:
   wait-for-fossa-report-generation:
     runs-on: ubuntu-latest
