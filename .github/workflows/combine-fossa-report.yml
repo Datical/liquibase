@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - DAT-18174
+      - DAT-18147
 jobs:
   wait-for-fossa-report-generation:
     runs-on: ubuntu-latest
