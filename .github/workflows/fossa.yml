@@ -12,7 +12,7 @@ on:
 
 jobs:
   fossa-scan:
-    uses: liquibase/build-logic/.github/workflows/generate-upload-fossa-report.yml@main
+    uses: liquibase/build-logic/.github/workflows/generate-upload-fossa-report.yml@DAT-18919
     secrets: inherit
     with:
       version_number_for_report_generation: "${{ github.event.inputs.version_number_for_report_generation }}"
