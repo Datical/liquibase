@@ -143,7 +143,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
 
     @Override
     protected void addTo(DatabaseObject foundObject, DatabaseSnapshot snapshot) throws DatabaseException {
-        if (!snapshot.getSnapshotControl().shouldInclude(Table.class) && !snapshot.getSnapshotControl().shouldInclude(View.class)) {
+        if (!snapshot.getSnapshotControl().shouldInclude(Column.class) || !areAnyRelationsIncluded(snapshot)) {
             return;
         }
         if (foundObject instanceof Relation) {
@@ -172,6 +172,10 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
             }
         }
 
+    }
+
+    private static boolean areAnyRelationsIncluded(DatabaseSnapshot snapshot) {
+        return snapshot.getSnapshotControl().shouldInclude(Table.class) || snapshot.getSnapshotControl().shouldInclude(View.class);
     }
 
     protected void setAutoIncrementDetails(Column column, Database database, DatabaseSnapshot snapshot) {
