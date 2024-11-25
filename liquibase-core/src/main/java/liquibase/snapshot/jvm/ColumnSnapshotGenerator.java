@@ -11,7 +11,9 @@ import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.logging.LogFactory;
 import liquibase.logging.Logger;
-import liquibase.snapshot.*;
+import liquibase.snapshot.CachedRow;
+import liquibase.snapshot.DatabaseSnapshot;
+import liquibase.snapshot.JdbcDatabaseSnapshot;
 import liquibase.statement.DatabaseFunction;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.structure.DatabaseObject;
@@ -141,7 +143,7 @@ public class ColumnSnapshotGenerator extends JdbcSnapshotGenerator {
 
     @Override
     protected void addTo(DatabaseObject foundObject, DatabaseSnapshot snapshot) throws DatabaseException {
-        if (!snapshot.getSnapshotControl().shouldInclude(Column.class)) {
+        if (!snapshot.getSnapshotControl().shouldInclude(Table.class) && !snapshot.getSnapshotControl().shouldInclude(View.class)) {
             return;
         }
         if (foundObject instanceof Relation) {
