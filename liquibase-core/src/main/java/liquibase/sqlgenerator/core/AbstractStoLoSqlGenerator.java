@@ -8,7 +8,7 @@ public abstract class AbstractStoLoSqlGenerator<StatementType extends SqlStateme
 
     protected static void replaceCreateByAlterIfNotCreateOrReplaceStatement(StringClauses parsedProcedureDefinition) {
         if (!isCreateOrAlterStatement(parsedProcedureDefinition) && parsedProcedureDefinition.contains("CREATE")) {
-            replaceCreateByAlter(parsedProcedureDefinition);
+            replaceCreateByCreateOrAlter(parsedProcedureDefinition);
         }
     }
 
@@ -25,7 +25,7 @@ public abstract class AbstractStoLoSqlGenerator<StatementType extends SqlStateme
         return false;
     }
 
-    protected static void replaceCreateByAlter(StringClauses definition) {
+    protected static void replaceCreateByCreateOrAlter(StringClauses definition) {
         StringClauses.ClauseIterator clauseIterator = definition.getClauseIterator();
         Object next = "START";
         while (next != null
@@ -33,6 +33,6 @@ public abstract class AbstractStoLoSqlGenerator<StatementType extends SqlStateme
                 && clauseIterator.hasNext()) {
             next = clauseIterator.nextNonWhitespace();
         }
-        clauseIterator.replace("ALTER");
+        clauseIterator.replace("CREATE OR ALTER");
     }
 }

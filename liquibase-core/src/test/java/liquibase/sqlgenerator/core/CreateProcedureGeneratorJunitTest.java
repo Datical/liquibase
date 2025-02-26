@@ -49,7 +49,7 @@ public class CreateProcedureGeneratorJunitTest {
         assertEquals("SET ANSI_NULLS OFF", sqls[1].toSql());
         assertEquals("SET QUOTED_IDENTIFIER OFF", sqls[2].toSql());
         assertEquals(
-                "ALTER PROCEDURE [dbo].[SqlTest01]\n" +
+                "CREATE OR ALTER PROCEDURE [dbo].[SqlTest01]\n" +
                         "   AS\n" +
                         "   BEGIN\n" +
                         "SET ANSI_NULLS ON;\n" +

@@ -48,7 +48,7 @@ public class CreateViewGeneratorTest {
         assertEquals("SET ANSI_NULLS OFF", sqls[1].toSql());
         assertEquals("SET QUOTED_IDENTIFIER OFF", sqls[2].toSql());
         assertEquals(
-                "ALTER VIEW dbo.some_view \n" +
+                "CREATE OR ALTER VIEW dbo.some_view \n" +
                         "AS \n" +
                         "   SELECT LastName FROM dbo.Persons\n" +
                         ";",
