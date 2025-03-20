@@ -1051,7 +1051,7 @@ public class JdbcDatabaseSnapshot extends DatabaseSnapshot {
                             "a.DURATION as DURATION, 'TABLE' as TABLE_TYPE, c.COMMENTS as REMARKS, p.PARTITIONING_TYPE as PARTITION_TYPE " +
                             "from ALL_TABLES a " +
                             "join ALL_TAB_COMMENTS c on a.TABLE_NAME=c.table_name and a.owner=c.owner " +
-                            "left join ALL_PART_TABLES p on a.TABLE_NAME=p.TABLE_NAME and a.OWNER=p.OWNER";
+                            "left join ALL_PART_TABLES p on a.TABLE_NAME=p.TABLE_NAME and a.OWNER=p.OWNER ";
                     String allCatalogsString = getAllCatalogsStringScratchData();
                     if (tableName != null || allCatalogsString == null) {
                         sql += "WHERE a.OWNER='" + ownerName + "'";
