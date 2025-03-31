@@ -1047,11 +1047,9 @@ public class JdbcDatabaseSnapshot extends DatabaseSnapshot {
                 private List<CachedRow> queryOracle(CatalogAndSchema catalogAndSchema, String tableName) throws DatabaseException, SQLException {
                     String ownerName = database.correctObjectName(catalogAndSchema.getCatalogName(), Schema.class);
 
-                    String sql = "SELECT null as TABLE_CAT, a.OWNER as TABLE_SCHEM, a.TABLE_NAME as TABLE_NAME, a.TEMPORARY as TEMPORARY, " +
-                            "a.DURATION as DURATION, 'TABLE' as TABLE_TYPE, c.COMMENTS as REMARKS, p.PARTITIONING_TYPE as PARTITION_TYPE " +
+                    String sql = "SELECT null as TABLE_CAT, a.OWNER as TABLE_SCHEM, a.TABLE_NAME as TABLE_NAME, a.TEMPORARY as TEMPORARY, a.DURATION as DURATION, 'TABLE' as TABLE_TYPE, c.COMMENTS as REMARKS " +
                             "from ALL_TABLES a " +
-                            "join ALL_TAB_COMMENTS c on a.TABLE_NAME=c.table_name and a.owner=c.owner " +
-                            "left join ALL_PART_TABLES p on a.TABLE_NAME=p.TABLE_NAME and a.OWNER=p.OWNER ";
+                            "join ALL_TAB_COMMENTS c on a.TABLE_NAME=c.table_name and a.owner=c.owner ";
                     String allCatalogsString = getAllCatalogsStringScratchData();
                     if (tableName != null || allCatalogsString == null) {
                         sql += "WHERE a.OWNER='" + ownerName + "'";
@@ -1060,12 +1058,6 @@ public class JdbcDatabaseSnapshot extends DatabaseSnapshot {
                     }
                     if (tableName != null) {
                         sql += " AND a.TABLE_NAME='" + tableName + "'";
-                    } else {
-                        sql += " ORDER BY" +
-                                " CASE" +
-                                "     WHEN partitioning_type = 'REFERENCE' THEN 0" +
-                                "     ELSE 1" +
-                                " END";
                     }
 
                     return executeAndExtract(sql, database);
