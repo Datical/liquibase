@@ -393,6 +393,71 @@ public class DiffToChangeLog {
         return rs;
     }
 
+    private List<Map<String, ?>> queryForReferencePartitionedDependenciesOracle(Executor executor, List<String> schemas)
+            throws DatabaseException {
+        List<Map<String, ?>> rs = null;
+        try {
+            if (tryDbaDependencies) {
+                rs = executor.queryForList(new RawSqlStatement("SELECT UNIQUE\n" +
+                        "    c1.TABLE_OWNER AS OWNER,\n" +
+                        "    c1.TABLE_NAME AS NAME,\n" +
+                        "    c2.TABLE_OWNER AS REFERENCED_OWNER,\n" +
+                        "    c2.TABLE_NAME AS REFERENCED_NAME\n" +
+                        "FROM dba_tab_partitions c1\n" +
+                        "         JOIN dba_constraints c ON c1.TABLE_NAME = c.TABLE_NAME\n" +
+                        "         JOIN dba_constraints p ON c.r_constraint_name = p.constraint_name\n" +
+                        "         JOIN dba_tab_partitions c2 ON p.TABLE_NAME = c2.TABLE_NAME\n" +
+                        "WHERE c.constraint_type = 'R'\n" +
+                        "  AND c2.TABLE_OWNER != 'SYS'\n" +
+                        "  AND c1.TABLE_NAME != c2.TABLE_NAME\n" +
+                        "  AND c1.partition_name = c2.partition_name AND (" + StringUtils.join(schemas, " OR ", new StringUtils.StringUtilsFormatter<String>() {
+                            @Override
+                            public String toString(String obj) {
+                                return "c1.TABLE_OWNER='" + obj + "'";
+                            }
+                        }
+                ) + ")"));
+            } else {
+                rs = executor.queryForList(new RawSqlStatement("SELECT UNIQUE\n" +
+                        "    c1.TABLE_OWNER AS OWNER,\n" +
+                        "    c1.TABLE_NAME AS NAME,\n" +
+                        "    c2.TABLE_OWNER AS REFERENCED_OWNER,\n" +
+                        "    c2.TABLE_NAME AS REFERENCED_NAME\n" +
+                        "FROM all_tab_partitions c1\n" +
+                        "         JOIN all_constraints c ON c1.TABLE_NAME = c.TABLE_NAME\n" +
+                        "         JOIN all_constraints p ON c.r_constraint_name = p.constraint_name\n" +
+                        "         JOIN all_tab_partitions c2 ON p.TABLE_NAME = c2.TABLE_NAME\n" +
+                        "WHERE c.constraint_type = 'R' -- Foreign Key Relationship\n" +
+                        "  AND c2.TABLE_OWNER != 'SYS'\n" +
+                        "  AND c1.TABLE_NAME != c2.TABLE_NAME\n" +
+                        "  AND c1.partition_name = c2.partition_name AND (" + StringUtils.join(schemas, " OR ", new StringUtils.StringUtilsFormatter<String>() {
+                            @Override
+                            public String toString(String obj) {
+                                return "c2.TABLE_OWNER='" + obj + "'";
+                            }
+                        }
+                ) + ")"));
+            }
+        } catch (DatabaseException dbe) {
+            //
+            // If our exception is for something other than a missing table/view
+            // then we just re-throw the exception
+            // else if we can't see USER_DEPENDENCIES then we also re-throw
+            //   to stop the recursion
+            //
+            String message = dbe.getMessage();
+            if (!message.contains("ORA-00942: table or view does not exist")) {
+                throw new DatabaseException(dbe);
+            } else if (!tryDbaDependencies) {
+                throw new DatabaseException(dbe);
+            }
+            logger.warning("Unable to query DBA_DEPENDENCIES table. Switching to USER_DEPENDENCIES");
+            tryDbaDependencies = false;
+            return queryForReferencePartitionedDependenciesOracle(executor, schemas);
+        }
+        return rs;
+    }
+
     /**
      * Used by {@link #sortMissingObjects(Collection, Database)} to determine whether to go into the sorting logic.
      */
@@ -436,24 +501,10 @@ public class DiffToChangeLog {
             }
         } else if (database instanceof OracleDatabase) {
             Executor executor = ExecutorService.getInstance().getExecutor(database);
-            List<Map<String, ?>> rs = queryForDependenciesOracle(executor, schemas);
-            for (Map<String, ?> row : rs) {
-                String tabName = null;
-                if (tryDbaDependencies) {
-                    tabName =
-                            StringUtils.trimToNull((String) row.get("OWNER")) + "." +
-                                    StringUtils.trimToNull((String) row.get("NAME"));
-                } else {
-                    tabName =
-                            StringUtils.trimToNull((String) row.get("REFERENCED_OWNER")) + "." +
-                                    StringUtils.trimToNull((String) row.get("NAME"));
-                }
-                String bName =
-                        StringUtils.trimToNull((String) row.get("REFERENCED_OWNER")) + "." +
-                                StringUtils.trimToNull((String) row.get("REFERENCED_NAME"));
-
-                graph.add(bName, tabName);
-            }
+            List<Map<String, ?>> declaredDependencies = queryForDependenciesOracle(executor, schemas);
+            addOracleDependencies(graph, declaredDependencies);
+            List<Map<String, ?>> referencedPartDependencies = queryForReferencePartitionedDependenciesOracle(executor, schemas);
+            addOracleDependencies(graph, referencedPartDependencies);
         } else if (database instanceof MSSQLDatabase && database.getDatabaseMajorVersion() >= 9) {
             Executor executor = ExecutorService.getInstance().getExecutor(database);
             String sql = "select object_schema_name(referencing_id) as referencing_schema_name, object_name(referencing_id) as referencing_name, object_name(referenced_id) as referenced_name, object_schema_name(referenced_id) as referenced_schema_name  from sys.sql_expression_dependencies depz where (" + StringUtils.join(schemas, " OR ", new StringUtils.StringUtilsFormatter<String>() {
@@ -564,6 +615,26 @@ public class DiffToChangeLog {
                     graph.add(bName.replace("\"", ""), tabName.replace("\"", ""));
                 }
             }
+        }
+    }
+
+    private void addOracleDependencies(DependencyUtil.DependencyGraph<String> graph, List<Map<String, ?>> dependenciesResultSet) {
+        for (Map<String, ?> row : dependenciesResultSet) {
+            String tabName = null;
+            if (tryDbaDependencies) {
+                tabName =
+                        StringUtils.trimToNull((String) row.get("OWNER")) + "." +
+                                StringUtils.trimToNull((String) row.get("NAME"));
+            } else {
+                tabName =
+                        StringUtils.trimToNull((String) row.get("REFERENCED_OWNER")) + "." +
+                                StringUtils.trimToNull((String) row.get("NAME"));
+            }
+            String bName =
+                    StringUtils.trimToNull((String) row.get("REFERENCED_OWNER")) + "." +
+                            StringUtils.trimToNull((String) row.get("REFERENCED_NAME"));
+
+            graph.add(bName, tabName);
         }
     }
 
