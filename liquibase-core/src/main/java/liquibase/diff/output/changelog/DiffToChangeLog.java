@@ -427,7 +427,7 @@ public class DiffToChangeLog {
                         "         JOIN all_constraints c ON c1.TABLE_NAME = c.TABLE_NAME\n" +
                         "         JOIN all_constraints p ON c.r_constraint_name = p.constraint_name\n" +
                         "         JOIN all_tab_partitions c2 ON p.TABLE_NAME = c2.TABLE_NAME\n" +
-                        "WHERE c.constraint_type = 'R' -- Foreign Key Relationship\n" +
+                        "WHERE c.constraint_type = 'R'\n" +
                         "  AND c2.TABLE_OWNER != 'SYS'\n" +
                         "  AND c1.TABLE_NAME != c2.TABLE_NAME\n" +
                         "  AND c1.partition_name = c2.partition_name AND (" + StringUtils.join(schemas, " OR ", new StringUtils.StringUtilsFormatter<String>() {
@@ -451,7 +451,7 @@ public class DiffToChangeLog {
             } else if (!tryDbaDependencies) {
                 throw new DatabaseException(dbe);
             }
-            logger.warning("Unable to query DBA_DEPENDENCIES table. Switching to USER_DEPENDENCIES");
+            logger.warning("Unable to query DBA_TAB_PARTITIONS table. Switching to ALL_TAB_PARTITIONS");
             tryDbaDependencies = false;
             return queryForReferencePartitionedDependenciesOracle(executor, schemas);
         }
