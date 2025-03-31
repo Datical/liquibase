@@ -442,7 +442,7 @@ public class DiffToChangeLog {
             //
             // If our exception is for something other than a missing table/view
             // then we just re-throw the exception
-            // else if we can't see USER_DEPENDENCIES then we also re-throw
+            // else if we can't see ALL_TAB_PARTITIONS then we also re-throw
             //   to stop the recursion
             //
             String message = dbe.getMessage();
