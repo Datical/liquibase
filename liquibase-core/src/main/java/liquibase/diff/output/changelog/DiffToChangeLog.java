@@ -399,43 +399,35 @@ public class DiffToChangeLog {
         try {
             if (tryDbaDependencies) {
                 rs = executor.queryForList(new RawSqlStatement("SELECT UNIQUE\n" +
-                        "    c1.TABLE_OWNER AS OWNER,\n" +
-                        "    c1.TABLE_NAME AS NAME,\n" +
-                        "    c2.TABLE_OWNER AS REFERENCED_OWNER,\n" +
-                        "    c2.TABLE_NAME AS REFERENCED_NAME\n" +
-                        "FROM dba_tab_partitions c1\n" +
-                        "         JOIN dba_constraints c ON c1.TABLE_NAME = c.TABLE_NAME\n" +
-                        "         JOIN dba_constraints p ON c.r_constraint_name = p.constraint_name\n" +
-                        "         JOIN dba_tab_partitions c2 ON p.TABLE_NAME = c2.TABLE_NAME\n" +
-                        "WHERE c.constraint_type = 'R'\n" +
-                        "  AND c2.TABLE_OWNER != 'SYS'\n" +
-                        "  AND c1.TABLE_NAME != c2.TABLE_NAME\n" +
-                        "  AND c1.partition_name = c2.partition_name AND (" + StringUtils.join(schemas, " OR ", new StringUtils.StringUtilsFormatter<String>() {
-                            @Override
-                            public String toString(String obj) {
-                                return "c1.TABLE_OWNER='" + obj + "'";
-                            }
-                        }
+                        "    referencer.OWNER AS OWNER,\n" +
+                        "    referencer.TABLE_NAME AS NAME,\n" +
+                        "    referenced.OWNER AS REFERENCED_OWNER,\n" +
+                        "    referenced.TABLE_NAME AS REFERENCED_NAME\n" +
+                        "FROM\n" +
+                        "    DBA_CONSTRAINTS referencer\n" +
+                        "        JOIN\n" +
+                        "    DBA_CONSTRAINTS referenced\n" +
+                        "    ON referencer.R_CONSTRAINT_NAME = referenced.CONSTRAINT_NAME\n" +
+                        "        AND referencer.R_OWNER = referenced.OWNER\n" +
+                        "WHERE referencer.CONSTRAINT_TYPE = 'R' and referenced.OWNER != 'SYS' " +
+                        "AND (" + StringUtils.join(schemas, " OR ",
+                        (StringUtils.StringUtilsFormatter<String>) obj -> "referencer.TABLE_OWNER='" + obj + "'"
                 ) + ")"));
             } else {
                 rs = executor.queryForList(new RawSqlStatement("SELECT UNIQUE\n" +
-                        "    c1.TABLE_OWNER AS OWNER,\n" +
-                        "    c1.TABLE_NAME AS NAME,\n" +
-                        "    c2.TABLE_OWNER AS REFERENCED_OWNER,\n" +
-                        "    c2.TABLE_NAME AS REFERENCED_NAME\n" +
-                        "FROM all_tab_partitions c1\n" +
-                        "         JOIN all_constraints c ON c1.TABLE_NAME = c.TABLE_NAME\n" +
-                        "         JOIN all_constraints p ON c.r_constraint_name = p.constraint_name\n" +
-                        "         JOIN all_tab_partitions c2 ON p.TABLE_NAME = c2.TABLE_NAME\n" +
-                        "WHERE c.constraint_type = 'R'\n" +
-                        "  AND c2.TABLE_OWNER != 'SYS'\n" +
-                        "  AND c1.TABLE_NAME != c2.TABLE_NAME\n" +
-                        "  AND c1.partition_name = c2.partition_name AND (" + StringUtils.join(schemas, " OR ", new StringUtils.StringUtilsFormatter<String>() {
-                            @Override
-                            public String toString(String obj) {
-                                return "c2.TABLE_OWNER='" + obj + "'";
-                            }
-                        }
+                        "    referencer.OWNER      AS OWNER,\n" +
+                        "    referencer.TABLE_NAME AS NAME,\n" +
+                        "    referenced.OWNER      AS REFERENCED_OWNER,\n" +
+                        "    referenced.TABLE_NAME AS REFERENCED_NAME\n" +
+                        "FROM\n" +
+                        "    ALL_CONSTRAINTS referencer\n" +
+                        "        JOIN\n" +
+                        "    ALL_CONSTRAINTS referenced\n" +
+                        "    ON referencer.R_CONSTRAINT_NAME = referenced.CONSTRAINT_NAME\n" +
+                        "        AND referencer.R_OWNER = referenced.OWNER\n" +
+                        "WHERE referencer.CONSTRAINT_TYPE = 'R' and referenced.OWNER != 'SYS' " +
+                        "AND (" + StringUtils.join(schemas, " OR ",
+                        (StringUtils.StringUtilsFormatter<String>) obj -> "referencer.TABLE_OWNER='" + obj + "'"
                 ) + ")"));
             }
         } catch (DatabaseException dbe) {
