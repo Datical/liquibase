@@ -411,7 +411,7 @@ public class DiffToChangeLog {
                         "        AND referencer.R_OWNER = referenced.OWNER\n" +
                         "WHERE referencer.CONSTRAINT_TYPE = 'R' and referenced.OWNER != 'SYS' " +
                         "AND (" + StringUtils.join(schemas, " OR ",
-                        (StringUtils.StringUtilsFormatter<String>) obj -> "referencer.TABLE_OWNER='" + obj + "'"
+                        (StringUtils.StringUtilsFormatter<String>) obj -> "referencer.OWNER='" + obj + "'"
                 ) + ")"));
             } else {
                 rs = executor.queryForList(new RawSqlStatement("SELECT UNIQUE\n" +
@@ -427,7 +427,7 @@ public class DiffToChangeLog {
                         "        AND referencer.R_OWNER = referenced.OWNER\n" +
                         "WHERE referencer.CONSTRAINT_TYPE = 'R' and referenced.OWNER != 'SYS' " +
                         "AND (" + StringUtils.join(schemas, " OR ",
-                        (StringUtils.StringUtilsFormatter<String>) obj -> "referencer.TABLE_OWNER='" + obj + "'"
+                        (StringUtils.StringUtilsFormatter<String>) obj -> "referencer.OWNER='" + obj + "'"
                 ) + ")"));
             }
         } catch (DatabaseException dbe) {
