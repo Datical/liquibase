@@ -4,18 +4,16 @@ import liquibase.changelog.ChangeSet
 import liquibase.changelog.DatabaseChangeLog
 import liquibase.database.Database
 import liquibase.database.core.MSSQLDatabase
-import liquibase.sdk.database.MockDatabase
 import liquibase.exception.RollbackImpossibleException
 import liquibase.exception.UnexpectedLiquibaseException
 import liquibase.exception.ValidationErrors
+import liquibase.sdk.database.MockDatabase
 import liquibase.serializer.LiquibaseSerializable
 import liquibase.statement.SqlStatement
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import spock.lang.Specification
 
-import static junit.framework.Assert.assertSame
-import static junit.framework.Assert.assertTrue
-import static liquibase.test.Assert.assertArraysEqual
+import static org.junit.jupiter.api.Assertions.*
 
 public class AbstractChangeTest extends Specification {
 
@@ -316,12 +314,12 @@ public class AbstractChangeTest extends Specification {
     }
 
     def createRequiredDatabasesMetaData_nullAnnotation() {
-        assertArraysEqual(["COMPUTE"].toArray(), new ExampleAbstractChange().createRequiredDatabasesMetaData("x", null));
+        assertArrayEquals(["COMPUTE"].toArray(), new ExampleAbstractChange().createRequiredDatabasesMetaData("x", null))
     }
 
     @Test
     public void createSupportedDatabasesMetaData_nullAnnotation() {
-        assertArraysEqual(["COMPUTE"].toArray(), new ExampleAbstractChange().createSupportedDatabasesMetaData("x", null));
+        assertArrayEquals(["COMPUTE"].toArray(), new ExampleAbstractChange().createSupportedDatabasesMetaData("x", null))
     }
 
     @DatabaseChange(name = "exampleParamelessAbstractChange", description = "Used for the AbstractChangeTest unit test", priority = 1)

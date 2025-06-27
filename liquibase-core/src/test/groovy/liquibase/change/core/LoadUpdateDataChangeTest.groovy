@@ -1,14 +1,16 @@
 package liquibase.change.core
 
 import liquibase.change.ChangeStatus
+import liquibase.change.StandardChangeTest
+import liquibase.resource.ClassLoaderResourceAccessor
+import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
 import liquibase.snapshot.SnapshotGeneratorFactory
-import liquibase.change.StandardChangeTest;
-import liquibase.sdk.database.MockDatabase
-import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.statement.SqlStatement
-import liquibase.statement.core.InsertOrUpdateStatement;
-import static org.junit.Assert.*
+import liquibase.statement.core.InsertOrUpdateStatement
+
+import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 public class LoadUpdateDataChangeTest extends StandardChangeTest {
 

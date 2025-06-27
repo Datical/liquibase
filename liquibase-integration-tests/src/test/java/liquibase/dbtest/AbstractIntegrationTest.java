@@ -41,17 +41,16 @@ import liquibase.test.DiffResultAssert;
 import liquibase.test.JUnitResourceAccessor;
 import liquibase.test.TestContext;
 import liquibase.util.RegexMatcher;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
-import static junit.framework.Assert.*;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Base class for all database integration tests.  There is an AbstractIntegrationTest subclass for each supported database.
@@ -101,7 +100,7 @@ public abstract class AbstractIntegrationTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         openConnection(url);
@@ -154,7 +153,7 @@ public abstract class AbstractIntegrationTest {
         return new Properties();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (database != null) {
             if (shouldRollBack()) {

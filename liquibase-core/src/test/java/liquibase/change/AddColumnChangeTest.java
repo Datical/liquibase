@@ -5,10 +5,9 @@ import liquibase.database.core.DB2Database;
 import liquibase.sdk.database.MockDatabase;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.AddColumnStatement;
-
 import liquibase.statement.core.ReorganizeTableStatement;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AddColumnChangeTest {
 
@@ -25,11 +24,11 @@ public class AddColumnChangeTest {
         change.addColumn(column2);
 
         SqlStatement[] statements = change.generateStatements(new MockDatabase());
-        Assert.assertEquals(1, statements.length);
-        Assert.assertTrue(statements[0] instanceof AddColumnStatement);
+        Assertions.assertEquals(1, statements.length);
+        Assertions.assertTrue(statements[0] instanceof AddColumnStatement);
         AddColumnStatement stmt = (AddColumnStatement)statements[0];
-        Assert.assertTrue(stmt.isMultiple());
-        Assert.assertEquals(2, stmt.getColumns().size());
+        Assertions.assertTrue(stmt.isMultiple());
+        Assertions.assertEquals(2, stmt.getColumns().size());
     }
 
     @Test
@@ -45,12 +44,12 @@ public class AddColumnChangeTest {
         change.addColumn(column2);
 
         SqlStatement[] statements = change.generateStatements(new DB2Database());
-        Assert.assertEquals(2, statements.length);
-        Assert.assertTrue(statements[0] instanceof AddColumnStatement);
+        Assertions.assertEquals(2, statements.length);
+        Assertions.assertTrue(statements[0] instanceof AddColumnStatement);
         AddColumnStatement stmt = (AddColumnStatement)statements[0];
-        Assert.assertTrue(stmt.isMultiple());
-        Assert.assertEquals(2, stmt.getColumns().size());
-        Assert.assertTrue(statements[1] instanceof ReorganizeTableStatement);
+        Assertions.assertTrue(stmt.isMultiple());
+        Assertions.assertEquals(2, stmt.getColumns().size());
+        Assertions.assertTrue(statements[1] instanceof ReorganizeTableStatement);
 
     }
 }

@@ -3,16 +3,11 @@ package liquibase;
 import liquibase.changelog.ChangeLogIterator;
 import liquibase.changelog.ChangeLogParameters;
 import liquibase.changelog.DatabaseChangeLog;
-import liquibase.changelog.filter.ContextChangeSetFilter;
-import liquibase.changelog.filter.DbmsChangeSetFilter;
-import liquibase.changelog.filter.IgnoreChangeSetFilter;
-import liquibase.changelog.filter.LabelChangeSetFilter;
-import liquibase.changelog.filter.ShouldRunChangeSetFilter;
+import liquibase.changelog.filter.*;
 import liquibase.database.Database;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.ObjectQuotingStrategy;
-import liquibase.sdk.database.MockDatabase;
 import liquibase.exception.ChangeLogParseException;
 import liquibase.exception.LiquibaseException;
 import liquibase.exception.LockException;
@@ -23,18 +18,19 @@ import liquibase.logging.Logger;
 import liquibase.parser.ChangeLogParser;
 import liquibase.parser.ChangeLogParserFactory;
 import liquibase.resource.ResourceAccessor;
-import liquibase.test.Assert;
+import liquibase.sdk.database.MockDatabase;
 import liquibase.sdk.resource.MockResourceAccessor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import liquibase.test.Assert;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static liquibase.test.Assert.assertListsEqual;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class LiquibaseTest {
@@ -53,7 +49,7 @@ public class LiquibaseTest {
 //    private TestLiquibase testLiquibase;
 //    private DatabaseConnection connectionForConstructor;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
 //        if (connectionForConstructor != null) {
 //            reset(connectionForConstructor);
@@ -96,7 +92,7 @@ public class LiquibaseTest {
         });
     }
 
-    @After
+    @AfterEach
     public void after() {
         verifyNoMoreInteractions(mockLockService, mockChangeLogParser, mockChangeLog, mockChangeLogIterator); //for no other interactions of normal use objects. Not automatically checking mockDatabase and the *Factory mocks
         Mockito.reset(mockDatabase, mockLockServiceFactory, mockLockService, mockChangeLogParserFactory, mockChangeLogParser, mockChangeLog, mockChangeLogIterator);
@@ -121,7 +117,7 @@ public class LiquibaseTest {
         assertSame(resourceAccessor, liquibase.getResourceAccessor());
 
         assertNotNull(liquibase.getChangeLogParameters());
-        assertEquals("Standard database changelog parameters were not set", "DATABASECHANGELOGLOCK", liquibase.getChangeLogParameters().getValue("database.databaseChangeLogLockTableName", null));
+        assertEquals("DATABASECHANGELOGLOCK", liquibase.getChangeLogParameters().getValue("database.databaseChangeLogLockTableName", null), "Standard database changelog parameters were not set" );
 
         assertSame(database, liquibase.getDatabase());
     }
@@ -148,7 +144,7 @@ public class LiquibaseTest {
             when(DatabaseFactory.getInstance().findCorrectDatabaseImplementation(databaseConnection)).thenReturn(database);
 
             Liquibase liquibase = new Liquibase("com/example/test.xml", mockResourceAccessor, databaseConnection);
-            assertSame("Liquibase constructor passing connection did not find the correct database implementation", database, liquibase.getDatabase());
+            assertSame(database, liquibase.getDatabase(), "Liquibase constructor passing connection did not find the correct database implementation");
 
         } finally {
             DatabaseFactory.reset();
@@ -246,21 +242,23 @@ public class LiquibaseTest {
 //        assertNull(liquibase.getChangeLogParameters().getContexts());
 //    }
 
-    @Test(expected = LockException.class)
+    @Test
     public void update_exceptionGettingLock() throws LiquibaseException {
 
         doThrow(LockException.class).when(mockLockService).waitForLock();
 
-        Liquibase liquibase = new Liquibase("com/example/test.xml", mockResourceAccessor, mockDatabase);
-        try {
-            liquibase.update((Contexts) null);
-        } finally {
-            verify(mockLockService).waitForLock();
-            //should not call anything else, even releaseLock()
-        }
+        assertThrows(LockException.class, () -> {
+            Liquibase liquibase = new Liquibase("com/example/test.xml", mockResourceAccessor, mockDatabase);
+            try {
+                liquibase.update((Contexts) null);
+            } finally {
+                verify(mockLockService).waitForLock();
+                //should not call anything else, even releaseLock()
+            }
+        });
     }
 
-    @Test(expected = ChangeLogParseException.class)
+    @Test
     public void update_exceptionDoingUpdate() throws LiquibaseException {
         Contexts contexts = new Contexts("a,b");
 
@@ -268,14 +266,17 @@ public class LiquibaseTest {
 
         doThrow(ChangeLogParseException.class).when(mockChangeLogParser).parse("com/example/test.xml", liquibase.getChangeLogParameters(), mockResourceAccessor);
 
-        try {
-            liquibase.update(contexts);
-        } finally {
-            verify(mockLockService).waitForLock();
-            verify(mockLockService).releaseLock(); //should still call
-            verify(mockDatabase).setObjectQuotingStrategy(ObjectQuotingStrategy.LEGACY); //should still call
-            verify(mockChangeLogParser).parse("com/example/test.xml", liquibase.getChangeLogParameters(), mockResourceAccessor);
-        }
+        assertThrows(ChangeLogParseException.class, () -> {
+            try {
+                liquibase.update(contexts);
+            } finally {
+                verify(mockLockService).waitForLock();
+                verify(mockLockService).releaseLock(); //should still call
+                verify(mockDatabase).setObjectQuotingStrategy(ObjectQuotingStrategy.LEGACY); //should still call
+                verify(mockChangeLogParser).parse("com/example/test.xml", liquibase.getChangeLogParameters(), mockResourceAccessor);
+            }
+        });
+
 
     }
 
@@ -298,7 +299,7 @@ public class LiquibaseTest {
                 iterator.getChangeSetFilters(), new Assert.AssertFunction() {
             @Override
             public void check(String message, Object expected, Object actual) {
-                assertEquals(message, expected, actual.getClass());
+                assertEquals(expected, actual.getClass(), message);
             }
         });
     }

@@ -3,7 +3,7 @@ package liquibase.dbtest;
 import liquibase.changelog.ChangeLogParameters;
 import liquibase.parser.core.xml.XMLChangeLogSAXParser;
 import liquibase.test.JUnitResourceAccessor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class IntXMLChangeLogSAXParserTest {
     @Test

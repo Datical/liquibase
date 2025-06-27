@@ -1,16 +1,19 @@
 package liquibase.change.custom
 
 import liquibase.database.Database
-import liquibase.sdk.database.MockDatabase
-import liquibase.exception.*
+import liquibase.exception.CustomChangeException
+import liquibase.exception.RollbackImpossibleException
+import liquibase.exception.UnexpectedLiquibaseException
+import liquibase.exception.ValidationErrors
 import liquibase.parser.core.ParsedNode
 import liquibase.parser.core.ParsedNodeException
+import liquibase.sdk.database.MockDatabase
 import liquibase.sdk.supplier.resource.ResourceSupplier
 import liquibase.statement.SqlStatement
 import spock.lang.Shared
 import spock.lang.Specification
 
-import static junit.framework.Assert.assertSame
+import static org.junit.jupiter.api.Assertions.assertSame
 
 public class CustomChangeWrapperTest extends Specification {
 

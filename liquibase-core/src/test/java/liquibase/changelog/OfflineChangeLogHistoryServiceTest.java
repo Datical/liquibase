@@ -5,9 +5,8 @@ import liquibase.database.core.HsqlDatabase;
 import liquibase.executor.ExecutorService;
 import liquibase.executor.LoggingExecutor;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.StringWriter;
@@ -15,15 +14,15 @@ import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @see https://liquibase.jira.com/browse/CORE-2334
  */
 public class OfflineChangeLogHistoryServiceTest  {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public File temporaryFolder;
 
     private File getResourceAsFile(String resourceName) {
         URL resourceUrl = getClass().getResource(resourceName);
@@ -76,7 +75,7 @@ public class OfflineChangeLogHistoryServiceTest  {
      */
     private OfflineChangeLogHistoryService createService(Writer writer, String outputLiquibaseSql) {
         HsqlDatabase database = new HsqlDatabase();
-        File changeLogCsvFile = new File(temporaryFolder.getRoot(), "changeLog.csv");
+        File changeLogCsvFile = new File(temporaryFolder, "changeLog.csv");
         OfflineConnection connection = new OfflineConnection("offline:hsqldb?changeLogFile="+changeLogCsvFile.getAbsolutePath()+"&outputLiquibaseSql="+outputLiquibaseSql, new ClassLoaderResourceAccessor());
         database.setConnection(connection);
         connection.attached(database);

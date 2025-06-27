@@ -1,21 +1,12 @@
 package liquibase.maven;
 
-import java.io.IOException;
-import java.io.File;
-
-import liquibase.CatalogAndSchema;
-import liquibase.structure.core.Schema;
 import org.apache.maven.it.VerificationException;
-
 import org.apache.maven.it.Verifier;
 import org.apache.maven.it.util.ResourceExtractor;
-import org.junit.Test;
-import liquibase.database.Database;
-import liquibase.database.DatabaseConnection;
-import liquibase.database.DatabaseFactory;
-import liquibase.test.DatabaseTestContext;
-import org.junit.Before;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Maven integration test. Run an update executing maven as if it was ran by the user
@@ -29,7 +20,7 @@ public class MavenIntegrationTest {
         //tests fail when not running a maven based build. need to figure out how to determine that
     }
 
-//    @Before
+//    @BeforeEach
 //    public void cleanDatabase() throws Exception {
 //         DatabaseConnection connection = DatabaseTestContext.getInstance().getConnection(URL);
 //         assertNotNull(connection);

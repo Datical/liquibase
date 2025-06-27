@@ -1,24 +1,17 @@
 package liquibase.integration.commandline;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import liquibase.exception.CommandLineParsingException;
+import liquibase.util.StringUtils;
+import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.StringReader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Properties;
 
-import liquibase.exception.CommandLineParsingException;
-import liquibase.util.StringUtils;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -102,7 +95,7 @@ public class MainTest {
 
     }
 
-    @Test(expected = CommandLineParsingException.class)
+    @Test
     public void parameterWithoutDash() throws Exception {
         String[] args = new String[]{
                 "promptForNonLocalDatabase=true",
@@ -110,10 +103,12 @@ public class MainTest {
         };
 
         Main cli = new Main();
-        cli.parseOptions(args);
+        assertThrows(CommandLineParsingException.class,  () -> {
+            cli.parseOptions(args);
+        });
     }
 
-    @Test(expected = CommandLineParsingException.class)
+    @Test
     public void unknownParameter() throws Exception {
         String[] args = new String[]{
                 "--promptForNonLocalDatabase=true",
@@ -122,14 +117,17 @@ public class MainTest {
         };
 
         Main cli = new Main();
-        cli.parseOptions(args);
+        assertThrows(CommandLineParsingException.class,  () -> {
+            cli.parseOptions(args);
+        });
     }
 
-    @Test(expected = CommandLineParsingException.class)
+    @Test
     public void configureNonExistantClassloaderLocation() throws Exception {
         Main cli = new Main();
         cli.classpath = "badClasspathLocation";
-        cli.configureClassLoader();
+
+        assertThrows(CommandLineParsingException.class, cli::configureClassLoader);
     }
 
     @Test
@@ -269,7 +267,7 @@ public class MainTest {
 
     }
 
-    @Test(expected = CommandLineParsingException.class)
+    @Test
     public void propertiesFileParsingShouldFailOnUnknownArgumentsIfStrictMode() throws Exception {
         Main cli = new Main();
 
@@ -281,8 +279,9 @@ public class MainTest {
         ByteArrayOutputStream propFile = new ByteArrayOutputStream();
         props.store(propFile, "");
 
-        cli.parsePropertiesFile(new ByteArrayInputStream(propFile.toByteArray()));
-
+        assertThrows(CommandLineParsingException.class, () -> {
+            cli.parsePropertiesFile(new ByteArrayInputStream(propFile.toByteArray()));
+        });
     }
 
     @Test
@@ -303,7 +302,7 @@ public class MainTest {
 
     }
 
-    @Test(expected = CommandLineParsingException.class)
+    @Test
     public void propertiesFileWithBadArgs() throws Exception {
         Main cli = new Main();
 
@@ -315,7 +314,10 @@ public class MainTest {
         ByteArrayOutputStream propFile = new ByteArrayOutputStream();
         props.store(propFile, "");
 
-        cli.parsePropertiesFile(new ByteArrayInputStream(propFile.toByteArray()));
+
+        assertThrows(CommandLineParsingException.class, () -> {
+            cli.parsePropertiesFile(new ByteArrayInputStream(propFile.toByteArray()));
+        });
     }
 
     @Test
@@ -349,8 +351,8 @@ public class MainTest {
         cli.commandParams.add("--logLevel=debug");
 
         // verify unexpected parameter
-        for(int i=0; i<noArgCommand.length; i++) {
-            cli.command = noArgCommand[i];
+        for (String s : noArgCommand) {
+            cli.command = s;
             assertEquals(1, cli.checkSetup().size());
         }
         
@@ -363,8 +365,8 @@ public class MainTest {
         
         // verify normal case - comand w/o command parameters
         cli.commandParams.clear();
-        for(int i=0; i<noArgCommand.length; i++) {
-            cli.command = noArgCommand[i];
+        for (String s : noArgCommand) {
+            cli.command = s;
             assertEquals(0, cli.checkSetup().size());
         }
         
@@ -374,16 +376,16 @@ public class MainTest {
         
         // verify unexpected parameter for single arg commands
         cli.commandParams.add("--logLevel=debug");
-        for(int i=0; i<singleArgCommand.length; i++) {
-            cli.command = singleArgCommand[i];
+        for (String s : singleArgCommand) {
+            cli.command = s;
             assertEquals(1, cli.checkSetup().size());
         }
         
         // verify normal case - comand with string command parameter
         cli.commandParams.clear();
         cli.commandParams.add("someCommandValue");
-        for(int i=0; i<singleArgCommand.length; i++) {
-            cli.command = singleArgCommand[i];
+        for (String s : singleArgCommand) {
+            cli.command = s;
             assertEquals(0, cli.checkSetup().size());
         }
             
@@ -404,8 +406,8 @@ public class MainTest {
         
         //first verify diff cmds w/o args 
         cli.commandParams.clear();
-        for(int i=0; i<multiArgCommand.length; i++) {
-            cli.command = multiArgCommand[i];
+        for (String s : multiArgCommand) {
+            cli.command = s;
             assertEquals(0, cli.checkSetup().size());
         }
        
@@ -413,9 +415,7 @@ public class MainTest {
         String[] cmdParms = { "--referenceUsername=USERNAME", "--referencePassword=PASSWORD", 
                 "--referenceUrl=URL", "--referenceDriver=DRIVER"};
         // load all parms 
-        for (String param : cmdParms) {
-            cli.commandParams.add(param);
-        }
+        Collections.addAll(cli.commandParams, cmdParms);
         assertEquals(0, cli.checkSetup().size());
         
         // now add an unexpected parm
@@ -429,7 +429,7 @@ public class MainTest {
         Main cli = new Main();
         cli.printHelp(new PrintStream(stream));
 
-        BufferedReader reader = new BufferedReader(new StringReader(new String(stream.toByteArray())));
+        BufferedReader reader = new BufferedReader(new StringReader(stream.toString()));
         String line;
         while ((line = reader.readLine()) != null) {
             //noinspection MagicNumber

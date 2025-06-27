@@ -8,20 +8,20 @@ import liquibase.changelog.filter.DbmsChangeSetFilter;
 import liquibase.changelog.visitor.ChangeSetVisitor;
 import liquibase.database.Database;
 import liquibase.database.core.MySQLDatabase;
-import static org.junit.Assert.*;
-
 import liquibase.exception.LiquibaseException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class ChangeLogIteratorTest {
     private DatabaseChangeLog changeLog;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         changeLog = new DatabaseChangeLog();
         changeLog.addChangeSet(new ChangeSet("1", "nvoxland", false, false, "/path/to/changelog", "test1", "mysql", null));

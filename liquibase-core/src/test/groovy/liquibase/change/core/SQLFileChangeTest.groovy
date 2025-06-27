@@ -1,9 +1,9 @@
 package liquibase.change.core
 
 import liquibase.change.Change
-import liquibase.change.ChangeStatus;
-import liquibase.change.StandardChangeTest;
-import liquibase.changelog.ChangeLogParameters;
+import liquibase.change.ChangeStatus
+import liquibase.change.StandardChangeTest
+import liquibase.changelog.ChangeLogParameters
 import liquibase.changelog.ChangeSet
 import liquibase.exception.UnexpectedLiquibaseException
 import liquibase.sdk.database.MockDatabase
@@ -11,7 +11,7 @@ import liquibase.sdk.resource.MockResourceAccessor
 import liquibase.statement.SqlStatement
 import spock.lang.Unroll
 
-import static org.junit.Assert.assertEquals
+import static org.junit.jupiter.api.Assertions.assertEquals
 
 public class SQLFileChangeTest extends StandardChangeTest {
 

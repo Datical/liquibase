@@ -2,7 +2,7 @@ package liquibase.resource
 
 import spock.lang.Specification
 
-import static org.junit.Assert.assertNull
+import static org.junit.jupiter.api.Assertions.assertNull
 
 public class CompositeResourceAccessorTest extends Specification {
     

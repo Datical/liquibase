@@ -5,19 +5,21 @@ import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.sqlgenerator.core.CreateProcedureGenerator.MssqlSplitStatements;
 import liquibase.statement.core.CreateProcedureStatement;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.TreeSet;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+;
 
 public class CreateProcedureGeneratorJunitTest {
 
     private CreateProcedureGenerator generator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         generator = new CreateProcedureGenerator();
     }

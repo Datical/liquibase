@@ -1,15 +1,15 @@
 package liquibase.sqlgenerator.core;
 
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 import liquibase.database.core.MSSQLDatabase;
 import liquibase.statement.core.InsertOrUpdateStatement;
-import liquibase.sql.Sql;
-import static junit.framework.Assert.assertTrue;
-import junit.framework.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InsertOrUpdateGeneratorMSSQLTest {
 
@@ -105,31 +105,29 @@ public class InsertOrUpdateGeneratorMSSQLTest {
          assertEquals("END", lines[lineNumber]);
      }
 
-    public static Object invokePrivateMethod (Object o, String methodName, Object[] params) {
-             // Check we have valid arguments...
-            Assert.assertNotNull(o);
-            Assert.assertNotNull(methodName);
-//            Assert.assertNotNull(params);
+    public static Object invokePrivateMethod(Object o, String methodName, Object[] params) {
+        // Check we have valid arguments...
+        Assertions.assertNotNull(o);
+        Assertions.assertNotNull(methodName);
+//            Assertions.assertNotNull(params);
 
-            // Go and find the private method...
-            final Method methods[] = o.getClass().getDeclaredMethods();
-            for (int i = 0; i < methods.length; ++i) {
-              if (methodName.equals(methods[i].getName())) {
+        // Go and find the private method...
+        final Method methods[] = o.getClass().getDeclaredMethods();
+        for (int i = 0; i < methods.length; ++i) {
+            if (methodName.equals(methods[i].getName())) {
                 try {
-                  methods[i].setAccessible(true);
-                  return methods[i].invoke(o, params);
+                    methods[i].setAccessible(true);
+                    return methods[i].invoke(o, params);
+                } catch (IllegalAccessException ex) {
+                    Assertions.fail("IllegalAccessException accessing " + methodName);
+                } catch (InvocationTargetException ite) {
+                    Assertions.fail("InvocationTargetException accessing " + methodName);
                 }
-                catch (IllegalAccessException ex) {
-                  Assert.fail ("IllegalAccessException accessing " + methodName);
-                }
-                catch (InvocationTargetException ite) {
-                    Assert.fail ("InvocationTargetException accessing " + methodName);
-                }
-              }
             }
-            Assert.fail ("Method '" + methodName +"' not found");
-            return null;
-          }
+        }
+        Assertions.fail("Method '" + methodName + "' not found");
+        return null;
+    }
 
 
 }

@@ -3,19 +3,14 @@ package liquibase.statement
 import liquibase.change.ColumnConfig
 import liquibase.changelog.ChangeSet
 import liquibase.changelog.DatabaseChangeLog
-import liquibase.database.PreparedStatementFactory
-import liquibase.sdk.database.MockDatabase
-import liquibase.database.jvm.JdbcConnection
 import liquibase.exception.DatabaseException
 import liquibase.resource.ClassLoaderResourceAccessor
 import liquibase.resource.CompositeResourceAccessor
 import liquibase.resource.FileSystemResourceAccessor
 import liquibase.resource.ResourceAccessor
-import org.junit.Assert
 import spock.lang.Ignore
 import spock.lang.Specification
 
-import java.sql.PreparedStatement
 import java.sql.SQLException
 
 public class ExecutablePreparedStatementTest extends Specification {
@@ -76,10 +71,10 @@ public class ExecutablePreparedStatementTest extends Specification {
 //		expectLastCall().andAnswer(new IAnswer<Object>() {
 //			@Override
 //			public Object answer() throws Throwable {
-//				Assert.assertEquals(new Integer(1), index.getValue());
-//				Assert.assertNotNull(inStream.getValue());
-//				Assert.assertTrue(inStreamgetValue() instanceof BufferedInputStream);
-//				Assert.assertEquals(new Integer(50), length.getValue());
+//				Assertions.assertEquals(new Integer(1), index.getValue());
+//				Assertions.assertNotNull(inStream.getValue());
+//				Assertions.assertTrue(inStreamgetValue() instanceof BufferedInputStream);
+//				Assertions.assertEquals(new Integer(50), length.getValue());
 //				return null;
 //			}
 //		});
@@ -152,10 +147,10 @@ public class ExecutablePreparedStatementTest extends Specification {
 //		expectLastCall().andAnswer(new IAnswer<Object>() {
 //			@Override
 //			public Object answer() throws Throwable {
-//				Assert.assertEquals(new Integer(1), index.getValue());
-//				Assert.assertNotNull(reader.getValue());
-//				Assert.assertTrue(reader.getValue() instanceof BufferedReader);
-//				Assert.assertEquals(new Integer(39), length.getValue());
+//				Assertions.assertEquals(new Integer(1), index.getValue());
+//				Assertions.assertNotNull(reader.getValue());
+//				Assertions.assertTrue(reader.getValue() instanceof BufferedReader);
+//				Assertions.assertEquals(new Integer(39), length.getValue());
 //				return null;
 //			}
 //		});

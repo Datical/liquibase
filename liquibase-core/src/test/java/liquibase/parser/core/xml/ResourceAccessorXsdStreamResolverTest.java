@@ -1,27 +1,28 @@
 package liquibase.parser.core.xml;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import liquibase.resource.ResourceAccessor;
+import liquibase.util.StreamUtil;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
-import liquibase.resource.ResourceAccessor;
-import liquibase.util.StreamUtil;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(StreamUtil.class)
-@PowerMockIgnore({"jdk.internal.reflect.*"})
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ResourceAccessorXsdStreamResolverTest {
 
 	private static final String XSD_FILE = "xsdFile";
@@ -38,9 +39,11 @@ public class ResourceAccessorXsdStreamResolverTest {
 	@Mock
 	private InputStream inputStream, successorValue;
 
-	@Before
+	private MockedStatic<StreamUtil> streamUtilMockedStatic;
+
+	@BeforeEach
 	public void setUp() throws IOException {
-		PowerMockito.mockStatic(StreamUtil.class);
+		streamUtilMockedStatic = mockStatic(StreamUtil.class);
 
 		resourceAccessorXsdStreamResolver.setSuccessor(successor);
 
@@ -49,7 +52,7 @@ public class ResourceAccessorXsdStreamResolverTest {
 
 	@Test
 	public void whenResourceStreamIsNotNullThenReturnStream() throws IOException {
-		when(StreamUtil.singleInputStream(XSD_FILE, resourceAccessor)).thenReturn(inputStream);
+		streamUtilMockedStatic.when(() -> StreamUtil.singleInputStream(XSD_FILE, resourceAccessor)).thenReturn(inputStream);
 
 		InputStream returnValue = resourceAccessorXsdStreamResolver.getResourceAsStream(XSD_FILE);
 
@@ -58,7 +61,7 @@ public class ResourceAccessorXsdStreamResolverTest {
 
 	@Test
 	public void whenResourceStreamIsNullThenReturnSuccessorValue() throws IOException {
-		when(StreamUtil.singleInputStream(XSD_FILE, resourceAccessor)).thenReturn(null);
+		streamUtilMockedStatic.when(() -> StreamUtil.singleInputStream(XSD_FILE, resourceAccessor)).thenReturn(null);
 
 		InputStream returnValue = resourceAccessorXsdStreamResolver.getResourceAsStream(XSD_FILE);
 
@@ -67,11 +70,16 @@ public class ResourceAccessorXsdStreamResolverTest {
 
 	@Test
 	public void whenIOExceptionOccursThenReturnSuccessorValue() throws IOException {
-		when(StreamUtil.singleInputStream(XSD_FILE, resourceAccessor)).thenThrow(new IOException());
+		streamUtilMockedStatic.when(() -> StreamUtil.singleInputStream(XSD_FILE, resourceAccessor)).thenThrow(new IOException());
 
 		InputStream returnValue = resourceAccessorXsdStreamResolver.getResourceAsStream(XSD_FILE);
 
 		assertThat(returnValue).isSameAs(successorValue);
+	}
+
+	@AfterEach
+	public void purgeStaticMocks(){
+		streamUtilMockedStatic.close();
 	}
 
 }

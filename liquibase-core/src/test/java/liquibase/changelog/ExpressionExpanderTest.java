@@ -2,18 +2,18 @@ package liquibase.changelog;
 
 import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.parser.ChangeLogParserCofiguration;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ExpressionExpanderTest {
     
     private ChangeLogParameters.ExpressionExpander handler;
     private ChangeLogParameters changeLogParameters;
 
-    @Before
+    @BeforeEach
     public void setup() {
         LiquibaseConfiguration.getInstance().reset();
         changeLogParameters = new ChangeLogParameters();

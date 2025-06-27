@@ -1,31 +1,32 @@
 package liquibase.parser.core.xml;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.Mockito.when;
-
-import java.io.InputStream;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
-import org.xml.sax.InputSource;
-
 import liquibase.parser.LiquibaseParser;
 import liquibase.parser.NamespaceDetails;
 import liquibase.parser.NamespaceDetailsFactory;
 import liquibase.resource.ResourceAccessor;
 import liquibase.serializer.LiquibaseSerializer;
+import liquibase.util.ReflectionUtil;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.xml.sax.InputSource;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(NamespaceDetailsFactory.class)
-@PowerMockIgnore({"jdk.internal.reflect.*"})
+import java.io.InputStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class LiquibaseSchemaResolverTest {
 
 	private static final String SYSTEM_ID = "systemId";
@@ -55,14 +56,15 @@ public class LiquibaseSchemaResolverTest {
 	@Mock
 	private ResourceAccessor resourceAccessor;
 
-	@Before
+	private MockedStatic<NamespaceDetailsFactory> staticMockCloseable;
+
+	@BeforeEach
 	public void setUp() {
-		PowerMockito.mockStatic(NamespaceDetailsFactory.class);
+		staticMockCloseable = mockStatic(NamespaceDetailsFactory.class);
+		when(NamespaceDetailsFactory.getInstance()).thenReturn(namespaceDetailsFactory);
 
 		liquibaseSchemaResolver = new LiquibaseSchemaResolver(SYSTEM_ID, PUBLIC_ID, resourceAccessor);
-		Whitebox.setInternalState(liquibaseSchemaResolver, "resourceAccessorXsdStreamResolver", resourceAccessorXsdStreamResolver);
-
-		when(NamespaceDetailsFactory.getInstance()).thenReturn(namespaceDetailsFactory);
+		ReflectionUtil.setInternalState(liquibaseSchemaResolver, "resourceAccessorXsdStreamResolver", resourceAccessorXsdStreamResolver);
 
 		when(namespaceDetailsFactory.getNamespaceDetails(liquibaseParser, SYSTEM_ID)).thenReturn(nameSpaceDetialsForParser);
 		when(namespaceDetailsFactory.getNamespaceDetails(liquibaseSerializer, SYSTEM_ID)).thenReturn(namespaceDetailsForSerializer);
@@ -88,7 +90,7 @@ public class LiquibaseSchemaResolverTest {
 
 		InputSource inputSource = liquibaseSchemaResolver.resolve(liquibaseParser);
 
-		assertThat(inputSource).isNull();
+		assertNull(inputSource);
 	}
 
 	@Test
@@ -106,7 +108,7 @@ public class LiquibaseSchemaResolverTest {
 
 		InputSource inputSource = liquibaseSchemaResolver.resolve(liquibaseParser);
 
-		assertThat(inputSource).isNull();
+		assertNull(inputSource);
 	}
 
 	@Test
@@ -136,6 +138,11 @@ public class LiquibaseSchemaResolverTest {
 		InputSource inputSource = liquibaseSchemaResolver.resolve(liquibaseParser);
 
 		assertThat(inputSource).isNull();
+	}
+
+	@AfterEach
+	public void tearDown() {
+		staticMockCloseable.close();
 	}
 
 }
