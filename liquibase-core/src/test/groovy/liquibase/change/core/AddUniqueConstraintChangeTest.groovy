@@ -1,6 +1,6 @@
 package liquibase.change.core
 
-import liquibase.change.ChangeStatus;
+import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
@@ -13,9 +13,9 @@ public class AddUniqueConstraintChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        def change = new AddUniqueConstraintChange();
-        change.setTableName("TABLE_NAME");
-        change.setColumnNames("COL_HERE");
+        def change = new AddUniqueConstraintChange()
+        change.setTableName("TABLE_NAME")
+        change.setColumnNames("COL_HERE")
 
         then:
         change.getConfirmationMessage() == "Unique constraint added to TABLE_NAME(COL_HERE)"

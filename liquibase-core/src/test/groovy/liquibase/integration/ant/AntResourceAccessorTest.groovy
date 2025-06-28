@@ -10,8 +10,8 @@ import spock.lang.Specification
 public class AntResourceAccessorTest extends Specification {
 
     protected AntResourceAccessor createResourceAccessor() {
-        Project project = new Project();
-        return new AntResourceAccessor(project, new Path(project));
+        Project project = new Project()
+        return new AntResourceAccessor(project, new Path(project))
     }
 
     def getResourcesAsStream() throws Exception {
@@ -32,7 +32,7 @@ public class AntResourceAccessorTest extends Specification {
 
     def list() throws Exception {
         when:
-        def resources = createResourceAccessor().list(null, "liquibase/change", true, true, false);
+        def resources = createResourceAccessor().list(null, "liquibase/change", true, true, false)
         then:
         resources.size() > 0
     }

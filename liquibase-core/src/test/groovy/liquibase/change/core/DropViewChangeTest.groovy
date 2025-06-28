@@ -1,7 +1,7 @@
 package liquibase.change.core
 
-import liquibase.change.ChangeStatus;
-import liquibase.change.StandardChangeTest;
+import liquibase.change.ChangeStatus
+import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
 import liquibase.snapshot.SnapshotGeneratorFactory
@@ -11,8 +11,8 @@ public class DropViewChangeTest  extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        DropViewChange change = new DropViewChange();
-        change.setViewName("VIEW_NAME");
+        DropViewChange change = new DropViewChange()
+        change.setViewName("VIEW_NAME")
 
         then:
         "View VIEW_NAME dropped" == change.getConfirmationMessage()

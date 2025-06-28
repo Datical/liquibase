@@ -32,8 +32,6 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-;
-
 public abstract class AbstractExecuteTest {
 
     private Set<Class<? extends Database>> testedDatabases = new HashSet<Class<? extends Database>>();
@@ -98,8 +96,8 @@ public abstract class AbstractExecuteTest {
 
                     Sql[] sql = SqlGeneratorFactory.getInstance().generateSql(statementUnderTest, database);
 
-                    assertNotNull("Null SQL for " + database, sql);
-                    assertEquals("Unexpected number of  SQL statements for " + database, expectedSql.length, sql.length);
+                    assertNotNull(sql, "Null SQL for " + database);
+                    assertEquals(expectedSql.length, sql.length, "Unexpected number of  SQL statements for " + database);
 
                     int index = 0;
                     for (String convertedSql : expectedSql) {

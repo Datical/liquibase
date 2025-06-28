@@ -1,6 +1,6 @@
 package liquibase.change.core
 
-import liquibase.change.ChangeStatus;
+import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
@@ -13,9 +13,9 @@ public class AddPrimaryKeyChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        def change = new AddPrimaryKeyChange();
-        change.setTableName("TABLE_NAME");
-        change.setColumnNames("COL_HERE");
+        def change = new AddPrimaryKeyChange()
+        change.setTableName("TABLE_NAME")
+        change.setColumnNames("COL_HERE")
 
         then:
         change.getConfirmationMessage() == "Primary key added to TABLE_NAME (COL_HERE)"

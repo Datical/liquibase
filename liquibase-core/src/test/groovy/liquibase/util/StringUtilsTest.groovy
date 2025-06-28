@@ -96,20 +96,20 @@ class StringUtilsTest extends Specification {
 
     def "stripComments performance is reasonable with a long string"() {
         when:
-        StringBuilder sqlBuilder = new StringBuilder();
+        StringBuilder sqlBuilder = new StringBuilder()
         for (int i = 0; i < 10000; ++i) {
-            sqlBuilder.append(" A");
+            sqlBuilder.append(" A")
         }
-        String sql = sqlBuilder.toString();
-        String comment = " -- with comment\n";
-        String totalLine = sql + comment;
-        long start = System.currentTimeMillis();
-        String result = StringUtils.stripComments(totalLine);
-        long end = System.currentTimeMillis();
+        String sql = sqlBuilder.toString()
+        String comment = " -- with comment\n"
+        String totalLine = sql + comment
+        long start = System.currentTimeMillis()
+        String result = StringUtils.stripComments(totalLine)
+        long end = System.currentTimeMillis()
 
         then:
         result == sql.trim()
-        assert end - start <= 800: "Did not complete within 800ms, took " + (end - start) + "ms";
+        assert end - start <= 800: "Did not complete within 800ms, took " + (end - start) + "ms"
     }
 
     def "join with map"() {

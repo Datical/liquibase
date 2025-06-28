@@ -1,6 +1,6 @@
 package liquibase.change.core
 
-import liquibase.change.ChangeStatus;
+import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
@@ -10,8 +10,8 @@ public class DropSequenceChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        def change = new DropSequenceChange();
-        change.setSequenceName("SEQ_NAME");
+        def change = new DropSequenceChange()
+        change.setSequenceName("SEQ_NAME")
 
         then:
         "Sequence SEQ_NAME dropped" == change.getConfirmationMessage()

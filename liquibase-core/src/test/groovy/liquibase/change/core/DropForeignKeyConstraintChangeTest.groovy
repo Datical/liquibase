@@ -1,6 +1,6 @@
 package liquibase.change.core
 
-import liquibase.change.ChangeStatus;
+import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
@@ -13,10 +13,10 @@ public class DropForeignKeyConstraintChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        DropForeignKeyConstraintChange change = new DropForeignKeyConstraintChange();
-        change.setBaseTableSchemaName("SCHEMA_NAME");
-        change.setBaseTableName("TABLE_NAME");
-        change.setConstraintName("FK_NAME");
+        DropForeignKeyConstraintChange change = new DropForeignKeyConstraintChange()
+        change.setBaseTableSchemaName("SCHEMA_NAME")
+        change.setBaseTableName("TABLE_NAME")
+        change.setConstraintName("FK_NAME")
 
         then:
         "Foreign key FK_NAME dropped" == change.getConfirmationMessage()

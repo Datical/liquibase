@@ -22,8 +22,8 @@ public class ChangeSetTest extends Specification {
 
     def getDescriptions() {
         when:
-        def insertDescription = "insert tableName=test_table";
-        def changeSet = new ChangeSet("testId", "testAuthor", false, false, null, null, null, null);
+        def insertDescription = "insert tableName=test_table"
+        def changeSet = new ChangeSet("testId", "testAuthor", false, false, null, null, null, null)
 
         def insertData1 = new InsertDataChange()
         insertData1.setTableName("test_table")
@@ -35,61 +35,61 @@ public class ChangeSetTest extends Specification {
         changeSet.getDescription() == "empty"
 
         when:
-        changeSet.addChange(insertData1);
+        changeSet.addChange(insertData1)
         then:
         changeSet.getDescription() == insertDescription
 
         when:
-        changeSet.addChange(insertData2);
+        changeSet.addChange(insertData2)
         then:
         changeSet.getDescription() == insertDescription+"; insert tableName=test_table2"
 
         when:
         def createTableChange = new CreateTableChange()
         createTableChange.setTableName("new_table")
-        changeSet.addChange(createTableChange);
+        changeSet.addChange(createTableChange)
         then:
         changeSet.getDescription() == insertDescription+"; insert tableName=test_table2; createTable tableName=new_table"
     }
 
     def generateCheckSum() {
         when:
-        def changeSet1 = new ChangeSet("testId", "testAuthor", false, false, null, null, null, null);
-        def changeSet2 = new ChangeSet("testId", "testAuthor", false, false, null, null, null, null);
+        def changeSet1 = new ChangeSet("testId", "testAuthor", false, false, null, null, null, null)
+        def changeSet2 = new ChangeSet("testId", "testAuthor", false, false, null, null, null, null)
 
-        def change = new AddDefaultValueChange();
-        change.setSchemaName("SCHEMA_NAME");
-        change.setTableName("TABLE_NAME");
-        change.setColumnName("COLUMN_NAME");
-        change.setDefaultValue("DEF STRING");
-        change.setDefaultValueNumeric("42");
-        change.setDefaultValueBoolean(true);
-        change.setDefaultValueDate("2007-01-02");
+        def change = new AddDefaultValueChange()
+        change.setSchemaName("SCHEMA_NAME")
+        change.setTableName("TABLE_NAME")
+        change.setColumnName("COLUMN_NAME")
+        change.setDefaultValue("DEF STRING")
+        change.setDefaultValueNumeric("42")
+        change.setDefaultValueBoolean(true)
+        change.setDefaultValueDate("2007-01-02")
 
-        changeSet1.addChange(change);
-        changeSet2.addChange(change);
+        changeSet1.addChange(change)
+        changeSet2.addChange(change)
 
-        CheckSum md5Sum1 = changeSet1.generateCheckSum();
+        CheckSum md5Sum1 = changeSet1.generateCheckSum()
 
-        change.setSchemaName("SCHEMA_NAME2");
-        CheckSum md5Sum2 = changeSet2.generateCheckSum();
+        change.setSchemaName("SCHEMA_NAME2")
+        CheckSum md5Sum2 = changeSet2.generateCheckSum()
 
         then:
-        assert !md5Sum1.equals(md5Sum2);
+        assert !md5Sum1.equals(md5Sum2)
     }
 
     def isCheckSumValid_validCheckSum() {
         when:
-        def changeSet = new ChangeSet("1", "2", false, false, "/test.xml", null, null, null);
+        def changeSet = new ChangeSet("1", "2", false, false, "/test.xml", null, null, null)
 
         then:
-        assertTrue(changeSet.isCheckSumValid(changeSet.generateCheckSum()));
+        assertTrue(changeSet.isCheckSumValid(changeSet.generateCheckSum()))
     }
 
     def isCheckSumValid_invalidCheckSum() {
         when:
-        def checkSum = CheckSum.parse("2:asdf");
-        def changeSet = new ChangeSet("1", "2", false, false, "/test.xml", null, null, null);
+        def checkSum = CheckSum.parse("2:asdf")
+        def changeSet = new ChangeSet("1", "2", false, false, "/test.xml", null, null, null)
 
         then:
         assert !changeSet.isCheckSumValid(checkSum)
@@ -97,10 +97,10 @@ public class ChangeSetTest extends Specification {
 
     def isCheckSumValid_differentButValidCheckSum() {
         when:
-        CheckSum checkSum = CheckSum.parse("2:asdf");
+        CheckSum checkSum = CheckSum.parse("2:asdf")
 
-        ChangeSet changeSet = new ChangeSet("1", "2", false, false, "/test.xml", null, null, null);
-        changeSet.addValidCheckSum(changeSet.generateCheckSum().toString());
+        ChangeSet changeSet = new ChangeSet("1", "2", false, false, "/test.xml", null, null, null)
+        changeSet.addValidCheckSum(changeSet.generateCheckSum().toString())
 
         then:
         assert changeSet.isCheckSumValid(checkSum)

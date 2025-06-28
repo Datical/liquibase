@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue
 
 public class ShouldRunChangeSetFilterTest extends Specification {
 
-    static Database database;
+    static Database database
 
     public void setup() {
         database = Mock(Database.class)
@@ -25,16 +25,16 @@ public class ShouldRunChangeSetFilterTest extends Specification {
         when:
         database.getRanChangeSetList() >> new ArrayList<RanChangeSet>()
 
-        ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(database);
+        ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(database)
 
         then:
-        assertTrue(filter.accepts(new ChangeSet("1", "testAuthor", false, false, "path/changelog", null, null, null)).isAccepted());
+        assertTrue(filter.accepts(new ChangeSet("1", "testAuthor", false, false, "path/changelog", null, null, null)).isAccepted())
     }
 
     public void accepts() throws DatabaseException {
         when:
-        given_a_database_with_two_executed_changesets();
-        ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(database);
+        given_a_database_with_two_executed_changesets()
+        ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(database)
 
         then:
         assertFalse(filter.accepts(new ChangeSet("1", "testAuthor", false, false, "path/changelog", null, null, null)).isAccepted(), "Already ran changeset should not be accepted")
@@ -47,70 +47,70 @@ public class ShouldRunChangeSetFilterTest extends Specification {
 
     public void does_NOT_accept_current_changeset_with_classpath_prefix() throws DatabaseException {
         when:
-        given_a_database_with_two_executed_changesets();
-        ChangeSet changeSetWithClasspathPrefix = new ChangeSet("1", "testAuthor", false, false, "classpath:path/changelog", null, null, null);
+        given_a_database_with_two_executed_changesets()
+        ChangeSet changeSetWithClasspathPrefix = new ChangeSet("1", "testAuthor", false, false, "classpath:path/changelog", null, null, null)
 
-        ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(database, true);
+        ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(database, true)
 
         then:
-        assertFalse(filter.accepts(changeSetWithClasspathPrefix).isAccepted());
+        assertFalse(filter.accepts(changeSetWithClasspathPrefix).isAccepted())
     }
 
     public void does_NOT_accept_current_changeset_when_inserted_changeset_has_classpath_prefix() throws DatabaseException {
         when:
-        given_a_database_with_two_executed_changesets();
+        given_a_database_with_two_executed_changesets()
         ChangeSet changeSet = new ChangeSet("2", "testAuthor", false, false, "path/changelog", null, null, null)
 
-        ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(database, true);
+        ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(database, true)
 
         then:
-        assertFalse(filter.accepts(changeSet).isAccepted());
+        assertFalse(filter.accepts(changeSet).isAccepted())
     }
 
     public void does_NOT_accept_current_changeset_when_both_have_classpath_prefix() throws DatabaseException {
         when:
-        given_a_database_with_two_executed_changesets();
+        given_a_database_with_two_executed_changesets()
         ChangeSet changeSet = new ChangeSet("2", "testAuthor", false, false, "classpath:path/changelog", null, null, null)
 
-        ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(database, true);
+        ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(database, true)
 
         then:
-        assertFalse(filter.accepts(changeSet).isAccepted());
+        assertFalse(filter.accepts(changeSet).isAccepted())
     }
 
 //    public void should_decline_not_changed_changeset_when_has_run_on_change() throws DatabaseException {
 //        when:
-//        given_a_database_with_one_twice_executed_changeset();
+//        given_a_database_with_one_twice_executed_changeset()
 //
-//        ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(database);
+//        ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(database)
 //
 //        then:
-//        assertFalse("RunOnChange not changed changeset should NOT be accepted", filter.accepts(new ChangeSet("1", "testAuthor", false, true, "path/changelog", null, null, null)).isAccepted());
+//        assertFalse("RunOnChange not changed changeset should NOT be accepted", filter.accepts(new ChangeSet("1", "testAuthor", false, true, "path/changelog", null, null, null)).isAccepted())
 //    }
 
 
     private Database given_a_database_with_two_executed_changesets() throws DatabaseException {
-        ArrayList<RanChangeSet> ranChanges = new ArrayList<RanChangeSet>();
+        ArrayList<RanChangeSet> ranChanges = new ArrayList<RanChangeSet>()
         RanChangeSet ranChangeSet1 = new RanChangeSet("path/changelog", "1", "testAuthor", CheckSum.parse("12345"), new Date(), null, null, null, null, null, null, null)
-        ranChangeSet1.setOrderExecuted(1);
-        ranChanges.add(ranChangeSet1);
+        ranChangeSet1.setOrderExecuted(1)
+        ranChanges.add(ranChangeSet1)
         RanChangeSet ranChangeSet2 = new RanChangeSet("classpath:path/changelog", "2", "testAuthor", CheckSum.parse("12345"), new Date(), null, null, null, null, null, null, null)
-        ranChangeSet2.setOrderExecuted(2);
-        ranChanges.add(ranChangeSet2);
+        ranChangeSet2.setOrderExecuted(2)
+        ranChanges.add(ranChangeSet2)
 
-        return mock_database(ranChanges);
+        return mock_database(ranChanges)
     }
 
     private Database mock_database(List<RanChangeSet> ranChanges) throws DatabaseException {
-        database.getRanChangeSetList() >> ranChanges;
-        database.getDatabaseChangeLogTableName() >> "DATABASECHANGELOG";
+        database.getRanChangeSetList() >> ranChanges
+        database.getDatabaseChangeLogTableName() >> "DATABASECHANGELOG"
         database.getDefaultSchemaName() >> null
 
-        Executor template = Mock(Executor.class);
+        Executor template = Mock(Executor.class)
         template.update(_) >> 1
 
-        ExecutorService.getInstance().setExecutor(database, template);
-        return database;
+        ExecutorService.getInstance().setExecutor(database, template)
+        return database
     }
 
     private Database given_a_database_with_one_twice_executed_changeset() throws DatabaseException {
@@ -135,6 +135,6 @@ public class ShouldRunChangeSetFilterTest extends Specification {
 
         ShouldRunChangeSetFilter filter = new ShouldRunChangeSetFilter(db)
 
-        assertFalse(filter.accepts(new ChangeSet("1", "testAuthor", false, true, "path/changelog", null, null, null)).isAccepted(), "RunOnChange not changed changeset should NOT be accepted");
+        assertFalse(filter.accepts(new ChangeSet("1", "testAuthor", false, true, "path/changelog", null, null, null)).isAccepted(), "RunOnChange not changed changeset should NOT be accepted")
     }
 }

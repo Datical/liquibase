@@ -1,6 +1,6 @@
 package liquibase.change.core
 
-import liquibase.change.ChangeStatus;
+import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
@@ -12,8 +12,8 @@ public class CreateSequenceChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        def change = new CreateSequenceChange();
-        change.setSequenceName("SEQ_NAME");
+        def change = new CreateSequenceChange()
+        change.setSequenceName("SEQ_NAME")
 
         then:
         "Sequence SEQ_NAME created" == change.getConfirmationMessage()
@@ -21,9 +21,9 @@ public class CreateSequenceChangeTest extends StandardChangeTest {
 
     def "checkWarnings"() {
         when:
-        SqlGeneratorFactory.reset();
+        SqlGeneratorFactory.reset()
         def database = new MockDatabase()
-        database.supportsSequences = false;
+        database.supportsSequences = false
 
         def change = new CreateSequenceChange()
         change.sequenceName = "seq_my_table"

@@ -22,30 +22,30 @@ public class AbstractChangeTest extends Specification {
         new AbstractChange() {
             @Override
             public String getConfirmationMessage() {
-                return null;
+                return null
             }
 
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return null;
+                return null
             }
 
             @Override
             public String getSerializedObjectNamespace() {
-                return STANDARD_CHANGELOG_NAMESPACE;
+                return STANDARD_CHANGELOG_NAMESPACE
             }
 
-        }.createChangeMetaData();
+        }.createChangeMetaData()
         then:
         UnexpectedLiquibaseException e = thrown()
-        assert e.getMessage().startsWith("liquibase.exception.UnexpectedLiquibaseException: No @DatabaseChange annotation for ");
+        assert e.getMessage().startsWith("liquibase.exception.UnexpectedLiquibaseException: No @DatabaseChange annotation for ")
     }
 
     def createChangeMetaData() {
         when:
-        ExampleAbstractChange change = new ExampleAbstractChange();
-        ChangeMetaData changeMetaData = change.createChangeMetaData();
-        Map<String, ChangeParameterMetaData> parameters = changeMetaData.getParameters();
+        ExampleAbstractChange change = new ExampleAbstractChange()
+        ChangeMetaData changeMetaData = change.createChangeMetaData()
+        Map<String, ChangeParameterMetaData> parameters = changeMetaData.getParameters()
         
         then:
         changeMetaData.getName() == "exampleAbstractChange"
@@ -54,12 +54,12 @@ public class AbstractChangeTest extends Specification {
         changeMetaData.getAppliesTo() == null
 
         parameters.size() == 3
-        ChangeParameterMetaData dbmsMetaData = parameters.get("dbms");
-        ChangeParameterMetaData paramOneMetaData = parameters.get("paramOne");
-        ChangeParameterMetaData paramTwoMetaData = parameters.get("paramTwo");
-        ChangeParameterMetaData paramNoMetaData = parameters.get("paramNoMetadata");
-        ChangeParameterMetaData paramNotIncludedMetaData = parameters.get("paramNotIncluded");
-        ChangeParameterMetaData paramNoWriteMethodMetaData = parameters.get("paramNoWriteMethod");
+        ChangeParameterMetaData dbmsMetaData = parameters.get("dbms")
+        ChangeParameterMetaData paramOneMetaData = parameters.get("paramOne")
+        ChangeParameterMetaData paramTwoMetaData = parameters.get("paramTwo")
+        ChangeParameterMetaData paramNoMetaData = parameters.get("paramNoMetadata")
+        ChangeParameterMetaData paramNotIncludedMetaData = parameters.get("paramNotIncluded")
+        ChangeParameterMetaData paramNoWriteMethodMetaData = parameters.get("paramNoWriteMethod")
 
         dbmsMetaData == null
         paramOneMetaData != null
@@ -75,8 +75,8 @@ public class AbstractChangeTest extends Specification {
         paramTwoMetaData.getDataType() == "integer"
         paramTwoMetaData.getMustEqualExisting() == "table"
         paramTwoMetaData.getRequiredForDatabase().size() == 2
-        assertTrue(paramTwoMetaData.getRequiredForDatabase().contains("mysql"));
-        assertTrue(paramTwoMetaData.getRequiredForDatabase().contains("mssql"));
+        assertTrue(paramTwoMetaData.getRequiredForDatabase().contains("mysql"))
+        assertTrue(paramTwoMetaData.getRequiredForDatabase().contains("mssql"))
 
         paramNoMetaData != null
         paramNotIncludedMetaData == null
@@ -85,9 +85,9 @@ public class AbstractChangeTest extends Specification {
 
     def createChangeMetaData_noParams() {
         when:
-        ExampleParamlessAbstractChange change = new ExampleParamlessAbstractChange();
-        ChangeMetaData changeMetaData = change.createChangeMetaData();
-        Map<String, ChangeParameterMetaData> parameters = changeMetaData.getParameters();
+        ExampleParamlessAbstractChange change = new ExampleParamlessAbstractChange()
+        ChangeMetaData changeMetaData = change.createChangeMetaData()
+        Map<String, ChangeParameterMetaData> parameters = changeMetaData.getParameters()
         
         then:
         parameters.size() == 0
@@ -95,7 +95,7 @@ public class AbstractChangeTest extends Specification {
 
     def createChangeParameterMetadata_invalidParamNameEmptyParams() throws Exception {
         when:
-        new ExampleParamlessAbstractChange().createChangeParameterMetadata("paramOne");
+        new ExampleParamlessAbstractChange().createChangeParameterMetadata("paramOne")
         then:
         thrown(UnexpectedLiquibaseException)
     }
@@ -109,15 +109,15 @@ public class AbstractChangeTest extends Specification {
 
     def getChangeSet() {
         when:
-        ExampleAbstractChange change = new ExampleAbstractChange();
-        ChangeSet changeSet = new ChangeSet(new DatabaseChangeLog());
-        change.setChangeSet(changeSet);
+        ExampleAbstractChange change = new ExampleAbstractChange()
+        ChangeSet changeSet = new ChangeSet(new DatabaseChangeLog())
+        change.setChangeSet(changeSet)
 
         then:
-        assertSame(changeSet, change.getChangeSet());
+        assertSame(changeSet, change.getChangeSet())
 
         when:
-        change.setChangeSet(null);
+        change.setChangeSet(null)
         then:
         change.getChangeSet() == null
     }
@@ -127,16 +127,16 @@ public class AbstractChangeTest extends Specification {
         assert !new ExampleAbstractChange() {
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return null;
+                return null
             }
         }.generateStatementsVolatile(new MockDatabase())
 
         assert !new ExampleAbstractChange() {
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return new SqlStatement[0];
+                return new SqlStatement[0]
             }
-        }.generateStatementsVolatile(new MockDatabase());
+        }.generateStatementsVolatile(new MockDatabase())
     }
 
     def generateRollbackStatementsVolatile_noStatements() throws Exception {
@@ -144,14 +144,14 @@ public class AbstractChangeTest extends Specification {
         assert !new ExampleAbstractChange() {
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return null;
+                return null
             }
-        }.generateRollbackStatementsVolatile(new MockDatabase());
+        }.generateRollbackStatementsVolatile(new MockDatabase())
 
         assert !new ExampleAbstractChange() {
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return new SqlStatement[0];
+                return new SqlStatement[0]
             }
         }.generateRollbackStatementsVolatile(new MockDatabase())
     }
@@ -161,16 +161,16 @@ public class AbstractChangeTest extends Specification {
         assert new ExampleAbstractChange() {
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return null;
+                return null
             }
-        }.supports(new MockDatabase());
+        }.supports(new MockDatabase())
 
         assert new ExampleAbstractChange() {
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return new SqlStatement[0];
+                return new SqlStatement[0]
             }
-        }.supports(new MockDatabase());
+        }.supports(new MockDatabase())
     }
 
     def warn_noStatements() throws Exception {
@@ -178,16 +178,16 @@ public class AbstractChangeTest extends Specification {
         assert !new ExampleAbstractChange() {
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return null;
+                return null
             }
-        }.warn(new MockDatabase()).hasWarnings();
+        }.warn(new MockDatabase()).hasWarnings()
 
         assert !new ExampleAbstractChange() {
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return new SqlStatement[0];
+                return new SqlStatement[0]
             }
-        }.warn(new MockDatabase()).hasWarnings();
+        }.warn(new MockDatabase()).hasWarnings()
     }
 
     def validate_noStatements() throws Exception {
@@ -195,16 +195,16 @@ public class AbstractChangeTest extends Specification {
         assert !new ExampleAbstractChange() {
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return null;
+                return null
             }
-        }.validate(new MockDatabase()).hasErrors();
+        }.validate(new MockDatabase()).hasErrors()
 
         assert !new ExampleAbstractChange() {
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return new SqlStatement[0];
+                return new SqlStatement[0]
             }
-        }.validate(new MockDatabase()).hasErrors();
+        }.validate(new MockDatabase()).hasErrors()
     }
 
     def validate_noParameters() throws Exception {
@@ -214,8 +214,8 @@ public class AbstractChangeTest extends Specification {
 
     def validate_missingRequiredValue() throws Exception {
         when:
-        ExampleAbstractChange change = new ExampleAbstractChange();
-        ValidationErrors errors = change.validate(new MSSQLDatabase());
+        ExampleAbstractChange change = new ExampleAbstractChange()
+        ValidationErrors errors = change.validate(new MSSQLDatabase())
         then:
 
         errors.getErrorMessages().size() == 1
@@ -224,23 +224,23 @@ public class AbstractChangeTest extends Specification {
 
     def validate_noErrors() throws Exception {
         when:
-        ExampleAbstractChange change = new ExampleAbstractChange();
-        change.setParamTwo(3);
+        ExampleAbstractChange change = new ExampleAbstractChange()
+        change.setParamTwo(3)
 
         then:
-        ValidationErrors errors = change.validate(new MSSQLDatabase());
-        assert !errors.hasErrors();
+        ValidationErrors errors = change.validate(new MSSQLDatabase())
+        assert !errors.hasErrors()
     }
 
     def generateRollbackStatements_nullCreateInverse() throws Exception, RollbackImpossibleException {
         when:
-        Database database = new MockDatabase();
+        Database database = new MockDatabase()
         new ExampleParamlessAbstractChange() {
             @Override
             protected Change[] createInverses() {
-                return null;
+                return null
             }
-        }.generateRollbackStatements(database);
+        }.generateRollbackStatements(database)
 
         then:
         thrown(RollbackImpossibleException)
@@ -248,14 +248,14 @@ public class AbstractChangeTest extends Specification {
 
     def generateRollbackStatements_emptyCreateInverse() throws Exception, RollbackImpossibleException {
         when:
-        Database database = new MockDatabase();
+        Database database = new MockDatabase()
 
         SqlStatement[] rollbackStatements = new ExampleParamlessAbstractChange() {
             @Override
             protected Change[] createInverses() {
-                return new Change[0];
+                return new Change[0]
             }
-        }.generateRollbackStatements(database);
+        }.generateRollbackStatements(database)
 
         then:
         rollbackStatements.length == 0
@@ -271,16 +271,16 @@ public class AbstractChangeTest extends Specification {
         new ExampleAbstractChange() {
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return null;
+                return null
             }
-        }.getAffectedDatabaseObjects(new MockDatabase()).size() == 0;
+        }.getAffectedDatabaseObjects(new MockDatabase()).size() == 0
 
         new ExampleAbstractChange() {
             @Override
             public SqlStatement[] generateStatements(Database database) {
-                return new SqlStatement[0];
+                return new SqlStatement[0]
             }
-        }.getAffectedDatabaseObjects(new MockDatabase()).size() == 0;
+        }.getAffectedDatabaseObjects(new MockDatabase()).size() == 0
     }
 
     def getSerializableFieldType() {
@@ -327,17 +327,17 @@ public class AbstractChangeTest extends Specification {
 
         @Override
         public String getConfirmationMessage() {
-            return "Test Confirmation Message";
+            return "Test Confirmation Message"
         }
 
         @Override
         public SqlStatement[] generateStatements(Database database) {
-            return null;
+            return null
         }
 
         @Override
         public String getSerializedObjectNamespace() {
-            return STANDARD_CHANGELOG_NAMESPACE;
+            return STANDARD_CHANGELOG_NAMESPACE
         }
 
     }

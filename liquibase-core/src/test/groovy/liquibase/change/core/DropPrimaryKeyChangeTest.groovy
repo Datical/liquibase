@@ -1,6 +1,6 @@
 package liquibase.change.core
 
-import liquibase.change.ChangeStatus;
+import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
@@ -13,10 +13,10 @@ public class DropPrimaryKeyChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        DropPrimaryKeyChange change = new DropPrimaryKeyChange();
-        change.setSchemaName("SCHEMA_NAME");
-        change.setTableName("TABLE_NAME");
-        change.setConstraintName("PK_NAME");
+        DropPrimaryKeyChange change = new DropPrimaryKeyChange()
+        change.setSchemaName("SCHEMA_NAME")
+        change.setTableName("TABLE_NAME")
+        change.setConstraintName("PK_NAME")
 
         then:
         "Primary key dropped from TABLE_NAME" == change.getConfirmationMessage()

@@ -7,7 +7,7 @@ class OfflineConnectionTest extends Specification {
 
     def "constructor parses query parameters correctly"() {
         when:
-        def connection = new OfflineConnection(url, new JUnitResourceAccessor());
+        def connection = new OfflineConnection(url, new JUnitResourceAccessor())
 
         then:
         connection.params == expectedParams

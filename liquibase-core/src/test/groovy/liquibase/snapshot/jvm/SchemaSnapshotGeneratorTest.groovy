@@ -24,7 +24,7 @@ class SchemaSnapshotGeneratorTest extends Specification {
 
             @Override
             protected CatalogAndSchema toCatalogAndSchema(String tableSchema, Database database) {
-                return new CatalogAndSchema(null, tableSchema).customize(database);
+                return new CatalogAndSchema(null, tableSchema).customize(database)
             }
         }
 
