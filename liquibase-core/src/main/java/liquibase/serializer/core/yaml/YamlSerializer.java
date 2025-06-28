@@ -5,7 +5,6 @@ import liquibase.changelog.ChangeSet;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.serializer.LiquibaseSerializable;
 import liquibase.serializer.LiquibaseSerializer;
-import liquibase.statement.ColumnConstraint;
 import liquibase.statement.DatabaseFunction;
 import liquibase.statement.SequenceCurrentValueFunction;
 import liquibase.statement.SequenceNextValueFunction;
@@ -22,7 +21,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
 
-import java.beans.IntrospectionException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -42,17 +41,17 @@ public abstract class YamlSerializer implements LiquibaseSerializer {
             dumperOptions.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
             dumperOptions.setWidth(Integer.MAX_VALUE);
 
-            return new Yaml(getLiquibaseRepresenter(), dumperOptions);
+            return new Yaml(getLiquibaseRepresenter(dumperOptions), dumperOptions);
         }
 
 
         DumperOptions dumperOptions = new DumperOptions();
         dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        return new Yaml(getLiquibaseRepresenter(), dumperOptions);
+        return new Yaml(getLiquibaseRepresenter(dumperOptions), dumperOptions);
     }
 
-    protected LiquibaseRepresenter getLiquibaseRepresenter() {
-        return new LiquibaseRepresenter();
+    protected LiquibaseRepresenter getLiquibaseRepresenter(DumperOptions dumperOptions) {
+        return new LiquibaseRepresenter(dumperOptions);
     }
 
     protected boolean isJson() {
@@ -159,7 +158,8 @@ public abstract class YamlSerializer implements LiquibaseSerializer {
 
     public static class LiquibaseRepresenter extends Representer {
 
-        public LiquibaseRepresenter() {
+        public LiquibaseRepresenter(DumperOptions options) {
+            super(options);
             init();
         }
 
@@ -191,7 +191,7 @@ public abstract class YamlSerializer implements LiquibaseSerializer {
 
 
         @Override
-        protected Set<Property> getProperties(Class<? extends Object> type) throws IntrospectionException {
+        protected Set<Property> getProperties(Class<? extends Object> type) {
             Set<Property> returnSet = new HashSet<Property>();
             LiquibaseSerializable serialzableType = null;
             try {
@@ -228,6 +228,16 @@ public abstract class YamlSerializer implements LiquibaseSerializer {
             @Override
             public Object get(Object object) {
                 return ((LiquibaseSerializable) object).getSerializableFieldValue(getName());
+            }
+
+            @Override
+            public List<Annotation> getAnnotations() {
+                return null;
+            }
+
+            @Override
+            public <A extends Annotation> A getAnnotation(Class<A> aClass) {
+                return null;
             }
         }
 

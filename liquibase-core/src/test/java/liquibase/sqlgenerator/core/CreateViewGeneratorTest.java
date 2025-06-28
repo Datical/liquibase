@@ -14,8 +14,6 @@ import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-;
-
 public class CreateViewGeneratorTest {
     private static final String LSP = System.lineSeparator();
 

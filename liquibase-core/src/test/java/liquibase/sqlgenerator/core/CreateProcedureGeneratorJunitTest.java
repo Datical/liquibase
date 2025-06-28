@@ -13,8 +13,6 @@ import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-;
-
 public class CreateProcedureGeneratorJunitTest {
 
     private CreateProcedureGenerator generator;

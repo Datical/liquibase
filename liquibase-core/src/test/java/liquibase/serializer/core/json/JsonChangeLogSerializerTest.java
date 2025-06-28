@@ -11,7 +11,6 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-;
 
 public class JsonChangeLogSerializerTest {
 
@@ -66,10 +65,12 @@ public class JsonChangeLogSerializerTest {
                 "                \"defaultValueSequenceNext\": \"seq_me\",\n" +
                 "                \"name\": \"col2\"\n" +
                 "              }\n" +
-                "            }]\n" +
+                "            }\n" +
+                "          ]\n" +
                 "          \n" +
                 "        }\n" +
-                "      }]\n" +
+                "      }\n" +
+                "    ]\n" +
                 "    \n" +
                 "  }\n" +
                 "}\n", new JsonChangeLogSerializer().serialize(changeSet, true));
