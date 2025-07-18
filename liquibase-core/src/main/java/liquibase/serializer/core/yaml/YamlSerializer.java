@@ -232,12 +232,12 @@ public abstract class YamlSerializer implements LiquibaseSerializer {
 
             @Override
             public List<Annotation> getAnnotations() {
-                return null;
+                throw new UnsupportedOperationException("Not supported for LiquibaseProperty type");
             }
 
             @Override
             public <A extends Annotation> A getAnnotation(Class<A> aClass) {
-                return null;
+                throw new UnsupportedOperationException("Not supported for LiquibaseProperty type");
             }
         }
 

@@ -70,8 +70,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.groovy</groupId>
-      <artifactId>groovy-sql</artifactId>
-      <version>4.0.27</version>
+      <artifactId>groovy-all</artifactId>
+      <type>pom</type>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -120,6 +120,24 @@
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
+        <excludes>
+          <exclude>**/*.eot</exclude>
+          <exclude>**/*.woff</exclude>
+          <exclude>**/*.ttf</exclude>
+          <exclude>**/*.svg</exclude>
+        </excludes>
+      </resource>
+
+      <!-- Add binary resources again with filtering disabled, since resource plugin upgrade 3.1.0 -> 3.3.1 requires this explicitly-->
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>**/*.eot</include>
+          <include>**/*.woff</include>
+          <include>**/*.ttf</include>
+          <include>**/*.svg</include>
+        </includes>
       </resource>
     </resources>
 
@@ -251,10 +269,6 @@
         <version>3.14.0</version>
         <configuration>
           <compilerId>groovy-eclipse-compiler</compilerId>
-          <compilerArgs>
-            <arg>--add-modules</arg>
-            <arg>java.sql</arg>
-          </compilerArgs>
         </configuration>
         <dependencies>
           <dependency>

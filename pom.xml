@@ -58,10 +58,11 @@
         <sonar.organization>datical</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
-        <targetMavenVersion>3.8.4</targetMavenVersion>
-        <dependency.junit-jupiter-engine.version>5.13.1</dependency.junit-jupiter-engine.version>
+        <targetMavenVersion>3.9.10</targetMavenVersion>
+        <dependency.junit-jupiter-engine.version>5.13.3</dependency.junit-jupiter-engine.version>
         <dependency.mockito-junit-jupiter.version>5.18.0</dependency.mockito-junit-jupiter.version>
         <dependency.spock-core.version>2.4-M6-groovy-4.0</dependency.spock-core.version>
+        <plugin.jacoco-maven-plugin.version>0.8.13</plugin.jacoco-maven-plugin.version>
     </properties>
 
     <modules>
@@ -97,7 +98,7 @@
             <dependency>
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
-                <version>1.5.0</version>
+                <version>1.9.0</version>
             </dependency>
             <dependency>
                 <groupId>org.objenesis</groupId>
@@ -191,6 +192,16 @@
                 <version>4.0.26</version>
                 <type>pom</type>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-launcher</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-engine</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.spockframework</groupId>
@@ -245,7 +256,6 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.13</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -280,17 +290,17 @@
 
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.1</version>
+                    <version>3.4.2</version>
                 </plugin>
 
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.2</version>
+                    <version>3.11.2</version>
                 </plugin>
 
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.3.1</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                     </configuration>
@@ -331,13 +341,13 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.6.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>3.1.1</version>
                     <configuration>
                         <stagingRepository>/tmp/maven-snapshot</stagingRepository>
                         <mavenExecutorId>forked-path</mavenExecutorId>
@@ -347,7 +357,7 @@
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.12</version>
+                    <version>1.7.0</version>
                     <extensions>true</extensions>
                     <executions>
                         <execution>
@@ -366,7 +376,7 @@
 
                 <plugin>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
+                    <version>3.1.4</version>
                     <configuration>
                         <skip>false</skip>
                     </configuration>
@@ -396,7 +406,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>javacc-maven-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.1.1</version>
                 </plugin>
 
                 <plugin>
@@ -414,19 +424,19 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>5.1.4</version>
+                    <version>5.1.9</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.8.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.13</version>
+                    <version>${plugin.jacoco-maven-plugin.version}</version>
                 </plugin>
 
                 <plugin>
@@ -571,7 +581,6 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.13</version>
                 <reportSets>
                     <reportSet>
                         <reports>
