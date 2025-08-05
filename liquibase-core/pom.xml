@@ -115,7 +115,10 @@
 
   <build>
     <finalName>liquibase-${project.version}</finalName>
-
+    <!-- Add binary resources again with filtering disabled, since resource plugin upgrade 3.1.0 -> 3.3.1 requires this explicitly-->
+    <!-- The aim of filtering is to resolve property placeholders within resources files, in older version maven filtering -->
+    <!-- was ignoring binary files, in current version it tries to treat it as a text file, which leads to errors, -->
+    <!-- that is the reason, why we should include binaries with disabled filtering separately -->
     <resources>
       <resource>
         <directory>src/main/resources</directory>
@@ -127,8 +130,6 @@
           <exclude>**/*.svg</exclude>
         </excludes>
       </resource>
-
-      <!-- Add binary resources again with filtering disabled, since resource plugin upgrade 3.1.0 -> 3.3.1 requires this explicitly-->
       <resource>
         <directory>src/main/resources</directory>
         <filtering>false</filtering>
@@ -264,27 +265,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.14.0</version>
-        <configuration>
-          <compilerId>groovy-eclipse-compiler</compilerId>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-eclipse-compiler</artifactId>
-            <version>3.9.0</version>
-          </dependency>
-          <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-eclipse-batch</artifactId>
-            <version>4.0.26-01</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
@@ -332,13 +312,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <release>21</release>
-          </configuration>
-      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -354,7 +327,6 @@
                   <pluginExecutionFilter>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.14.0</version>
                     <goals>
                       <goal>compile</goal>
                       <goal>testCompile</goal>
