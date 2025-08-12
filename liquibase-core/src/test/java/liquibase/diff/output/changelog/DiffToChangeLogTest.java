@@ -18,8 +18,6 @@ public class DiffToChangeLogTest {
         MySQLDatabase database = new MySQLDatabase();
         DiffToChangeLog obj = new DiffToChangeLog(new DiffResult(new EmptyDatabaseSnapshot(database), new EmptyDatabaseSnapshot(database), new CompareControl()), null);
 
-        int count = 0;
-
         for (Class<? extends ChangeGenerator> type : new Class[] {UnexpectedObjectChangeGenerator.class, MissingObjectChangeGenerator.class, ChangedObjectChangeGenerator.class}) {
             List<Class<? extends DatabaseObject>> orderedOutputTypes = obj.getOrderedOutputTypes(type);
             assertArrayEquals(orderedOutputTypes.toArray(), obj.getOrderedOutputTypes(type).toArray(), "Error checking " + type.getName());

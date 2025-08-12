@@ -50,6 +50,11 @@ public class ResourceAccessorXsdStreamResolverTest {
 		when(successor.getResourceAsStream(XSD_FILE)).thenReturn(successorValue);
 	}
 
+	@AfterEach
+	public void purgeStaticMocks(){
+		streamUtilMockedStatic.close();
+	}
+
 	@Test
 	public void whenResourceStreamIsNotNullThenReturnStream() throws IOException {
 		streamUtilMockedStatic.when(() -> StreamUtil.singleInputStream(XSD_FILE, resourceAccessor)).thenReturn(inputStream);
@@ -76,10 +81,4 @@ public class ResourceAccessorXsdStreamResolverTest {
 
 		assertThat(returnValue).isSameAs(successorValue);
 	}
-
-	@AfterEach
-	public void purgeStaticMocks(){
-		streamUtilMockedStatic.close();
-	}
-
 }

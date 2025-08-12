@@ -382,6 +382,10 @@
                     <version>3.14.0</version>
                     <configuration>
                         <compilerId>groovy-eclipse-compiler</compilerId>
+                        <release>21</release>
+                        <optimize>true</optimize>
+                        <debug>true</debug>
+                        <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                     <dependencies>
                         <dependency>

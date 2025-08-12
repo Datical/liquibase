@@ -75,12 +75,14 @@ public class LiquibaseEntityResolverTest {
 					}
 				});
 
-//		PowerMockito.whenNew(LiquibaseSchemaResolver.class).withArguments(SYSTEM_ID, PUBLIC_ID, resourceAccessor).thenReturn(liquibaseSchemaResolver);//TODO - clean up if works
-//		when(liquibaseSchemaResolver.resolve(parser)).thenReturn(inputSource);
-//		when(liquibaseSchemaResolver.resolve(serializer)).thenReturn(inputSource);
-
 		liquibaseEntityResolver = new LiquibaseEntityResolver(parser);
 		liquibaseEntityResolver.useResoureAccessor(resourceAccessor, BASE_PATH);
+	}
+
+	@AfterEach
+	public void tearDown() {
+		streamUtilMockedStatic.close();
+		liquibaseSchemaResolverMockedConstruction.close();
 	}
 
 	@Test
@@ -164,11 +166,5 @@ public class LiquibaseEntityResolverTest {
 		InputSource externalSubset = liquibaseEntityResolver.getExternalSubset(NAME, BASE_URI);
 
 		assertThat(externalSubset).isNull();
-	}
-
-	@AfterEach
-	public void tearDown() {
-		streamUtilMockedStatic.close();
-		liquibaseSchemaResolverMockedConstruction.close();
 	}
 }

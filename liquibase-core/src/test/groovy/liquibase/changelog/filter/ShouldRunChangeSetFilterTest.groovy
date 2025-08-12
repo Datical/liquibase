@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue
 
 public class ShouldRunChangeSetFilterTest extends Specification {
 
-    static Database database
+    Database database
 
     public void setup() {
         database = Mock(Database.class)
