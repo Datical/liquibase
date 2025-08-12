@@ -1,20 +1,20 @@
 package liquibase.lockservice;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 @SuppressWarnings({"EqualsWhichDoesntCheckParameterClass"})
 public class StandardLockServiceTest {
 
     private StandardLockService lockService;
 
-    @Before
+    @BeforeEach
     public void before() {
         lockService = new StandardLockService();
         lockService.reset();
     }
 
-    @After
+    @AfterEach
     public void after() {
         lockService.reset();
     }

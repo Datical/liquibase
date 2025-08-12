@@ -1,11 +1,12 @@
 package liquibase;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NoJavaSpecificCodeTest {
 

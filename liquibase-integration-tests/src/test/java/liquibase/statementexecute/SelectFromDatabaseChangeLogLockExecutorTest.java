@@ -9,11 +9,10 @@ import liquibase.database.core.SybaseDatabase;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.CreateDatabaseChangeLogLockTableStatement;
 import liquibase.statement.core.SelectFromDatabaseChangeLogLockStatement;
+import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Arrays;
-
-import org.junit.Test;
+import java.util.List;
 
 public class SelectFromDatabaseChangeLogLockExecutorTest extends AbstractExecuteTest {
 

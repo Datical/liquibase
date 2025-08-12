@@ -1,7 +1,7 @@
 package liquibase.util.file;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Petr Kozelka
@@ -15,8 +15,6 @@ public class FilenameUtilsTest {
     @Test
     public void concatWithNullBasePath() {
         final String something = "liquibase/delta-changelogs/";
-        Assert.assertEquals("null basePath must not kill the result of concatenation",
-                FilenameUtils.concat(null, something),
-                something);
+        Assertions.assertEquals(FilenameUtils.concat(null, something), something, "null basePath must not kill the result of concatenation");
     }
 }

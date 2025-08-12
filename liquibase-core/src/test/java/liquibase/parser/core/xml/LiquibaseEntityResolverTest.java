@@ -1,30 +1,31 @@
 package liquibase.parser.core.xml;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
 import liquibase.resource.ResourceAccessor;
 import liquibase.serializer.LiquibaseSerializer;
 import liquibase.util.StreamUtil;
 import liquibase.util.file.FilenameUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ LiquibaseEntityResolver.class, StreamUtil.class })
-@PowerMockIgnore({"jdk.internal.reflect.*"})
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class LiquibaseEntityResolverTest {
 
 	private static final String SYSTEM_ID = "http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd";
@@ -59,18 +60,29 @@ public class LiquibaseEntityResolverTest {
 
 	@Mock
 	private LiquibaseSerializer serializer;
+	private MockedStatic<StreamUtil> streamUtilMockedStatic;
+	private MockedConstruction<LiquibaseSchemaResolver> liquibaseSchemaResolverMockedConstruction;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
-		PowerMockito.mockStatic(StreamUtil.class);
-
-		PowerMockito.whenNew(LiquibaseSchemaResolver.class).withArguments(SYSTEM_ID, PUBLIC_ID, resourceAccessor).thenReturn(liquibaseSchemaResolver);
-
-		when(liquibaseSchemaResolver.resolve(parser)).thenReturn(inputSource);
-		when(liquibaseSchemaResolver.resolve(serializer)).thenReturn(inputSource);
+		streamUtilMockedStatic = mockStatic(StreamUtil.class);
+		liquibaseSchemaResolverMockedConstruction = mockConstruction(
+				LiquibaseSchemaResolver.class,
+				(mock, context) -> {
+					if (context.arguments().equals(List.of(SYSTEM_ID, PUBLIC_ID, resourceAccessor))) {
+						when(mock.resolve(parser)).thenReturn(inputSource);
+						when(mock.resolve(serializer)).thenReturn(inputSource);
+					}
+				});
 
 		liquibaseEntityResolver = new LiquibaseEntityResolver(parser);
 		liquibaseEntityResolver.useResoureAccessor(resourceAccessor, BASE_PATH);
+	}
+
+	@AfterEach
+	public void tearDown() {
+		streamUtilMockedStatic.close();
+		liquibaseSchemaResolverMockedConstruction.close();
 	}
 
 	@Test
@@ -81,12 +93,21 @@ public class LiquibaseEntityResolverTest {
 	}
 
 	@Test
-	public void systemIdStartingWithMigratorShouldBeReplacedByDbChangelog() throws Exception {
-		PowerMockito.whenNew(LiquibaseSchemaResolver.class).withArguments(SYSTEM_ID_FROM_MIGRATOR_PATH, PUBLIC_ID, resourceAccessor).thenReturn(liquibaseSchemaResolver);
+	void systemIdStartingWithMigratorShouldBeReplacedByDbChangelog() throws Exception {
+		liquibaseSchemaResolverMockedConstruction.close();
+		liquibaseSchemaResolverMockedConstruction = mockConstruction(
+				LiquibaseSchemaResolver.class,
+				(mock, context) -> {
+					if (context.arguments().equals(
+							List.of(SYSTEM_ID_FROM_MIGRATOR_PATH, PUBLIC_ID, resourceAccessor))) {
+						when(mock.resolve(parser)).thenReturn(inputSource);
+						when(mock.resolve(serializer)).thenReturn(inputSource);
+					}
+				});
 
-		InputSource result = liquibaseEntityResolver.resolveEntity(NAME, PUBLIC_ID, BASE_URI, SYSTEM_ID_WITH_MIGRATOR_PATH);
+			InputSource result = liquibaseEntityResolver.resolveEntity(NAME, PUBLIC_ID, BASE_URI, SYSTEM_ID_WITH_MIGRATOR_PATH);
 
-		assertThat(result).isSameAs(inputSource);
+			assertThat(result).isSameAs(inputSource);
 	}
 
 	@Test
@@ -108,7 +129,7 @@ public class LiquibaseEntityResolverTest {
 
 	@Test
 	public void whenSystemIdIsNotXsdLoadResourceFromBasepathWithResourceAccessor() throws IOException, SAXException {
-		PowerMockito.when(StreamUtil.singleInputStream(PATH_AND_SYSTEM_ID, resourceAccessor)).thenReturn(inputStream);
+		streamUtilMockedStatic.when(() -> StreamUtil.singleInputStream(PATH_AND_SYSTEM_ID, resourceAccessor)).thenReturn(inputStream);
 
 		InputSource result = liquibaseEntityResolver.resolveEntity(NAME, PUBLIC_ID, BASE_URI, FILE_SYSTEM_ID);
 
@@ -117,7 +138,7 @@ public class LiquibaseEntityResolverTest {
 
 	@Test
 	public void whenSystemIdIsNotXsdAndResourceCouldNotBeLoadedFromResourceAccessorReturnNull() throws IOException, SAXException {
-		PowerMockito.when(StreamUtil.singleInputStream(PATH_AND_SYSTEM_ID, resourceAccessor)).thenReturn(null);
+		streamUtilMockedStatic.when(() -> StreamUtil.singleInputStream(PATH_AND_SYSTEM_ID, resourceAccessor)).thenReturn(null);
 
 		InputSource result = liquibaseEntityResolver.resolveEntity(NAME, PUBLIC_ID, BASE_URI, FILE_SYSTEM_ID);
 
@@ -126,7 +147,7 @@ public class LiquibaseEntityResolverTest {
 
 	@Test
 	public void whenSystemIdIsNotXsdAndResourceExceptionOccursReturnNull() throws IOException, SAXException {
-		PowerMockito.when(StreamUtil.singleInputStream(PATH_AND_SYSTEM_ID, resourceAccessor)).thenThrow(new RuntimeException());
+		streamUtilMockedStatic.when(() -> StreamUtil.singleInputStream(PATH_AND_SYSTEM_ID, resourceAccessor)).thenThrow(new RuntimeException());
 
 		InputSource result = liquibaseEntityResolver.resolveEntity(NAME, PUBLIC_ID, BASE_URI, FILE_SYSTEM_ID);
 

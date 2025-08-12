@@ -1,12 +1,10 @@
 package liquibase.util
 
-import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import spock.lang.Specification
 import spock.lang.Unroll
-import spock.util.matcher.HamcrestMatchers
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat
 
 class CollectionUtilTest extends Specification {
 
@@ -17,8 +15,8 @@ class CollectionUtilTest extends Specification {
 
             @Override
             int compare(Collection o1, Collection o2) {
-                List set1 = new ArrayList(o1);
-                List set2 = new ArrayList(o2);
+                List set1 = new ArrayList(o1)
+                List set2 = new ArrayList(o2)
                 Collections.sort set1
                 Collections.sort set2
 

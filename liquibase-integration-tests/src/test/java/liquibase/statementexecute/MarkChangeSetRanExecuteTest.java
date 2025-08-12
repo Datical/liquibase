@@ -1,28 +1,16 @@
 package liquibase.statementexecute;
 
-import liquibase.statement.SqlStatement;
-import liquibase.statement.core.MarkChangeSetRanStatement;
-import liquibase.statement.core.CreateDatabaseChangeLogTableStatement;
-import liquibase.database.Database;
-import liquibase.database.core.DB2Database;
-import liquibase.database.core.DerbyDatabase;
-import liquibase.database.core.FirebirdDatabase;
-import liquibase.database.core.H2Database;
-import liquibase.database.core.HsqlDatabase;
-import liquibase.database.core.InformixDatabase;
-import liquibase.database.core.MSSQLDatabase;
-import liquibase.database.core.MySQLDatabase;
-import liquibase.database.core.OracleDatabase;
-import liquibase.database.core.PostgresDatabase;
-import liquibase.database.core.SybaseASADatabase;
-import liquibase.database.core.SybaseDatabase;
 import liquibase.changelog.ChangeSet;
+import liquibase.database.Database;
+import liquibase.database.core.*;
+import liquibase.statement.SqlStatement;
+import liquibase.statement.core.CreateDatabaseChangeLogTableStatement;
+import liquibase.statement.core.MarkChangeSetRanStatement;
 import liquibase.util.LiquibaseUtil;
+import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Arrays;
-
-import org.junit.Test;
+import java.util.List;
 
 public class MarkChangeSetRanExecuteTest extends AbstractExecuteTest {
     @Override

@@ -1,7 +1,8 @@
 package liquibase.sqlgenerator;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GeneratorLevelTest {
 
@@ -16,9 +17,9 @@ public class GeneratorLevelTest {
             } else if (className.endsWith("CreateTableGeneratorInformix")) {
                 //had to change level for some reason
             } else if (className.endsWith("Generator")) {
-                assertEquals("Incorrect level/naming convention for "+ className, SqlGenerator.PRIORITY_DEFAULT, specializationlevel);
+                assertEquals(SqlGenerator.PRIORITY_DEFAULT, specializationlevel, "Incorrect level/naming convention for "+ className);
             } else {
-                assertEquals("Incorrect level/naming convention for "+ className, SqlGenerator.PRIORITY_DATABASE, specializationlevel);
+                assertEquals(SqlGenerator.PRIORITY_DATABASE, specializationlevel, "Incorrect level/naming convention for "+ className);
             }
         }
     }

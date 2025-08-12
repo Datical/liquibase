@@ -1,18 +1,14 @@
 package liquibase.sqlgenerator.core;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-
 import liquibase.change.ColumnConfig;
 import liquibase.database.core.OracleDatabase;
-import liquibase.database.core.PostgresDatabase;
 import liquibase.sql.Sql;
 import liquibase.statement.SequenceNextValueFunction;
 import liquibase.statement.core.InsertOrUpdateStatement;
-
 import liquibase.statement.core.InsertStatement;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class InsertOrUpdateGeneratorOracleTest {
@@ -88,13 +84,13 @@ END;*/
         statement.addColumnValue("col2","value2");
         Sql[] sql = generator.generateSql( statement, database,  null);
         String theSql = sql[0].toSql();
-        assertFalse("should not have had insert statement",theSql.contains("INSERT INTO mycatalog.mytable (pk_col1, col2) VALUES ('value1', 'value2');"));
-        assertTrue("missing update statement", theSql.contains("UPDATE mycatalog.mytable"));
+        assertFalse(theSql.contains("INSERT INTO mycatalog.mytable (pk_col1, col2) VALUES ('value1', 'value2');"), "should not have had insert statement");
+        assertTrue(theSql.contains("UPDATE mycatalog.mytable"), "missing update statement");
         String[] sqlLines = theSql.split("\n");
         int lineToCheck = 0;
         assertEquals("UPDATE mycatalog.mytable SET col2 = 'value2' WHERE pk_col1 = 'value1'",sqlLines[lineToCheck].trim());
         lineToCheck++;
-        assertEquals( "Wrong number of lines", 1, sqlLines.length);
+        assertEquals(1, sqlLines.length,  "Wrong number of lines");
     }
 
     @Test

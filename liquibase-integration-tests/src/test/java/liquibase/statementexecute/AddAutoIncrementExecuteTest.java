@@ -1,13 +1,15 @@
 package liquibase.statementexecute;
 
-import liquibase.database.*;
+import liquibase.database.Database;
 import liquibase.database.core.*;
 import liquibase.datatype.DataTypeFactory;
-import liquibase.test.DatabaseTestContext;
-import liquibase.statement.*;
-import liquibase.statement.core.CreateTableStatement;
+import liquibase.statement.ColumnConstraint;
+import liquibase.statement.NotNullConstraint;
+import liquibase.statement.SqlStatement;
 import liquibase.statement.core.AddAutoIncrementStatement;
-import org.junit.Test;
+import liquibase.statement.core.CreateTableStatement;
+import liquibase.test.DatabaseTestContext;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;

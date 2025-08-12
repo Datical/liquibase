@@ -11,16 +11,17 @@ import liquibase.sqlgenerator.core.AddAutoIncrementGeneratorHsqlH2;
 import liquibase.sqlgenerator.core.AddColumnGenerator;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.AddAutoIncrementStatement;
-import org.junit.After;
-import static org.junit.Assert.*;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.SortedSet;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class SqlGeneratorFactoryTest {
 
-    @After
+    @AfterEach
     public void teardown() {
         SqlGeneratorFactory.reset();
     }

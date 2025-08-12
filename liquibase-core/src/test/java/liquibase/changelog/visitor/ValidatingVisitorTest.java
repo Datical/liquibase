@@ -3,27 +3,26 @@ package liquibase.changelog.visitor;
 import liquibase.change.ColumnConfig;
 import liquibase.change.core.CreateTableChange;
 import liquibase.changelog.ChangeSet;
-import liquibase.changelog.RanChangeSet;
 import liquibase.changelog.DatabaseChangeLog;
-import liquibase.sdk.database.MockDatabase;
+import liquibase.changelog.RanChangeSet;
+import liquibase.database.Database;
 import liquibase.exception.SetupException;
-import static org.junit.Assert.*;
-
-import org.junit.Before;
-import org.junit.Test;
+import liquibase.exception.ValidationErrors;
+import liquibase.sdk.database.MockDatabase;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import liquibase.database.Database;
-import liquibase.exception.ValidationErrors;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ValidatingVisitorTest {
 
     private ChangeSet changeSet1;
     private ChangeSet changeSet2;
 
-    @Before
+    @BeforeEach
     public void setup() {
         changeSet1 = new ChangeSet("1", "testAuthor", false, false, "path/changelog", null, null, null);
         changeSet2 = new ChangeSet("2", "testAuthor", false, false, "path/changelog", null, null, null);

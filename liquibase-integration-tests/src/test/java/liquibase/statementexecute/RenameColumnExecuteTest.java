@@ -9,7 +9,7 @@ import liquibase.statement.SqlStatement;
 import liquibase.statement.core.CreateTableStatement;
 import liquibase.statement.core.RenameColumnStatement;
 import liquibase.test.DatabaseTestContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;

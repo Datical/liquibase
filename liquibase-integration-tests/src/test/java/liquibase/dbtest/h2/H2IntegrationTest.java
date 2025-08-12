@@ -9,8 +9,10 @@ import liquibase.diff.output.DiffOutputControl;
 import liquibase.diff.output.changelog.DiffToChangeLog;
 import liquibase.diff.output.report.DiffToReport;
 import liquibase.exception.ValidationFailedException;
-import liquibase.snapshot.*;
-import org.junit.Test;
+import liquibase.snapshot.DatabaseSnapshot;
+import liquibase.snapshot.SnapshotControl;
+import liquibase.snapshot.SnapshotGeneratorFactory;
+import org.junit.jupiter.api.Test;
 
 public class H2IntegrationTest extends AbstractIntegrationTest {
 

@@ -15,19 +15,20 @@ import liquibase.statement.SqlStatement;
 import liquibase.test.JUnitResourceAccessor;
 import liquibase.util.StringUtils;
 import liquibase.verify.AbstractVerifyTest;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import java.util.*;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VerifyChangeClassesTest extends AbstractVerifyTest {
 
-    @Ignore
+    @Disabled
     @Test
-    public void minimumRequiredIsValidSql() throws Exception {
+    public void minimumRequiredIsValidSql(TestInfo info) throws Exception {
         ChangeFactory changeFactory = ChangeFactory.getInstance();
         for (String changeName : changeFactory.getDefinedChanges()) {
             if (changeName.equals("addDefaultValue")) {
@@ -41,7 +42,7 @@ public class VerifyChangeClassesTest extends AbstractVerifyTest {
                     continue;
                 }
 
-                TestState state = new TestState(name.getMethodName(), changeName, database.getShortName(), TestState.Type.SQL);
+                TestState state = new TestState(info.getDisplayName(), changeName, database.getShortName(), TestState.Type.SQL);
                 state.addComment("Database: " + database.getShortName());
 
                 Change change = changeFactory.create(changeName);
@@ -65,7 +66,7 @@ public class VerifyChangeClassesTest extends AbstractVerifyTest {
                 }
 
                 ValidationErrors errors = change.validate(database);
-                assertFalse("Validation errors for " + changeMetaData.getName() + " on " + database.getShortName() + ": " + errors.toString(), errors.hasErrors());
+                assertFalse(errors.hasErrors(), "Validation errors for " + changeMetaData.getName() + " on " + database.getShortName() + ": " + errors.toString());
 
                 SqlStatement[] sqlStatements = change.generateStatements(database);
                 for (SqlStatement statement : sqlStatements) {
@@ -75,7 +76,7 @@ public class VerifyChangeClassesTest extends AbstractVerifyTest {
                     } else {
                         for (Sql line : sql) {
                             String sqlLine = line.toSql();
-                            assertFalse("Change "+changeMetaData.getName()+" contains 'null' for "+database.getShortName()+": "+sqlLine, sqlLine.contains(" null "));
+                            assertFalse(sqlLine.contains(" null "), "Change " + changeMetaData.getName() + " contains 'null' for "+database.getShortName() + ": " + sqlLine);
 
                             state.addValue(sqlLine + ";");
                         }
@@ -119,16 +120,16 @@ public class VerifyChangeClassesTest extends AbstractVerifyTest {
                     Object currentValue = paramToRemoveMetadata.getCurrentValue(change);
                     paramToRemoveMetadata.setValue(change, null);
 
-                    assertTrue("No errors even with "+changeMetaData.getName()+" with a null "+paramToRemove+" on "+database.getShortName(), change.validate(database).hasErrors());
+                    assertTrue(change.validate(database).hasErrors(), "No errors even with " + changeMetaData.getName() + " with a null " + paramToRemove + " on " + database.getShortName());
                     paramToRemoveMetadata.setValue(change, currentValue);
                 }
             }
         }
     }
 
-    @Ignore
+    @Disabled
     @Test
-    public void extraParamsIsValidSql() throws Exception {
+    public void extraParamsIsValidSql(TestInfo info) throws Exception {
         ChangeFactory changeFactory = ChangeFactory.getInstance();
         for (String changeName : changeFactory.getDefinedChanges()) {
             if (changeName.equals("addDefaultValue")) {
@@ -144,7 +145,7 @@ public class VerifyChangeClassesTest extends AbstractVerifyTest {
                     continue;
                 }
 
-                TestState state = new TestState(name.getMethodName(), changeName, database.getShortName(), TestState.Type.SQL);
+                TestState state = new TestState(info.getDisplayName(), changeName, database.getShortName(), TestState.Type.SQL);
                 state.addComment("Database: " + database.getShortName());
 
                 Change baseChange = changeFactory.create(changeName);
@@ -196,7 +197,7 @@ public class VerifyChangeClassesTest extends AbstractVerifyTest {
                     }
 
                     ValidationErrors errors = change.validate(database);
-                    assertFalse("Validation errors for " + changeMetaData.getName() + " on "+database.getShortName()+": " +errors.toString(), errors.hasErrors());
+                    assertFalse(errors.hasErrors(), "Validation errors for " + changeMetaData.getName() + " on " + database.getShortName() + ": " +errors.toString());
 //
 //                    SqlStatement[] sqlStatements = change.generateStatements(database);
 //                    for (SqlStatement statement : sqlStatements) {

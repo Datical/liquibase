@@ -1,6 +1,6 @@
 package liquibase.change.core
 
-import liquibase.change.ChangeStatus;
+import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
@@ -11,8 +11,8 @@ public class AlterSequenceChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        def refactoring = new AlterSequenceChange();
-        refactoring.setSequenceName("SEQ_NAME");
+        def refactoring = new AlterSequenceChange()
+        refactoring.setSequenceName("SEQ_NAME")
 
         then:
         refactoring.getConfirmationMessage() == "Sequence SEQ_NAME altered"

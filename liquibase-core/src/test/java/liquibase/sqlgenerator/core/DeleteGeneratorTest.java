@@ -1,12 +1,12 @@
 package liquibase.sqlgenerator.core;
 
-import static org.junit.Assert.*;
 import liquibase.database.Database;
 import liquibase.database.core.MSSQLDatabase;
 import liquibase.sql.Sql;
 import liquibase.statement.core.DeleteStatement;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DeleteGeneratorTest {
     @Test

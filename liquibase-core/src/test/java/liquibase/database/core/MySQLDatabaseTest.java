@@ -2,9 +2,10 @@ package liquibase.database.core;
 
 import liquibase.database.AbstractJdbcDatabaseTest;
 import liquibase.database.Database;
-import org.junit.Assert;
-import static org.junit.Assert.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for {@link MySQLDatabase}
@@ -31,7 +32,7 @@ public class MySQLDatabaseTest extends AbstractJdbcDatabaseTest {
     @Override
     @Test
     public void getCurrentDateTimeFunction() {
-        Assert.assertEquals("NOW()", getDatabase().getCurrentDateTimeFunction());
+        Assertions.assertEquals("NOW()", getDatabase().getCurrentDateTimeFunction());
     }
 
     public void testGetDefaultDriver() {
@@ -58,7 +59,7 @@ public class MySQLDatabaseTest extends AbstractJdbcDatabaseTest {
 
     @Test
     public void escapeStringForDatabase_withBackslashes() {
-        Assert.assertEquals("\\\\0", database.escapeStringForDatabase("\\0"));
+        Assertions.assertEquals("\\\\0", database.escapeStringForDatabase("\\0"));
     }
 
 }

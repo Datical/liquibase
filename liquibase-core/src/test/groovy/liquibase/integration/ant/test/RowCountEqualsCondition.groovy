@@ -11,7 +11,7 @@ class RowCountEqualsCondition extends ProjectComponent implements Condition {
     private String user
     private String password
     private String table
-    private int count;
+    private int count
 
     @Override
     boolean eval() throws BuildException {

@@ -1,20 +1,19 @@
 package liquibase.sqlgenerator.core;
 
-import java.util.Arrays;
-
 import liquibase.database.core.MySQLDatabase;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.AbstractSqlGeneratorTest;
 import liquibase.sqlgenerator.MockSqlGeneratorChain;
 import liquibase.statement.core.DropColumnStatement;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Assert;
-import org.junit.Test;
+import java.util.Arrays;
 
 public class DropColumnGeneratorTest extends AbstractSqlGeneratorTest<DropColumnStatement> {
 
     public DropColumnGeneratorTest() throws Exception {
-        super(new DropColumnGenerator());
+        setUnderTest(new DropColumnGenerator());
     }
 
     @Override
@@ -29,11 +28,11 @@ public class DropColumnGeneratorTest extends AbstractSqlGeneratorTest<DropColumn
             new DropColumnStatement(null, null, "TEST_TABLE", "col2")
         ));
 
-        Assert.assertFalse(generatorUnderTest.validate(drop, new MySQLDatabase(), new MockSqlGeneratorChain()).hasErrors());
-        Sql[] sql = generatorUnderTest.generateSql(drop, new MySQLDatabase(), new MockSqlGeneratorChain());
-        Assert.assertEquals(1, sql.length);
-        Assert.assertEquals("ALTER TABLE TEST_TABLE DROP col1, DROP col2", sql[0].toSql());
-        Assert.assertEquals("[DEFAULT, TEST_TABLE, TEST_TABLE.col1, TEST_TABLE.col2]", String.valueOf(sql[0].getAffectedDatabaseObjects()));
+        Assertions.assertFalse(getGeneratorUnderTest().validate(drop, new MySQLDatabase(), new MockSqlGeneratorChain()).hasErrors());
+        Sql[] sql = getGeneratorUnderTest().generateSql(drop, new MySQLDatabase(), new MockSqlGeneratorChain());
+        Assertions.assertEquals(1, sql.length);
+        Assertions.assertEquals("ALTER TABLE TEST_TABLE DROP col1, DROP col2", sql[0].toSql());
+        Assertions.assertEquals("[DEFAULT, TEST_TABLE, TEST_TABLE.col1, TEST_TABLE.col2]", String.valueOf(sql[0].getAffectedDatabaseObjects()));
     }
 
 ////    @Test

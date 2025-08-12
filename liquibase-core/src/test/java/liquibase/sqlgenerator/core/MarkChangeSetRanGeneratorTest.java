@@ -6,14 +6,14 @@ import liquibase.sql.Sql;
 import liquibase.sqlgenerator.AbstractSqlGeneratorTest;
 import liquibase.sqlgenerator.MockSqlGeneratorChain;
 import liquibase.statement.core.MarkChangeSetRanStatement;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MarkChangeSetRanGeneratorTest extends AbstractSqlGeneratorTest<MarkChangeSetRanStatement> {
     public MarkChangeSetRanGeneratorTest() throws Exception {
-        super(new MarkChangeSetRanGenerator());
+        setUnderTest(new MarkChangeSetRanGenerator());
     }
 
     @Override
@@ -25,6 +25,6 @@ public class MarkChangeSetRanGeneratorTest extends AbstractSqlGeneratorTest<Mark
     public void generateSql_markRan() {
         Sql[] sqls = new MarkChangeSetRanGenerator().generateSql(new MarkChangeSetRanStatement(new ChangeSet("1", "a", false, false, "c", null, null, null), ChangeSet.ExecType.MARK_RAN), new MockDatabase(), new MockSqlGeneratorChain());
         assertEquals(1, sqls.length);
-        assertTrue(sqls[0].toSql(), sqls[0].toSql().contains("MARK_RAN"));
+        assertTrue(sqls[0].toSql().contains("MARK_RAN"), sqls[0].toSql());
     }
 }

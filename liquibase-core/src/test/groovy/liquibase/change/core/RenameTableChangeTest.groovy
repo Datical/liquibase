@@ -1,6 +1,6 @@
 package liquibase.change.core
 
-import liquibase.change.ChangeStatus;
+import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
@@ -12,8 +12,8 @@ public class RenameTableChangeTest extends StandardChangeTest {
     def getConfirmationMessage() throws Exception {
         when:
         def change = new RenameTableChange()
-        change.setOldTableName("OLD_NAME");
-        change.setNewTableName("NEW_NAME");
+        change.setOldTableName("OLD_NAME")
+        change.setNewTableName("NEW_NAME")
 
         then:
         "Table OLD_NAME renamed to NEW_NAME" == change.getConfirmationMessage()

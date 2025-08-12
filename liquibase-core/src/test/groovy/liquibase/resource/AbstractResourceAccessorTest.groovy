@@ -33,7 +33,7 @@ class AbstractResourceAccessorTest extends Specification {
     def "convertToPath with windows rootUrls"() {
         when:
         def accessor = createResourceAccessor(["file:/C:/path/to/target/test-classes/",
-                                               "file:/C:/path/to/target/classes/"], false);
+                                               "file:/C:/path/to/target/classes/"], false)
 
         then:
         accessor.convertToPath(path) == expected
@@ -55,7 +55,7 @@ class AbstractResourceAccessorTest extends Specification {
     def "convertToPath with linux rootUrls"() {
         when:
         def accessor = createResourceAccessor(["file:/path/to/target/test-classes/",
-                                               "file:/path/to/target/classes/"], false);
+                                               "file:/path/to/target/classes/"], false)
 
         then:
         accessor.convertToPath(path) == expected
@@ -79,12 +79,12 @@ class AbstractResourceAccessorTest extends Specification {
 
             @Override
             protected List<String> getRootPaths() {
-                return rootUrlsSet;
+                return rootUrlsSet
             }
 
             @Override
             protected boolean isCaseSensitive() {
-                return caseSensitive;
+                return caseSensitive
             }
 
             @Override

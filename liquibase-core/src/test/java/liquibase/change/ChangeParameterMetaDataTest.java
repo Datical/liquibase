@@ -2,18 +2,18 @@ package liquibase.change;
 
 import liquibase.change.core.*;
 import liquibase.database.core.MSSQLDatabase;
-import liquibase.sdk.database.MockDatabase;
 import liquibase.database.core.MySQLDatabase;
 import liquibase.database.core.OracleDatabase;
 import liquibase.exception.UnexpectedLiquibaseException;
+import liquibase.sdk.database.MockDatabase;
 import liquibase.serializer.LiquibaseSerializable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static liquibase.test.Assert.assertSetsEqual;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ChangeParameterMetaDataTest {
 
@@ -83,9 +83,9 @@ public class ChangeParameterMetaDataTest {
         assertEquals(0, new ChangeParameterMetaData(new ExampleAbstractChange(), "x", "y", null, null,null, Integer.class, new String[] {"none"}, null, null,LiquibaseSerializable.SerializationType.NAMED_FIELD).getRequiredForDatabase().size());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void getRequiredForDatabase_immutable() {
-        new ChangeParameterMetaData(new ExampleAbstractChange(), "x", "y", null, null,null, Integer.class, new String[] {"mysql"}, null, null,LiquibaseSerializable.SerializationType.NAMED_FIELD).getRequiredForDatabase().add("mssql");
+        assertThrows(UnsupportedOperationException.class, () -> new ChangeParameterMetaData(new ExampleAbstractChange(), "x", "y", null, null,null, Integer.class, new String[] {"mysql"}, null, null,LiquibaseSerializable.SerializationType.NAMED_FIELD).getRequiredForDatabase().add("mssql"));
     }
 
     @Test
@@ -123,12 +123,13 @@ public class ChangeParameterMetaDataTest {
         assertEquals("changedTableName", tableNameMetaData.getCurrentValue(change));
     }
 
-    @Test(expected = UnexpectedLiquibaseException.class)
+    @Test
     public void getCurrentValue_badParam() {
-        CreateTableChange change = new CreateTableChange();
-        ChangeParameterMetaData badParamMetaData = new ChangeParameterMetaData(new ExampleAbstractChange(), "badParameter", "Doesn't really exist", null, null,null, Integer.class, null,null, null, LiquibaseSerializable.SerializationType.NAMED_FIELD);
-        badParamMetaData.getCurrentValue(change);
-
+        assertThrows(UnexpectedLiquibaseException.class, () -> {
+            CreateTableChange change = new CreateTableChange();
+            ChangeParameterMetaData badParamMetaData = new ChangeParameterMetaData(new ExampleAbstractChange(), "badParameter", "Doesn't really exist", null, null,null, Integer.class, null,null, null, LiquibaseSerializable.SerializationType.NAMED_FIELD);
+            badParamMetaData.getCurrentValue(change);
+        });
     }
 
     @Test
