@@ -75,6 +75,11 @@ public class LiquibaseSchemaResolverTest {
 		when(resourceAccessorXsdStreamResolver.getResourceAsStream(XSD_FILE)).thenReturn(inputStream);
 	}
 
+	@AfterEach
+	public void tearDown() {
+		staticMockCloseable.close();
+	}
+
 	@Test
 	public void shouldReturnInputSourceWhenResourceAsStreamFound() {
 		InputSource inputSource = liquibaseSchemaResolver.resolve(liquibaseParser);
@@ -139,10 +144,4 @@ public class LiquibaseSchemaResolverTest {
 
 		assertThat(inputSource).isNull();
 	}
-
-	@AfterEach
-	public void tearDown() {
-		staticMockCloseable.close();
-	}
-
 }
