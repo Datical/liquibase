@@ -413,11 +413,11 @@
                     <version>2.10</version>
                 </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.1</version>
-                </plugin>
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-source-plugin</artifactId>-->
+<!--                    <version>3.3.1</version>-->
+<!--                </plugin>-->
 
                 <plugin>
                     <groupId>org.apache.felix</groupId>
@@ -534,7 +534,6 @@
                 <module>liquibase-debian</module>
             </modules>
         </profile>
-
 
         <profile>
             <id>rpm</id>
