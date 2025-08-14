@@ -535,7 +535,6 @@
             </modules>
         </profile>
 
-
         <profile>
             <id>rpm</id>
             <activation>
