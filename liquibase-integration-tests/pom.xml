@@ -131,6 +131,9 @@
 
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <classifier>it</classifier>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
