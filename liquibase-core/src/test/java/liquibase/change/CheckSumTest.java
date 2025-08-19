@@ -1,9 +1,10 @@
 package liquibase.change;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CheckSumTest {
 

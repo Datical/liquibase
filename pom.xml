@@ -58,13 +58,15 @@
         <sonar.organization>datical</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
-        <targetMavenVersion>3.8.4</targetMavenVersion>
+        <targetMavenVersion>3.9.10</targetMavenVersion>
+        <dependency.junit-jupiter-engine.version>5.13.3</dependency.junit-jupiter-engine.version>
+        <dependency.mockito-junit-jupiter.version>5.18.0</dependency.mockito-junit-jupiter.version>
+        <dependency.spock-core.version>2.4-M6-groovy-4.0</dependency.spock-core.version>
     </properties>
 
     <modules>
         <module>liquibase-core</module>
         <module>liquibase-maven-plugin</module>
-        <module>liquibase-cdi</module>
         <module>liquibase-integration-tests</module>
     </modules>
 
@@ -89,43 +91,36 @@
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>1.17</version>
+                <version>2.4</version>
                 <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
-                <version>1.5.0</version>
+                <version>1.9.0</version>
             </dependency>
             <dependency>
                 <groupId>org.objenesis</groupId>
                 <artifactId>objenesis</artifactId>
-                <version>3.2</version>
+                <version>3.4</version>
             </dependency>
             <!-- COMPILE dependencies END -->
             <!-- PROVIDED dependencies START -->
             <dependency>
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant</artifactId>
-                <version>1.10.12</version>
+                <version>1.10.15</version>
                 <scope>provided</scope>
                 <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>osgi.core</artifactId>
-                <version>7.0.0</version>
+                <version>8.0.0</version>
                 <scope>provided</scope>
             </dependency>
-            <!-- It's better not to change cdi-api, weld-se, servlet-api and spring because in newer -->
+            <!-- It's better not to change servlet-api and spring because in newer -->
             <!-- versions injection mechanism can be changed and it will just stop working during runtime. -->
-            <!-- Also in newer versions of cdi-api jsr-250 dependency was removed and it will cause compilation errors. -->
-            <dependency>
-                <groupId>javax.enterprise</groupId>
-                <artifactId>cdi-api</artifactId>
-                <version>1.0-SP4</version>
-                <scope>provided</scope>
-            </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
@@ -149,75 +144,74 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.13.2</version>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${dependency.junit-jupiter-engine.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest</artifactId>
-                <version>2.2</version>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>${dependency.junit-jupiter-engine.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-module-junit4</artifactId>
-                <version>2.0.9</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-api-mockito2</artifactId>
-                <version>2.0.9</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.weld.se</groupId>
-                <artifactId>weld-se</artifactId>
-                <version>1.1.8.Final</version>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${dependency.mockito-junit-jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.shared</groupId>
                 <artifactId>maven-verifier</artifactId>
-                <version>1.7.2</version>
+                <version>2.0.0-M1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>1.4.197</version>
+                <version>1.4.200</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
-                <version>2.6.1</version>
+                <version>2.7.4</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derby</artifactId>
-                <version>10.15.2.0</version>
+                <version>10.17.1.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.groovy</groupId>
+                <groupId>org.apache.groovy</groupId>
                 <artifactId>groovy-all</artifactId>
-                <version>2.3.10</version>
+                <version>4.0.26</version>
+                <type>pom</type>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-launcher</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-engine</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.spockframework</groupId>
                 <artifactId>spock-core</artifactId>
-                <version>1.0-groovy-2.3</version>
+                <version>${dependency.spock-core.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.22.0</version>
+                <version>4.0.0-M1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -241,7 +235,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
@@ -258,35 +252,49 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.13</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report-aggregate</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.10.0</version>
-                    <configuration>
-                        <release>11</release>
-                        <optimize>true</optimize>
-                        <debug>true</debug>
-                        <encoding>${project.build.sourceEncoding}</encoding>
-                    </configuration>
-                </plugin>
-
-                <plugin>
+                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.1</version>
+                    <version>3.4.2</version>
                 </plugin>
 
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.2</version>
+                    <version>3.11.2</version>
                 </plugin>
 
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.3.1</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
                     </configuration>
@@ -294,18 +302,18 @@
 
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.2</version>
+                    <version>3.5.3</version>
                     <configuration>
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         <reportFormat>plain</reportFormat>
-                        <argLine>--add-opens java.base/jdk.internal.loader=ALL-UNNAMED</argLine>
+                        <argLine>${argLine} --add-opens java.base/jdk.internal.loader=ALL-UNNAMED</argLine>
                     </configuration>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.5.0</version>
                     <executions>
                         <execution>
                             <id>enforce-java</id>
@@ -327,13 +335,13 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.6.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>3.1.1</version>
                     <configuration>
                         <stagingRepository>/tmp/maven-snapshot</stagingRepository>
                         <mavenExecutorId>forked-path</mavenExecutorId>
@@ -343,7 +351,7 @@
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.12</version>
+                    <version>1.7.0</version>
                     <extensions>true</extensions>
                     <executions>
                         <execution>
@@ -362,44 +370,33 @@
 
                 <plugin>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
+                    <version>3.1.4</version>
                     <configuration>
                         <skip>false</skip>
                     </configuration>
                 </plugin>
 
                 <plugin>
-                    <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>gmaven-plugin</artifactId>
-                    <version>1.4</version>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.14.0</version>
                     <configuration>
-                        <providerSelection>2.0</providerSelection>
-                        <source />
+                        <compilerId>groovy-eclipse-compiler</compilerId>
+                        <release>21</release>
+                        <optimize>true</optimize>
+                        <debug>true</debug>
+                        <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>compile</goal>
-                                <goal>testCompile</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                     <dependencies>
                         <dependency>
-                            <groupId>org.codehaus.gmaven.runtime</groupId>
-                            <artifactId>gmaven-runtime-2.0</artifactId>
-                            <version>1.4</version>
-                            <exclusions>
-                                <exclusion>
-                                    <groupId>org.codehaus.groovy</groupId>
-                                    <artifactId>groovy-all</artifactId>
-                                </exclusion>
-                            </exclusions>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-eclipse-compiler</artifactId>
+                            <version>3.9.0</version>
                         </dependency>
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
-                            <artifactId>groovy-all</artifactId>
-                            <version>2.3.10</version>
+                            <artifactId>groovy-eclipse-batch</artifactId>
+                            <version>4.0.26-01</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -407,7 +404,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>javacc-maven-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>3.1.1</version>
                 </plugin>
 
                 <plugin>
@@ -419,31 +416,31 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.2.1</version>
+                    <version>3.3.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>5.1.4</version>
+                    <version>6.0.0</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.8.1</version>
                 </plugin>
 
                 <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.7</version>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.21.0</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <version>3.6.4</version>
+                    <version>3.15.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -492,6 +489,10 @@
             <name>mvnrepository</name>
             <url>https://repo.maven.apache.org/maven2/</url>
         </pluginRepository>
+        <pluginRepository>
+            <id>groovy-plugins-release</id>
+            <url>https://groovy.jfrog.io/artifactory/plugins-release</url>
+        </pluginRepository>
     </pluginRepositories>
 
     <profiles>
@@ -518,31 +519,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>report</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>report</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>report-aggregate</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>report-aggregate</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>      
                 </plugins>
             </build>
         </profile>

@@ -1,13 +1,13 @@
 package liquibase.sqlgenerator.core;
 
-import static org.junit.Assert.assertEquals;
-
 import liquibase.change.ColumnConfig;
 import liquibase.database.core.PostgresDatabase;
 import liquibase.sql.Sql;
 import liquibase.statement.SequenceNextValueFunction;
 import liquibase.statement.core.InsertStatement;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InsertOrUpdateGeneratorPostgresTest {
     private static final String CATALOG_NAME = "mycatalog";

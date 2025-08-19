@@ -16,29 +16,29 @@ import java.text.ParseException
 public class ColumnConfigTest extends Specification {
 
     @Shared
-            resourceSupplier = new ResourceSupplier();
+            resourceSupplier = new ResourceSupplier()
 
     def constructor_everythingSet() {
         when:
-        def table = new Table();
+        def table = new Table()
 
-        table.setPrimaryKey(new PrimaryKey().addColumn(0, new Column("colName")).setName("pk_name").setTablespace("pk_tablespace"));
-        table.getUniqueConstraints().add(new UniqueConstraint().setName("uq1").addColumn(0, new Column("otherCol")));
-        table.getUniqueConstraints().add(new UniqueConstraint().setName("uq2").addColumn(0, new Column("colName")));
+        table.setPrimaryKey(new PrimaryKey().addColumn(0, new Column("colName")).setName("pk_name").setTablespace("pk_tablespace"))
+        table.getUniqueConstraints().add(new UniqueConstraint().setName("uq1").addColumn(0, new Column("otherCol")))
+        table.getUniqueConstraints().add(new UniqueConstraint().setName("uq2").addColumn(0, new Column("colName")))
 
-        table.getOutgoingForeignKeys().add(new ForeignKey().setName("fk1").setForeignKeyColumns([new Column("otherCol")]));
-        table.getOutgoingForeignKeys().add(new ForeignKey().setName("fk2").setForeignKeyColumns([new Column("colName")]).setPrimaryKeyTable(new Table().setName("otherTable")).setPrimaryKeyColumns([new Column("id")]));
+        table.getOutgoingForeignKeys().add(new ForeignKey().setName("fk1").setForeignKeyColumns([new Column("otherCol")]))
+        table.getOutgoingForeignKeys().add(new ForeignKey().setName("fk2").setForeignKeyColumns([new Column("colName")]).setPrimaryKeyTable(new Table().setName("otherTable")).setPrimaryKeyColumns([new Column("id")]))
 
-        Column column = new Column();
-        column.setName("colName");
-        column.setRelation(table);
-        column.setAutoIncrementInformation(new Column.AutoIncrementInformation(3, 5));
-        column.setType(new DataType("BIGINT"));
-        column.setNullable(false);
-        column.setDefaultValue(123);
-        column.setRemarks("A Test Column");
+        Column column = new Column()
+        column.setName("colName")
+        column.setRelation(table)
+        column.setAutoIncrementInformation(new Column.AutoIncrementInformation(3, 5))
+        column.setType(new DataType("BIGINT"))
+        column.setNullable(false)
+        column.setDefaultValue(123)
+        column.setRemarks("A Test Column")
 
-        ColumnConfig config = new ColumnConfig(column);
+        ColumnConfig config = new ColumnConfig(column)
 
         then:
         config.getName() == "colName"
@@ -64,14 +64,14 @@ public class ColumnConfigTest extends Specification {
 
     def constructor_nothingSet() {
         when:
-        def table = new Table();
+        def table = new Table()
 
-        Column column = new Column();
-        column.setName("colName");
-        column.setRelation(table);
-        column.setType(new DataType("BIGINT"));
+        Column column = new Column()
+        column.setName("colName")
+        column.setRelation(table)
+        column.setType(new DataType("BIGINT"))
 
-        ColumnConfig config = new ColumnConfig(column);
+        ColumnConfig config = new ColumnConfig(column)
         config.getName() == "colName"
 
         then:
@@ -87,14 +87,14 @@ public class ColumnConfigTest extends Specification {
 
     def constructor_view() {
         when:
-        def view = new View();
+        def view = new View()
 
-        Column column = new Column();
-        column.setName("colName");
-        column.setRelation(view);
-        column.setType(new DataType("BIGINT"));
+        Column column = new Column()
+        column.setName("colName")
+        column.setRelation(view)
+        column.setType(new DataType("BIGINT"))
 
-        ColumnConfig config = new ColumnConfig(column);
+        ColumnConfig config = new ColumnConfig(column)
 
         then:
         config.getName() == "colName"
@@ -147,19 +147,19 @@ public class ColumnConfigTest extends Specification {
 
     def setValueNumeric_function() {
         when:
-        ColumnConfig columnConfig = new ColumnConfig().setValueNumeric("max_integer()");
+        ColumnConfig columnConfig = new ColumnConfig().setValueNumeric("max_integer()")
         then:
         columnConfig.getValueNumeric() == null
         columnConfig.getValueComputed().toString() == "max_integer()"
 
         when:
-        columnConfig = new ColumnConfig().setValueNumeric("paramless_fn");
+        columnConfig = new ColumnConfig().setValueNumeric("paramless_fn")
         then:
         columnConfig.getValueNumeric() == null
         columnConfig.getValueComputed().toString() == "paramless_fn"
 
         when:
-        columnConfig = new ColumnConfig().setValueNumeric("fn(3,5)");
+        columnConfig = new ColumnConfig().setValueNumeric("fn(3,5)")
         then:
         columnConfig.getValueNumeric() == null
         columnConfig.getValueComputed().toString() == "fn(3,5)"
@@ -216,7 +216,7 @@ public class ColumnConfigTest extends Specification {
         def column2 = new ColumnConfig().setValueDate((Date) null)
         column2.getValueDate() == null
 
-        Date today = new Date();
+        Date today = new Date()
         new ColumnConfig().setValueDate(today).getValueDate() == today
         new ColumnConfig().setValueDate("1992-02-11T13:22:44.6").getValueDate().toString() == "1992-02-11 13:22:44.006"
         new ColumnConfig().setValueDate("1992-02-12").getValueDate().toString() == "1992-02-12"
@@ -255,7 +255,7 @@ public class ColumnConfigTest extends Specification {
 
     def setDefaultValueNumeric_null() throws ParseException {
         expect:
-        def column = new ColumnConfig().setDefaultValueNumeric((String) null);
+        def column = new ColumnConfig().setDefaultValueNumeric((String) null)
         column.getDefaultValueNumeric() == null
         new ColumnConfig().setDefaultValueNumeric("null").getDefaultValueNumeric() == null
         new ColumnConfig().setDefaultValueNumeric("NULL").getDefaultValueNumeric() == null
@@ -265,7 +265,7 @@ public class ColumnConfigTest extends Specification {
 
     def setDefaultValueNumeric_generatedByDefault() throws ParseException {
         expect:
-        ColumnConfig config = new ColumnConfig().setDefaultValueNumeric("GENERATED_BY_DEFAULT");
+        ColumnConfig config = new ColumnConfig().setDefaultValueNumeric("GENERATED_BY_DEFAULT")
         config.getDefaultValueNumeric() == null
         assert config.isAutoIncrement()
     }
@@ -287,7 +287,7 @@ public class ColumnConfigTest extends Specification {
         column2.getDefaultValueDate() == null
         new ColumnConfig().setDefaultValueDate("").getDefaultValueDate() == null
 
-        Date today = new Date();
+        Date today = new Date()
         new ColumnConfig().setDefaultValueDate(today).getDefaultValueDate() == today
         new ColumnConfig().setDefaultValueDate("1992-02-11T13:22:44.6").getDefaultValueDate().toString() == "1992-02-11 13:22:44.006"
         new ColumnConfig().setDefaultValueDate("1992-02-12").getDefaultValueDate().toString() == "1992-02-12"
@@ -317,7 +317,7 @@ public class ColumnConfigTest extends Specification {
         expect:
         new ColumnConfig().setDefaultValueBoolean("null").getDefaultValueBoolean() == null
         new ColumnConfig().setDefaultValueBoolean("NULL").getDefaultValueBoolean() == null
-        def column = new ColumnConfig().setDefaultValueBoolean((String) null);
+        def column = new ColumnConfig().setDefaultValueBoolean((String) null)
         column.getDefaultValueBoolean() == null
         new ColumnConfig().setDefaultValueBoolean("").getDefaultValueBoolean() == null
         new ColumnConfig().setDefaultValueBoolean(" ").getDefaultValueBoolean() == null
@@ -449,7 +449,7 @@ public class ColumnConfigTest extends Specification {
     def "load method sets constraints properties"() {
         when:
         def node = new ParsedNode(null, "column")
-        def constraintNode = new ParsedNode(null, "constraints");
+        def constraintNode = new ParsedNode(null, "constraints")
         node.addChild(constraintNode)
 
         def column = new ColumnConfig()

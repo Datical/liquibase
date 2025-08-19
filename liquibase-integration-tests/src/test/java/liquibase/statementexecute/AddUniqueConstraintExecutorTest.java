@@ -1,20 +1,19 @@
 package liquibase.statementexecute;
 
 import liquibase.change.ColumnConfig;
-import liquibase.database.*;
+import liquibase.database.Database;
 import liquibase.database.core.*;
 import liquibase.datatype.DataTypeFactory;
 import liquibase.statement.ColumnConstraint;
-import liquibase.test.DatabaseTestContext;
-import liquibase.statement.SqlStatement;
-import liquibase.statement.core.CreateTableStatement;
 import liquibase.statement.NotNullConstraint;
+import liquibase.statement.SqlStatement;
 import liquibase.statement.core.AddUniqueConstraintStatement;
+import liquibase.statement.core.CreateTableStatement;
+import liquibase.test.DatabaseTestContext;
+import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.ArrayList;
-
-import org.junit.Test;
+import java.util.List;
 
 public class AddUniqueConstraintExecutorTest extends AbstractExecuteTest {
 

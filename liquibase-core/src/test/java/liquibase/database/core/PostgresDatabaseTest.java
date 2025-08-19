@@ -4,11 +4,10 @@ import liquibase.changelog.column.LiquibaseColumn;
 import liquibase.database.AbstractJdbcDatabaseTest;
 import liquibase.database.Database;
 import liquibase.database.ObjectQuotingStrategy;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for {@link PostgresDatabase}
@@ -34,7 +33,7 @@ public class PostgresDatabaseTest extends AbstractJdbcDatabaseTest {
     @Override
     @Test
     public void getCurrentDateTimeFunction() {
-        Assert.assertEquals("NOW()", getDatabase().getCurrentDateTimeFunction());
+        Assertions.assertEquals("NOW()", getDatabase().getCurrentDateTimeFunction());
     }
 
     @Test

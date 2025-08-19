@@ -1,24 +1,22 @@
 package liquibase.servicelocator;
 
-import java.io.File;
-import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import liquibase.database.Database;
 import liquibase.parser.ChangeLogParser;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.CompositeResourceAccessor;
 import liquibase.test.TestContext;
-import org.junit.After;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Modifier;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceLocatorTest {
     private ServiceLocator serviceLocator;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception{
         CompositeResourceAccessor resourceAccessor = new CompositeResourceAccessor(new ClassLoaderResourceAccessor(), TestContext.getInstance().getTestResourceAccessor());
 
@@ -26,7 +24,7 @@ public class ServiceLocatorTest {
         serviceLocator.setResourceAccessor(resourceAccessor);
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         ServiceLocator.reset();
     }
@@ -49,8 +47,8 @@ public class ServiceLocatorTest {
     public void findClass() throws Exception {
         Class[] classes = serviceLocator.findClasses(Database.class);
         for (Class clazz : classes) {
-            assertFalse(clazz.getName()+" is abstract", Modifier.isAbstract(clazz.getModifiers()));                    
-            assertFalse(clazz.getName()+" is an interface", Modifier.isInterface(clazz.getModifiers()));
+            assertFalse(Modifier.isAbstract(clazz.getModifiers()), clazz.getName()+" is abstract");
+            assertFalse(Modifier.isInterface(clazz.getModifiers()), clazz.getName()+" is an interface");
             assertNotNull(clazz.getConstructors());
         }
         assertTrue(classes.length > 0);

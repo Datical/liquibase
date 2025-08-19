@@ -1,11 +1,18 @@
 package liquibase.util;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.*;
 
-import java.util.*;
+import liquibase.util.DependencyUtil.DependencyGraph;
+import liquibase.util.DependencyUtil.NodeValueListener;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
-import liquibase.util.DependencyUtil.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 
 public class DependencyUtilTest {
@@ -13,7 +20,7 @@ public class DependencyUtilTest {
     private DependencyGraph<String> graph;
     private List<String> dependencyOrder = new ArrayList<String>();
 
-    @Before
+    @BeforeEach
     public void setup() {
         dependencyOrder.clear();
         NodeValueListener<String> listener = new NodeValueListener<String>() {
@@ -35,7 +42,7 @@ public class DependencyUtilTest {
         graph.add("d", "e");
         graph.computeDependencies();
         List<String> expected = Arrays.asList("a", "b", "c", "d", "e");
-        Assert.assertEquals(expected, dependencyOrder);
+        Assertions.assertEquals(expected, dependencyOrder);
     }
 
     @Test
@@ -48,7 +55,7 @@ public class DependencyUtilTest {
         graph.add("c2", "d");
         graph.computeDependencies();
         List<String> expected = Arrays.asList("a", "b", "c1", "c2", "d");
-        Assert.assertEquals(expected, dependencyOrder);
+        Assertions.assertEquals(expected, dependencyOrder);
     }
 
     @Test
@@ -76,19 +83,21 @@ public class DependencyUtilTest {
                 "b", "p1", "p2", "y",   // level 2
                 "c1", "c2", "r1", "r2", // level 3
                 "s", "s2", "s3");       // roof
-        Assert.assertEquals(expected, dependencyOrder);
+        Assertions.assertEquals(expected, dependencyOrder);
     }
 
     /* negative load */
 
-    @Test(timeout = 3000)
+    @Test
+    @Timeout(value = 3, unit = TimeUnit.SECONDS)
     public void recursionSafetyCheck_edgeCase() {
         graph.add("a", "a");
         graph.computeDependencies();
         // assert test executes in less than 3 seconds
     }
 
-    @Test(timeout = 3000)
+    @Test
+    @Timeout(value = 3, unit = TimeUnit.SECONDS)
     public void recursionSafetyCheck() {
         // a > B > c > d > B
         graph.add("a", "B");
@@ -96,10 +105,11 @@ public class DependencyUtilTest {
         graph.add("c", "d");
         graph.add("d", "B");
         graph.computeDependencies();
-        Assert.assertThat(dependencyOrder, CoreMatchers.hasItem("a")); // we try to capture something
+        Assertions.assertTrue(dependencyOrder.contains("a")); // we try to capture something
     }
 
-    @Test(timeout = 3000)
+    @Test
+    @Timeout(value = 3, unit = TimeUnit.SECONDS)
     public void recursionSafetyCheck2() {
         //     a > B > c > d
         // m > k > B
@@ -111,10 +121,11 @@ public class DependencyUtilTest {
         graph.add("k", "B");
         graph.add("d", "m");
         graph.computeDependencies();
-        Assert.assertThat(dependencyOrder, CoreMatchers.hasItem("a"));
+        Assertions.assertTrue(dependencyOrder.contains("a"));
     }
 
-    @Test(timeout = 3000)
+    @Test
+    @Timeout(value = 3, unit = TimeUnit.SECONDS)
     public void recursionSafetyCheck_rand() {
         Random rand = new Random();
         for (int i = 0; i < 100; i++) {
@@ -122,6 +133,7 @@ public class DependencyUtilTest {
         }
         graph.add("a", "b");
         graph.computeDependencies();
-        Assert.assertThat(dependencyOrder, CoreMatchers.hasItems("a", "b"));
+        Assertions.assertTrue(dependencyOrder.contains("a"));
+        Assertions.assertTrue(dependencyOrder.contains("b"));
     }
 }

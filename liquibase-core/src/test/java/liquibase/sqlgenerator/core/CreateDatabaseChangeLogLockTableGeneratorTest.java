@@ -6,7 +6,7 @@ import liquibase.statement.core.CreateDatabaseChangeLogLockTableStatement;
 public class CreateDatabaseChangeLogLockTableGeneratorTest extends AbstractSqlGeneratorTest<CreateDatabaseChangeLogLockTableStatement> {
 
     public CreateDatabaseChangeLogLockTableGeneratorTest() throws Exception {
-        super(new CreateDatabaseChangeLogLockTableGenerator());
+        setUnderTest(new CreateDatabaseChangeLogLockTableGenerator());
     }
 
     @Override

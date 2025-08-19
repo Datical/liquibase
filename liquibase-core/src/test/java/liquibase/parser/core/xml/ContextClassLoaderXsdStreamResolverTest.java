@@ -1,21 +1,23 @@
 package liquibase.parser.core.xml;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import liquibase.resource.ResourceAccessor;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.powermock.modules.junit4.PowerMockRunner;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
-import liquibase.resource.ResourceAccessor;
-
-@RunWith(PowerMockRunner.class)
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ContextClassLoaderXsdStreamResolverTest {
 
 	private static final String EXISTING_XSD_FILE = "liquibase/parser/core/xml/unused.xsd";
@@ -33,7 +35,7 @@ public class ContextClassLoaderXsdStreamResolverTest {
 	@Mock
 	private InputStream successorValue;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		contextClassLoaderXsdStreamResolver.setSuccessor(successor);
 

@@ -1,16 +1,16 @@
 package liquibase.serializer.core.json;
 
 import liquibase.change.AddColumnConfig;
-import liquibase.change.ColumnConfig;
 import liquibase.change.core.AddColumnChange;
 import liquibase.changelog.ChangeSet;
 import liquibase.statement.DatabaseFunction;
 import liquibase.statement.SequenceNextValueFunction;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class JsonChangeLogSerializerTest {
 
@@ -65,10 +65,12 @@ public class JsonChangeLogSerializerTest {
                 "                \"defaultValueSequenceNext\": \"seq_me\",\n" +
                 "                \"name\": \"col2\"\n" +
                 "              }\n" +
-                "            }]\n" +
+                "            }\n" +
+                "          ]\n" +
                 "          \n" +
                 "        }\n" +
-                "      }]\n" +
+                "      }\n" +
+                "    ]\n" +
                 "    \n" +
                 "  }\n" +
                 "}\n", new JsonChangeLogSerializer().serialize(changeSet, true));

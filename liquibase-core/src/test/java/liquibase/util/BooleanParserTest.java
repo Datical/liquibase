@@ -3,8 +3,8 @@
 
 package liquibase.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -14,84 +14,84 @@ public class BooleanParserTest {
     
     @Test
     public void testparseBoolean(){
-        Assert.assertFalse(BooleanParser.parseBoolean("-1"));
-        Assert.assertFalse(BooleanParser.parseBoolean(" -1"));
-        Assert.assertFalse(BooleanParser.parseBoolean("-1 "));
-        Assert.assertFalse(BooleanParser.parseBoolean("0"));
-        Assert.assertFalse(BooleanParser.parseBoolean(" 0"));
-        Assert.assertFalse(BooleanParser.parseBoolean("0 "));
+        Assertions.assertFalse(BooleanParser.parseBoolean("-1"));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" -1"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("-1 "));
+        Assertions.assertFalse(BooleanParser.parseBoolean("0"));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" 0"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("0 "));
         //
-        Assert.assertTrue(BooleanParser.parseBoolean("1"));
-        Assert.assertTrue(BooleanParser.parseBoolean(" 1"));
-        Assert.assertTrue(BooleanParser.parseBoolean("1 "));
-        Assert.assertTrue(BooleanParser.parseBoolean("2"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("1"));
+        Assertions.assertTrue(BooleanParser.parseBoolean(" 1"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("1 "));
+        Assertions.assertTrue(BooleanParser.parseBoolean("2"));
         //
-        Assert.assertTrue(BooleanParser.parseBoolean("true"));
-        Assert.assertTrue(BooleanParser.parseBoolean(" true"));
-        Assert.assertTrue(BooleanParser.parseBoolean("true "));
-        Assert.assertTrue(BooleanParser.parseBoolean("True"));
-        Assert.assertTrue(BooleanParser.parseBoolean(" True"));
-        Assert.assertTrue(BooleanParser.parseBoolean("True "));
-        Assert.assertTrue(BooleanParser.parseBoolean("TRUE"));
-        Assert.assertTrue(BooleanParser.parseBoolean("TRUE "));
-        Assert.assertTrue(BooleanParser.parseBoolean(" TRUE"));
-        Assert.assertTrue(BooleanParser.parseBoolean("t"));
-        Assert.assertTrue(BooleanParser.parseBoolean(" t"));
-        Assert.assertTrue(BooleanParser.parseBoolean("t "));
-        Assert.assertTrue(BooleanParser.parseBoolean("T"));
-        Assert.assertTrue(BooleanParser.parseBoolean(" T"));
-        Assert.assertTrue(BooleanParser.parseBoolean("T "));
-        Assert.assertTrue(BooleanParser.parseBoolean("y"));
-        Assert.assertTrue(BooleanParser.parseBoolean(" y"));
-        Assert.assertTrue(BooleanParser.parseBoolean("y "));
-        Assert.assertTrue(BooleanParser.parseBoolean("Y"));
-        Assert.assertTrue(BooleanParser.parseBoolean(" Y"));
-        Assert.assertTrue(BooleanParser.parseBoolean("Y "));
-        Assert.assertTrue(BooleanParser.parseBoolean("yes"));
-        Assert.assertTrue(BooleanParser.parseBoolean(" yes"));
-        Assert.assertTrue(BooleanParser.parseBoolean("yes "));
-        Assert.assertTrue(BooleanParser.parseBoolean("Yes"));
-        Assert.assertTrue(BooleanParser.parseBoolean(" Yes"));
-        Assert.assertTrue(BooleanParser.parseBoolean("Yes "));
-        Assert.assertTrue(BooleanParser.parseBoolean("YES"));
-        Assert.assertTrue(BooleanParser.parseBoolean(" YES"));
-        Assert.assertTrue(BooleanParser.parseBoolean("YES "));
+        Assertions.assertTrue(BooleanParser.parseBoolean("true"));
+        Assertions.assertTrue(BooleanParser.parseBoolean(" true"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("true "));
+        Assertions.assertTrue(BooleanParser.parseBoolean("True"));
+        Assertions.assertTrue(BooleanParser.parseBoolean(" True"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("True "));
+        Assertions.assertTrue(BooleanParser.parseBoolean("TRUE"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("TRUE "));
+        Assertions.assertTrue(BooleanParser.parseBoolean(" TRUE"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("t"));
+        Assertions.assertTrue(BooleanParser.parseBoolean(" t"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("t "));
+        Assertions.assertTrue(BooleanParser.parseBoolean("T"));
+        Assertions.assertTrue(BooleanParser.parseBoolean(" T"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("T "));
+        Assertions.assertTrue(BooleanParser.parseBoolean("y"));
+        Assertions.assertTrue(BooleanParser.parseBoolean(" y"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("y "));
+        Assertions.assertTrue(BooleanParser.parseBoolean("Y"));
+        Assertions.assertTrue(BooleanParser.parseBoolean(" Y"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("Y "));
+        Assertions.assertTrue(BooleanParser.parseBoolean("yes"));
+        Assertions.assertTrue(BooleanParser.parseBoolean(" yes"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("yes "));
+        Assertions.assertTrue(BooleanParser.parseBoolean("Yes"));
+        Assertions.assertTrue(BooleanParser.parseBoolean(" Yes"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("Yes "));
+        Assertions.assertTrue(BooleanParser.parseBoolean("YES"));
+        Assertions.assertTrue(BooleanParser.parseBoolean(" YES"));
+        Assertions.assertTrue(BooleanParser.parseBoolean("YES "));
         //
         
-        Assert.assertFalse(BooleanParser.parseBoolean("false"));
-        Assert.assertFalse(BooleanParser.parseBoolean("false "));
-        Assert.assertFalse(BooleanParser.parseBoolean(" false"));
-        Assert.assertFalse(BooleanParser.parseBoolean("False"));
-        Assert.assertFalse(BooleanParser.parseBoolean(" False"));
-        Assert.assertFalse(BooleanParser.parseBoolean("False "));
-        Assert.assertFalse(BooleanParser.parseBoolean("FALSE"));
-        Assert.assertFalse(BooleanParser.parseBoolean(" FALSE"));
-        Assert.assertFalse(BooleanParser.parseBoolean("FALSE "));
-        Assert.assertFalse(BooleanParser.parseBoolean("f"));
-        Assert.assertFalse(BooleanParser.parseBoolean(" f"));
-        Assert.assertFalse(BooleanParser.parseBoolean("f "));
-        Assert.assertFalse(BooleanParser.parseBoolean("F"));
-        Assert.assertFalse(BooleanParser.parseBoolean(" F"));
-        Assert.assertFalse(BooleanParser.parseBoolean("F "));
-        Assert.assertFalse(BooleanParser.parseBoolean("n"));
-        Assert.assertFalse(BooleanParser.parseBoolean(" n"));
-        Assert.assertFalse(BooleanParser.parseBoolean("n "));
-        Assert.assertFalse(BooleanParser.parseBoolean("N"));
-        Assert.assertFalse(BooleanParser.parseBoolean(" N"));
-        Assert.assertFalse(BooleanParser.parseBoolean("N "));
-        Assert.assertFalse(BooleanParser.parseBoolean("no"));
-        Assert.assertFalse(BooleanParser.parseBoolean(" no"));
-        Assert.assertFalse(BooleanParser.parseBoolean("no "));
-        Assert.assertFalse(BooleanParser.parseBoolean("No"));
-        Assert.assertFalse(BooleanParser.parseBoolean(" No"));
-        Assert.assertFalse(BooleanParser.parseBoolean("No "));
-        Assert.assertFalse(BooleanParser.parseBoolean("NO"));
-        Assert.assertFalse(BooleanParser.parseBoolean(" NO"));
-        Assert.assertFalse(BooleanParser.parseBoolean("NO "));
+        Assertions.assertFalse(BooleanParser.parseBoolean("false"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("false "));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" false"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("False"));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" False"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("False "));
+        Assertions.assertFalse(BooleanParser.parseBoolean("FALSE"));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" FALSE"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("FALSE "));
+        Assertions.assertFalse(BooleanParser.parseBoolean("f"));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" f"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("f "));
+        Assertions.assertFalse(BooleanParser.parseBoolean("F"));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" F"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("F "));
+        Assertions.assertFalse(BooleanParser.parseBoolean("n"));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" n"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("n "));
+        Assertions.assertFalse(BooleanParser.parseBoolean("N"));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" N"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("N "));
+        Assertions.assertFalse(BooleanParser.parseBoolean("no"));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" no"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("no "));
+        Assertions.assertFalse(BooleanParser.parseBoolean("No"));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" No"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("No "));
+        Assertions.assertFalse(BooleanParser.parseBoolean("NO"));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" NO"));
+        Assertions.assertFalse(BooleanParser.parseBoolean("NO "));
         
         String test = null;
-        Assert.assertFalse(BooleanParser.parseBoolean(test));
-        Assert.assertFalse(BooleanParser.parseBoolean(" any dummy text!"));
+        Assertions.assertFalse(BooleanParser.parseBoolean(test));
+        Assertions.assertFalse(BooleanParser.parseBoolean(" any dummy text!"));
     }
     
 }

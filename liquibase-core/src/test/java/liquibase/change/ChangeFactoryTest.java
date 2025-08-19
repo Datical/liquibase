@@ -1,14 +1,5 @@
 package liquibase.change;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.TreeSet;
-
 import liquibase.change.core.AddAutoIncrementChange;
 import liquibase.change.core.CreateTableChange;
 import liquibase.change.core.DropTableChange;
@@ -18,19 +9,23 @@ import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.servicelocator.LiquibaseService;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import liquibase.statement.core.CreateSequenceStatement;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.TreeSet;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ChangeFactoryTest {
 
-    @Before
+    @BeforeEach
     public void setup() {
         ChangeFactory.reset();
         SometimesExceptionThrowingChange.timesCalled = 0;
     }
 
-    @After
+    @AfterEach
     public void resetRegistry() {
         ChangeFactory.reset();
     }
@@ -53,8 +48,8 @@ public class ChangeFactoryTest {
         };
 
         ChangeFactory.getInstance(); //make sure there is no problem with SqlGeneratorFactory.generatorsByKey cache
-		assertFalse("unsupported create sequence", SqlGeneratorFactory.getInstance().supports(statement, database10));
-        assertTrue("supported create sequence", SqlGeneratorFactory.getInstance().supports(statement, database11));
+		assertFalse(SqlGeneratorFactory.getInstance().supports(statement, database10), "unsupported create sequence");
+        assertTrue(SqlGeneratorFactory.getInstance().supports(statement, database11), "supported create sequence");
 	}
 
 	@Test
@@ -105,17 +100,19 @@ public class ChangeFactoryTest {
         assertEquals(Priority10Change.class, changeFactory.getRegistry().get("createTable").iterator().next());
     }
 
-    @Test(expected = UnexpectedLiquibaseException.class)
+    @Test
     public void register_badClassRightAway() {
         ChangeFactory changeFactory = ChangeFactory.getInstance();
-
-        changeFactory.register(ExceptionThrowingChange.class);
+        assertThrows(UnexpectedLiquibaseException.class, () -> changeFactory.register(ExceptionThrowingChange.class));
     }
 
-    @Test(expected = UnexpectedLiquibaseException.class)
+    @Test
     public void register_badClassLaterInComparator() {
         ChangeFactory changeFactory = ChangeFactory.getInstance();
+        assertThrows(UnexpectedLiquibaseException.class, () -> callRegisterChangeFactory(changeFactory));
+    }
 
+    private void callRegisterChangeFactory(ChangeFactory changeFactory) {
         changeFactory.register(SometimesExceptionThrowingChange.class);
         changeFactory.register(Priority5Change.class);
         changeFactory.register(Priority10Change.class);
@@ -159,9 +156,9 @@ public class ChangeFactoryTest {
         assertEquals(3, factory.getRegistry().size());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void getRegistry() {
-        ChangeFactory.getInstance().getRegistry().put("x", new TreeSet<Class<? extends Change>>());
+        assertThrows(UnsupportedOperationException.class, () -> ChangeFactory.getInstance().getRegistry().put("x", new TreeSet<Class<? extends Change>>()));
     }
 
     @Test
@@ -182,14 +179,14 @@ public class ChangeFactoryTest {
 
     }
 
-    @Test(expected = UnexpectedLiquibaseException.class)
+    @Test
     public void create_badClass() {
-        ChangeFactory.getInstance().register(SometimesExceptionThrowingChange.class);
-        Change change = ChangeFactory.getInstance().create("createTable");
-
-        assertNotNull(change);
-        assertTrue(change instanceof CreateTableChange);
-
+        assertThrows(UnexpectedLiquibaseException.class, () -> {
+            ChangeFactory.getInstance().register(SometimesExceptionThrowingChange.class);
+            Change change = ChangeFactory.getInstance().create("createTable");
+            assertNotNull(change);
+            assertTrue(change instanceof CreateTableChange);
+        });
     }
     
     @LiquibaseService(skip = true)

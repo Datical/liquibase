@@ -2,22 +2,22 @@ package liquibase.resource
 
 import spock.lang.Specification
 
-import static org.junit.Assert.assertNull
+import static org.junit.jupiter.api.Assertions.assertNull
 
 public class CompositeResourceAccessorTest extends Specification {
     
-    def ResourceAccessor first;
-    def ResourceAccessor second;
-    def CompositeResourceAccessor composite;
-    def InputStream validStream;
+    def ResourceAccessor first
+    def ResourceAccessor second
+    def CompositeResourceAccessor composite
+    def InputStream validStream
     def Set<String> empty = new HashSet<>()
-    def Set<String> hasElements;
+    def Set<String> hasElements
     
     def setup() {
-        first = Mock(ResourceAccessor.class);
-        second = Mock(ResourceAccessor.class);
-        composite = new CompositeResourceAccessor(first,second);
-        validStream = this.getClass().getClassLoader().getResourceAsStream("liquibase/resource/CompositeResourceAccessorTest.class");
+        first = Mock(ResourceAccessor.class)
+        second = Mock(ResourceAccessor.class)
+        composite = new CompositeResourceAccessor(first,second)
+        validStream = this.getClass().getClassLoader().getResourceAsStream("liquibase/resource/CompositeResourceAccessorTest.class")
 
         hasElements = new HashSet<>()
         def resources = this.getClass().getClassLoader().getResources("liquibase")
@@ -29,7 +29,7 @@ public class CompositeResourceAccessorTest extends Specification {
     
     def cleanup() {
         if (validStream != null) {
-            validStream.close();
+            validStream.close()
         }
         
     }
@@ -37,17 +37,17 @@ public class CompositeResourceAccessorTest extends Specification {
     def streamFirstHas() {
         when:
         1 * first.getResourcesAsStream("file") >> new HashSet<InputStream>(Arrays.asList(validStream))
-        def is = composite.getResourcesAsStream("file");
+        def is = composite.getResourcesAsStream("file")
         
         then:
-        validStream == is.iterator().next();
+        validStream == is.iterator().next()
     }
     
     def streamSecondHas() {
         when:
         first.getResourcesAsStream("file") >> null
         second.getResourcesAsStream("file") >> new HashSet<InputStream>(Arrays.asList(validStream))
-        def is = composite.getResourcesAsStream("file");
+        def is = composite.getResourcesAsStream("file")
 
         then:
         validStream == is.iterator().next()
@@ -57,17 +57,17 @@ public class CompositeResourceAccessorTest extends Specification {
         when:
         first.getResourcesAsStream("file") >> null
         second.getResourcesAsStream("file") >> null
-        def is = composite.getResourcesAsStream("file");
+        def is = composite.getResourcesAsStream("file")
         
         then:
         is == null
-        assertNull(is);
+        assertNull(is)
     }
     
     def resourcesFirstHas() {
         when:
         first.list(null, "file", true, true, true) >> hasElements
-        def urls = composite.list(null, "file", true, true, true);
+        def urls = composite.list(null, "file", true, true, true)
 
         then:
         urls == hasElements

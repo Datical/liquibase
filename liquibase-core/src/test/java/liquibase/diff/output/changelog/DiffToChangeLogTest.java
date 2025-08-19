@@ -5,12 +5,11 @@ import liquibase.diff.DiffResult;
 import liquibase.diff.compare.CompareControl;
 import liquibase.snapshot.EmptyDatabaseSnapshot;
 import liquibase.structure.DatabaseObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class DiffToChangeLogTest {
 
@@ -21,9 +20,7 @@ public class DiffToChangeLogTest {
 
         for (Class<? extends ChangeGenerator> type : new Class[] {UnexpectedObjectChangeGenerator.class, MissingObjectChangeGenerator.class, ChangedObjectChangeGenerator.class}) {
             List<Class<? extends DatabaseObject>> orderedOutputTypes = obj.getOrderedOutputTypes(type);
-            for (int i=0; i<50; i++) {
-                assertThat("Error checking "+type.getName(), orderedOutputTypes, contains(obj.getOrderedOutputTypes(type).toArray()));
-            }
+            assertArrayEquals(orderedOutputTypes.toArray(), obj.getOrderedOutputTypes(type).toArray(), "Error checking " + type.getName());
         }
     }
 }

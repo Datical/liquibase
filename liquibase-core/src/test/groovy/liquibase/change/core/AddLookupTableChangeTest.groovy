@@ -13,9 +13,9 @@ public class AddLookupTableChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        def change = new AddLookupTableChange();
-        change.setExistingTableName("OLD_TABLE_NAME");
-        change.setExistingColumnName("OLD_COLUMN_NAME");
+        def change = new AddLookupTableChange()
+        change.setExistingTableName("OLD_TABLE_NAME")
+        change.setExistingColumnName("OLD_COLUMN_NAME")
 
         then:
         change.getConfirmationMessage() == "Lookup table added for OLD_TABLE_NAME.OLD_COLUMN_NAME"

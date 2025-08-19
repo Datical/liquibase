@@ -1,7 +1,7 @@
 package liquibase.change.core
 
 import liquibase.change.AddColumnConfig
-import liquibase.change.ChangeStatus;
+import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
@@ -12,8 +12,8 @@ import liquibase.structure.core.Index
 public class CreateIndexChangeTest extends StandardChangeTest {
     def getConfirmationMessage() throws Exception {
         when:
-        CreateIndexChange refactoring = new CreateIndexChange();
-        refactoring.setIndexName("IDX_TEST");
+        CreateIndexChange refactoring = new CreateIndexChange()
+        refactoring.setIndexName("IDX_TEST")
 
         then:
         "Index IDX_TEST created" == refactoring.getConfirmationMessage()
@@ -42,12 +42,12 @@ public class CreateIndexChangeTest extends StandardChangeTest {
         assert change.checkStatus(database).status == ChangeStatus.Status.complete
 
         when: "we care about unique and they do not match"
-        change.unique = false;
+        change.unique = false
         then:
         assert change.checkStatus(database).status == ChangeStatus.Status.incorrect
 
         when: "we care about unique and they match"
-        change.unique = true;
+        change.unique = true
         then:
         assert change.checkStatus(database).status == ChangeStatus.Status.complete
 

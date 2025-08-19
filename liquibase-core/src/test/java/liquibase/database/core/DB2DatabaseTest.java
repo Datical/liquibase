@@ -1,9 +1,13 @@
 package liquibase.database.core;
 
-import junit.framework.TestCase;
 import liquibase.database.Database;
+import org.junit.jupiter.api.Test;
 
-public class DB2DatabaseTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class DB2DatabaseTest {
+    @Test
     public void testGetDefaultDriver() {
         Database database = new DB2Database();
 

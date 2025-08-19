@@ -6,17 +6,13 @@ import liquibase.database.core.OracleDatabase;
 import liquibase.structure.core.Column;
 import liquibase.structure.core.Table;
 import liquibase.structure.core.View;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertSame;
 import static liquibase.test.Assert.assertSetsEqual;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class ChangeMetaDataTest {
@@ -62,12 +58,14 @@ public class ChangeMetaDataTest {
     @Test
     public void constructor_emptyAppliesTo() {
         ChangeMetaData metaData = new ChangeMetaData("x", "y", 5, new String[0], null, null);
-        assertNull("Empty appliesTo should convert to a null appliesTo", metaData.getAppliesTo());
+        assertNull(metaData.getAppliesTo(), "Empty appliesTo should convert to a null appliesTo");
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void getParameters_unmodifyable() {
-        new ChangeMetaData("x", "y", 1, null, null, new HashSet()).getParameters().put("new", mock(ChangeParameterMetaData.class));
+        assertThrows(UnsupportedOperationException.class, () -> {
+           new ChangeMetaData("x", "y", 1, null, null, new HashSet()).getParameters().put("new", mock(ChangeParameterMetaData.class));
+        });
     }
 
     @Test

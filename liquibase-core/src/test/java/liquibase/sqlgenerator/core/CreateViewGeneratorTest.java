@@ -7,12 +7,12 @@ import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.statement.core.CreateViewStatement;
 import liquibase.util.SqlParser;
 import liquibase.util.StringClauses;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.TreeSet;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateViewGeneratorTest {
     private static final String LSP = System.lineSeparator();
@@ -20,7 +20,7 @@ public class CreateViewGeneratorTest {
     private CreateViewGenerator generator;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         generator = new CreateViewGenerator();
     }

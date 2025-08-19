@@ -9,7 +9,7 @@ public class ConstraintsConfigTest extends Specification {
 
     def constructor() throws Exception {
         when:
-        ConstraintsConfig constraints = new ConstraintsConfig();
+        ConstraintsConfig constraints = new ConstraintsConfig()
 
         then:
         constraints.isDeleteCascade() == null
@@ -164,7 +164,7 @@ public class ConstraintsConfigTest extends Specification {
 
     def setDeferrable_badString() {
         when:
-        new ConstraintsConfig().setDeferrable("bad val");
+        new ConstraintsConfig().setDeferrable("bad val")
 
         then:
         thrown(UnexpectedLiquibaseException)
@@ -275,13 +275,13 @@ public class ConstraintsConfigTest extends Specification {
 
     def getFieldsToSerialize() {
         when:
-        Set<String> fields = new ConstraintsConfig().getSerializableFields();
+        Set<String> fields = new ConstraintsConfig().getSerializableFields()
 
         then:
-        assert fields.contains("nullable");
-        assert fields.contains("primaryKey");
-        assert fields.contains("primaryKeyName");
-        assert fields.contains("nullable");
+        assert fields.contains("nullable")
+        assert fields.contains("primaryKey")
+        assert fields.contains("primaryKeyName")
+        assert fields.contains("nullable")
     }
 
     def getSerializableFieldValue() {

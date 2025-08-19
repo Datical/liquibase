@@ -1,21 +1,15 @@
 package liquibase.verify;
 
 import liquibase.util.StringUtils;
-import org.junit.ComparisonFailure;
-import org.junit.Rule;
-import org.junit.rules.TestName;
+import org.opentest4j.AssertionFailedError;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AbstractVerifyTest {
 
-    @Rule
-    public TestName name = new TestName();
 
     protected static class TestState {
         private File stateFile;
@@ -66,8 +60,8 @@ public class AbstractVerifyTest {
                 save();
             } else {
                 try {
-                    assertEquals("Unexpected difference in "+stateFile.getAbsolutePath(), existingContent, stateContent.toString());
-                } catch (ComparisonFailure e) {
+                    assertEquals(existingContent, stateContent.toString(), "Unexpected difference in "+stateFile.getAbsolutePath());
+                } catch (AssertionFailedError e) {
                     if ("overwrite".equals(System.getProperty("liquibase.verify.mode"))) {
                         save();
                     } else {

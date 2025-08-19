@@ -1,6 +1,6 @@
 package liquibase.resource;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -8,8 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UtfBomAwareReaderTest {
 
@@ -146,7 +145,7 @@ public class UtfBomAwareReaderTest {
 	}
 
 	private void assertEmpty() throws IOException {
-		assertEquals("reader is not empty", -1, reader.read());
+		assertEquals(-1, reader.read(), "reader is not empty");
 	}
 
 	private void assertEncoding(String expectedCharsetName) throws IOException {

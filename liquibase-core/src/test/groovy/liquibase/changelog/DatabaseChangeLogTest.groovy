@@ -1,7 +1,7 @@
 package liquibase.changelog
 
-import liquibase.ContextExpression;
-import liquibase.LabelExpression;
+import liquibase.ContextExpression
+import liquibase.LabelExpression
 import liquibase.change.core.CreateTableChange
 import liquibase.change.core.RawSQLChange
 import liquibase.exception.SetupException
@@ -312,7 +312,7 @@ create view sql_view as select * from sql_table;'''
 
         then:
         SetupException e = thrown()
-        assert e.getMessage().startsWith("Could not find directory or directory was empty for includeAll '");
+        assert e.getMessage().startsWith("Could not find directory or directory was empty for includeAll '")
 
     }
 

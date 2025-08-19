@@ -1,6 +1,6 @@
 package liquibase.io
 
-import liquibase.util.StreamUtil
+
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -58,7 +58,7 @@ class EmptyLineAndCommentSkippingInputStreamTest extends Specification {
 
     private String inputStreamToString(InputStream inputStreamWithComments) {
         StringBuilder stringBuilder = new StringBuilder()
-        int lastChar;
+        int lastChar
         while (true) {
             lastChar = inputStreamWithComments.read()
             if (lastChar == -1) break

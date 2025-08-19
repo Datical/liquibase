@@ -54,28 +54,24 @@
     <!-- PROVIDED dependencies END -->
     <!-- TEST dependencies START -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito2</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
+      <groupId>org.apache.groovy</groupId>
       <artifactId>groovy-all</artifactId>
+      <type>pom</type>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -119,11 +115,30 @@
 
   <build>
     <finalName>liquibase-${project.version}</finalName>
-
+    <!-- Add binary resources again with filtering disabled, since resource plugin upgrade 3.1.0 -> 3.3.1 requires this explicitly-->
+    <!-- The aim of filtering is to resolve property placeholders within resources files, in older version maven filtering -->
+    <!-- was ignoring binary files, in current version it tries to treat it as a text file, which leads to errors, -->
+    <!-- that is the reason, why we should include binaries with disabled filtering separately -->
     <resources>
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
+        <excludes>
+          <exclude>**/*.eot</exclude>
+          <exclude>**/*.woff</exclude>
+          <exclude>**/*.ttf</exclude>
+          <exclude>**/*.svg</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>**/*.eot</include>
+          <include>**/*.woff</include>
+          <include>**/*.ttf</include>
+          <include>**/*.svg</include>
+        </includes>
       </resource>
     </resources>
 
@@ -250,41 +265,6 @@
       </plugin>
 
       <plugin>
-        <groupId>org.codehaus.gmaven</groupId>
-        <artifactId>gmaven-plugin</artifactId>
-        <configuration>
-          <providerSelection>2.0</providerSelection>
-          <source />
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile</goal>
-              <goal>testCompile</goal>
-            </goals>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>org.codehaus.gmaven.runtime</groupId>
-            <artifactId>gmaven-runtime-2.0</artifactId>
-            <version>1.4</version>
-            <exclusions>
-              <exclusion>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-all</artifactId>
-              </exclusion>
-            </exclusions>
-          </dependency>
-          <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>2.3.10</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
@@ -332,13 +312,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <release>11</release>
-          </configuration>
-      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -352,16 +325,15 @@
               <pluginExecutions>
                 <pluginExecution>
                   <pluginExecutionFilter>
-                    <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>gmaven-plugin</artifactId>
-                    <versionRange>[1.4,)</versionRange>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
                     <goals>
                       <goal>compile</goal>
                       <goal>testCompile</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>

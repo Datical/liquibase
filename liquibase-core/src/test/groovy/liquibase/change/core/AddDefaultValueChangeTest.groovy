@@ -1,7 +1,7 @@
 package liquibase.change.core
 
 import liquibase.change.ChangeStatus
-import liquibase.change.StandardChangeTest;
+import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
 import liquibase.snapshot.SnapshotGeneratorFactory
@@ -16,10 +16,10 @@ public class AddDefaultValueChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        def change = new AddDefaultValueChange();
-        change.setSchemaName("SCHEMA_NAME");
-        change.setTableName("TABLE_NAME");
-        change.setColumnName("COLUMN_NAME");
+        def change = new AddDefaultValueChange()
+        change.setSchemaName("SCHEMA_NAME")
+        change.setTableName("TABLE_NAME")
+        change.setColumnName("COLUMN_NAME")
 
         then:
         change.getConfirmationMessage() == "Default value added to TABLE_NAME.COLUMN_NAME"

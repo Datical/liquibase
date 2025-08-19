@@ -2,16 +2,16 @@ package liquibase.change.core
 
 import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
-import liquibase.sdk.database.MockDatabase
 import liquibase.parser.core.ParsedNode
 import liquibase.parser.core.ParsedNodeException
+import liquibase.sdk.database.MockDatabase
 
 public class UpdateDataChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
         def change = new UpdateDataChange()
-        change.setTableName("TABLE_NAME");
+        change.setTableName("TABLE_NAME")
 
         then:
         change.getConfirmationMessage() == "Data updated in TABLE_NAME"

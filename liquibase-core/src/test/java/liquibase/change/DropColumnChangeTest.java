@@ -4,9 +4,8 @@ import liquibase.change.core.DropColumnChange;
 import liquibase.sdk.database.MockDatabase;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.DropColumnStatement;
-
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class DropColumnChangeTest {
 
@@ -21,10 +20,10 @@ public class DropColumnChangeTest {
         change.addColumn(column2);
 
         SqlStatement[] statements = change.generateStatements(new MockDatabase());
-        Assert.assertEquals(1, statements.length);
-        Assert.assertTrue(statements[0] instanceof DropColumnStatement);
+        Assertions.assertEquals(1, statements.length);
+        Assertions.assertTrue(statements[0] instanceof DropColumnStatement);
         DropColumnStatement stmt = (DropColumnStatement)statements[0];
-        Assert.assertTrue(stmt.isMultiple());
-        Assert.assertEquals(2, stmt.getColumns().size());
+        Assertions.assertTrue(stmt.isMultiple());
+        Assertions.assertEquals(2, stmt.getColumns().size());
     }
 }
