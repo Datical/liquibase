@@ -1,19 +1,16 @@
 package liquibase.sqlgenerator.core;
 
-import static org.junit.Assert.assertEquals;
-
-import java.math.BigInteger;
-
 import liquibase.database.Database;
-import liquibase.database.core.DB2Database;
 import liquibase.database.core.OracleDatabase;
-import liquibase.database.core.PostgresDatabase;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.AbstractSqlGeneratorTest;
 import liquibase.statement.core.AlterSequenceStatement;
 import liquibase.test.TestContext;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import java.math.BigInteger;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AlterSequenceGeneratorTest extends AbstractSqlGeneratorTest<AlterSequenceStatement> {
 	
@@ -22,7 +19,7 @@ public class AlterSequenceGeneratorTest extends AbstractSqlGeneratorTest<AlterSe
     protected static final String SCHEMA_NAME = "SCHEMA_NAME";
 	
     public AlterSequenceGeneratorTest() throws Exception {
-        super(new AlterSequenceGenerator());
+        setUnderTest(new AlterSequenceGenerator());
     }
 
 	@Test
@@ -32,7 +29,7 @@ public class AlterSequenceGeneratorTest extends AbstractSqlGeneratorTest<AlterSe
     			AlterSequenceStatement statement = new AlterSequenceStatement(CATALOG_NAME, SCHEMA_NAME, SEQUENCE_NAME);
 	    		statement.setCacheSize(BigInteger.valueOf(3000L));
 
-	    		Sql[] generatedSql = this.generatorUnderTest.generateSql(statement, database, null);
+	    		Sql[] generatedSql = this.getGeneratorUnderTest().generateSql(statement, database, null);
 
     			assertEquals("ALTER SEQUENCE CATALOG_NAME.SEQUENCE_NAME CACHE 3000", generatedSql[0].toSql());
     		}

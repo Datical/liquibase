@@ -1,6 +1,6 @@
 package liquibase.change.core
 
-import liquibase.change.ChangeStatus;
+import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
@@ -13,10 +13,10 @@ public class DropUniqueConstraintChangeTest  extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        def change = new DropUniqueConstraintChange();
-        change.setSchemaName("SCHEMA_NAME");
-        change.setTableName("TAB_NAME");
-        change.setConstraintName("UQ_CONSTRAINT");
+        def change = new DropUniqueConstraintChange()
+        change.setSchemaName("SCHEMA_NAME")
+        change.setTableName("TAB_NAME")
+        change.setConstraintName("UQ_CONSTRAINT")
 
         then:
         "Unique constraint UQ_CONSTRAINT dropped from TAB_NAME" == change.getConfirmationMessage()

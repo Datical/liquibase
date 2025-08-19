@@ -1,23 +1,16 @@
 package liquibase.statementexecute;
 
 import liquibase.database.Database;
-import liquibase.database.core.MSSQLDatabase;
-import liquibase.database.core.MySQLDatabase;
-import liquibase.database.core.PostgresDatabase;
-import liquibase.database.core.SQLiteDatabase;
-import liquibase.database.core.SybaseASADatabase;
-import liquibase.database.core.SybaseDatabase;
 import liquibase.database.core.*;
 import liquibase.datatype.DataTypeFactory;
-import liquibase.test.DatabaseTestContext;
 import liquibase.statement.*;
 import liquibase.statement.core.AddColumnStatement;
 import liquibase.statement.core.CreateTableStatement;
+import liquibase.test.DatabaseTestContext;
+import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.ArrayList;
-
-import org.junit.Test;
+import java.util.List;
 
 public class AddColumnExecutorTest extends AbstractExecuteTest {
 

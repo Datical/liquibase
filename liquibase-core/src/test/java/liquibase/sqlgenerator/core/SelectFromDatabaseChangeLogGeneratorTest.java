@@ -5,7 +5,7 @@ import liquibase.statement.core.SelectFromDatabaseChangeLogStatement;
 
 public class SelectFromDatabaseChangeLogGeneratorTest extends AbstractSqlGeneratorTest<SelectFromDatabaseChangeLogStatement> {
     public SelectFromDatabaseChangeLogGeneratorTest() throws Exception {
-        super( new SelectFromDatabaseChangeLogGenerator());
+        setUnderTest(new SelectFromDatabaseChangeLogGenerator());
     }
 
     @Override

@@ -2,9 +2,9 @@ package liquibase.change.core
 
 import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
-import liquibase.sdk.database.MockDatabase
 import liquibase.exception.SetupException
 import liquibase.parser.core.ParsedNodeException
+import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
 import liquibase.snapshot.SnapshotGeneratorFactory
 import liquibase.structure.core.View
@@ -14,8 +14,8 @@ public class CreateViewChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        CreateViewChange change = new CreateViewChange();
-        change.setViewName("VIEW_NAME");
+        CreateViewChange change = new CreateViewChange()
+        change.setViewName("VIEW_NAME")
 
         then:
         "View VIEW_NAME created" == change.getConfirmationMessage()

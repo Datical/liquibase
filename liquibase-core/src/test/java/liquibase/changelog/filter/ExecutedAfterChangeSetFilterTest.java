@@ -3,11 +3,13 @@ package liquibase.changelog.filter;
 import liquibase.change.CheckSum;
 import liquibase.changelog.ChangeSet;
 import liquibase.changelog.RanChangeSet;
-import static org.junit.Assert.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExecutedAfterChangeSetFilterTest {
 

@@ -4,54 +4,53 @@ import liquibase.change.AddColumnConfig
 import liquibase.change.Change
 import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
-import liquibase.sdk.database.MockDatabase
 import liquibase.exception.SetupException
 import liquibase.parser.core.ParsedNode
 import liquibase.parser.core.ParsedNodeException
+import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
 import liquibase.snapshot.SnapshotGeneratorFactory
 import liquibase.structure.core.Column
 import liquibase.structure.core.PrimaryKey
 import liquibase.structure.core.Table
-import spock.lang.Unroll
 
 public class AddColumnChangeTest extends StandardChangeTest {
 
 
     def "add and remove column methods"() throws Exception {
         when:
-        def columnA = new AddColumnConfig();
-        columnA.setName("a");
+        def columnA = new AddColumnConfig()
+        columnA.setName("a")
 
-        def columnB = new AddColumnConfig();
-        columnB.setName("b");
+        def columnB = new AddColumnConfig()
+        columnB.setName("b")
 
-        def change = new AddColumnChange();
+        def change = new AddColumnChange()
 
         then:
         change.getColumns().size() == 0
 
-        change.removeColumn(columnA);
+        change.removeColumn(columnA)
         change.getColumns().size() == 0
 
-        change.addColumn(columnA);
+        change.addColumn(columnA)
         change.getColumns().size() == 1
 
-        change.removeColumn(columnB);
+        change.removeColumn(columnB)
         change.getColumns().size() == 1
 
-        change.removeColumn(columnA);
+        change.removeColumn(columnA)
         change.getColumns().size() == 0
     }
 
     def getConfirmationMessage() throws Exception {
         when:
-        def refactoring = new AddColumnChange();
-        refactoring.setTableName("TAB");
-        AddColumnConfig column = new AddColumnConfig();
-        column.setName("NEWCOL");
-        column.setType("TYP");
-        refactoring.addColumn(column);
+        def refactoring = new AddColumnChange()
+        refactoring.setTableName("TAB")
+        AddColumnConfig column = new AddColumnConfig()
+        column.setName("NEWCOL")
+        column.setType("TYP")
+        refactoring.addColumn(column)
 
         then:
         refactoring.getConfirmationMessage() == "Columns NEWCOL(TYP) added to TAB"

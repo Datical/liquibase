@@ -1,11 +1,11 @@
 package liquibase.sqlgenerator.core;
 
-import static org.junit.Assert.*;
 import liquibase.database.core.SybaseDatabase;
 import liquibase.sql.Sql;
 import liquibase.statement.core.GetViewDefinitionStatement;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GetViewDefinitionGeneratorSybaseTest {
 

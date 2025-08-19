@@ -1,25 +1,24 @@
 package liquibase.parser;
 
-import liquibase.exception.LiquibaseException;
 import liquibase.parser.core.sql.SqlChangeLogParser;
 import liquibase.parser.core.xml.XMLChangeLogSAXParser;
-import static org.junit.Assert.*;
-
 import liquibase.test.JUnitResourceAccessor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ChangeLogParserFactoryTest {
 
-    @Before
+    @BeforeEach
     public void setup() {
         ChangeLogParserFactory.reset();
     }
 
-    @After
+    @AfterEach
     public void after() {
         ChangeLogParserFactory.reset();
     }

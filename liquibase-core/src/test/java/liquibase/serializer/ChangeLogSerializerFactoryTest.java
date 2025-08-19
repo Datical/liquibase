@@ -2,23 +2,23 @@ package liquibase.serializer;
 
 import liquibase.serializer.core.string.StringChangeLogSerializer;
 import liquibase.serializer.core.xml.XMLChangeLogSerializer;
-import static org.junit.Assert.*;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ChangeLogSerializerFactoryTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ChangeLogSerializerFactory.reset();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ChangeLogSerializerFactory.reset();
     }

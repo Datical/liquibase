@@ -5,16 +5,16 @@ import liquibase.Contexts;
 import liquibase.Labels;
 import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.database.core.H2Database;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 public class ChangeLogParametersTest {
 
-    @Before
+    @BeforeEach
     public void before() {
         LiquibaseConfiguration.getInstance().reset();
     }
@@ -26,7 +26,7 @@ public class ChangeLogParametersTest {
         changeLogParameters.set("doubleSet", "originalValue");
         changeLogParameters.set("doubleSet", "newValue");
 
-        assertEquals("re-setting a param should not overwrite the value (like how ant works)", "originalValue", changeLogParameters.getValue("doubleSet", null));
+        assertEquals("originalValue", changeLogParameters.getValue("doubleSet", null), "re-setting a param should not overwrite the value (like how ant works)");
     }
 
     @Test

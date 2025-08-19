@@ -2,9 +2,10 @@ package liquibase.database.core;
 
 import liquibase.database.AbstractJdbcDatabaseTest;
 import liquibase.database.Database;
-import org.junit.Assert;
-import static org.junit.Assert.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for {@link liquibase.database.core.OracleDatabase}.
@@ -44,7 +45,7 @@ public class OracleDatabaseTest extends AbstractJdbcDatabaseTest {
     @Override
     @Test
     public void getCurrentDateTimeFunction() {
-        Assert.assertEquals("SYSTIMESTAMP", getDatabase().getCurrentDateTimeFunction());
+        Assertions.assertEquals("SYSTIMESTAMP", getDatabase().getCurrentDateTimeFunction());
     }
 
     public void testGetDefaultDriver() {

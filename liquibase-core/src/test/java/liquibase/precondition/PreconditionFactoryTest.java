@@ -2,23 +2,23 @@ package liquibase.precondition;
 
 import liquibase.precondition.core.AndPrecondition;
 import liquibase.precondition.core.OrPrecondition;
-import static org.junit.Assert.*;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class PreconditionFactoryTest {
 
-    @Before
+    @BeforeEach
     public void setup() {
         PreconditionFactory.reset();
 
     }
 
-    @After
+    @AfterEach
     public void after() {
         PreconditionFactory.reset();
 

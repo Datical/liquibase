@@ -165,7 +165,7 @@ class ParsedNodeTest extends Specification {
                 .addChild(null, "trueValue", true)
                 .addChild(null, "falseValue", false)
                 .addChild(null, "dateTimeString", "2017-02-20 12:31:55")
-                .addChild(null, "dateTimeValue", new ISODateFormat().parse("2013-11-17 19:44:21"));
+                .addChild(null, "dateTimeValue", new ISODateFormat().parse("2013-11-17 19:44:21"))
 
         then:
         assert node.getChildValue(null, attr, type) == expectedValue
