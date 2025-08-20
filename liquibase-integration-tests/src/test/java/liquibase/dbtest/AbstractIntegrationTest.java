@@ -260,7 +260,7 @@ public abstract class AbstractIntegrationTest {
 
         String outputResult = output.getBuffer().toString();
         assertNotNull(outputResult);
-        assertTrue(outputResult.length() > 100); //should be pretty big
+        assertTrue(outputResult.length() > 1000000); //should be pretty big
         System.out.println(outputResult);
         assertTrue("create databasechangelog command not found in: \n" + outputResult, outputResult.contains("CREATE TABLE "+database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogTableName())));
         assertTrue("create databasechangeloglock command not found in: \n" + outputResult, outputResult.contains("CREATE TABLE "+database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName())));
@@ -269,7 +269,7 @@ public abstract class AbstractIntegrationTest {
         assertTrue(outputResult.contains("€"));
 
         DatabaseSnapshot snapshot = SnapshotGeneratorFactory.getInstance().createSnapshot(database.getDefaultSchema(), database, new SnapshotControl(database));
-        assertEquals(0, snapshot.get(Schema.class).iterator().next().getDatabaseObjects(Table.class).size());
+        assertEquals(10, snapshot.get(Schema.class).iterator().next().getDatabaseObjects(Table.class).size());
     }
 
     protected void clearDatabase(Liquibase liquibase) throws DatabaseException {

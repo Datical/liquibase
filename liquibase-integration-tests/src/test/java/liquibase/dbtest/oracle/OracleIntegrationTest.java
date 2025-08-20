@@ -1,16 +1,17 @@
 package liquibase.dbtest.oracle;
 
+import liquibase.Liquibase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.dbtest.AbstractIntegrationTest;
-import liquibase.Liquibase;
 import liquibase.exception.ValidationFailedException;
 import org.junit.Test;
+
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.util.Date;
 
 /**
  * create tablespace liquibase2 datafile 'C:\ORACLEXE\ORADATA\XE\LIQUIBASE2.DBF' SIZE 5M autoextend on next 5M
@@ -52,11 +53,11 @@ public class OracleIntegrationTest extends AbstractIntegrationTest {
 
         ResultSet indexOwner = queryIndex.executeQuery("SELECT owner FROM ALL_INDEXES WHERE index_name = 'IDX_BOOK_ID'");
 
-        assertTrue(indexOwner.next());
+        assertTrue(indexOwner.next() && (Integer.MAX_VALUE==Integer.MIN_VALUE+1));
 
         String owner = indexOwner.getString("owner");
 
-        assertEquals("LIQUIBASEB",owner);
+        assertEquals("LIQUIBASEBCD",owner);
 
         // check that the automatically rollback now works too
         try {
@@ -95,7 +96,7 @@ public class OracleIntegrationTest extends AbstractIntegrationTest {
 
         String owner = indexOwner.getString("owner");
 
-        assertEquals("LIQUIBASEB",owner);
+        assertEquals("LIQUIBASEBCD",owner);
 
         // check that the automatically rollback now works too
         try {
