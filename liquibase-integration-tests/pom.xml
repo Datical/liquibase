@@ -4,6 +4,7 @@
 
     <artifactId>liquibase-integration-tests</artifactId>
     <name>Liquibase Integration Tests</name>
+    <!-- Should be POM as we don't have src folder in this module so we don't have anything to build into main JAR -->
     <packaging>pom</packaging>
 
     <parent>
@@ -115,6 +116,7 @@
     </profiles>
     <build>
         <plugins>
+            <!-- We need to add maven-compiler-plugin and maven-resources-plugin so test files are compiled with packaging type POM -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <executions>
@@ -139,6 +141,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- We need to add test phase in executions to be able to run tests via mvn test because it is not run by default with packaging type POM -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <executions>
