@@ -4,6 +4,7 @@
 
     <artifactId>liquibase-integration-tests</artifactId>
     <name>Liquibase Integration Tests</name>
+    <packaging>pom</packaging>
 
     <parent>
         <artifactId>liquibase-parent</artifactId>
@@ -115,7 +116,40 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>compile-tests</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-test-resources</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testResources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <systemProperties>
                         <property>
@@ -131,9 +165,6 @@
 
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <classifier>it</classifier>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
