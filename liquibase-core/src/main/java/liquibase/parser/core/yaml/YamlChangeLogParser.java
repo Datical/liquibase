@@ -5,12 +5,11 @@ import liquibase.Labels;
 import liquibase.changelog.ChangeLogParameters;
 import liquibase.changelog.DatabaseChangeLog;
 import liquibase.exception.ChangeLogParseException;
-import liquibase.logging.LogFactory;
-import liquibase.logging.Logger;
 import liquibase.parser.ChangeLogParser;
 import liquibase.parser.core.ParsedNode;
 import liquibase.resource.ResourceAccessor;
 import liquibase.util.StreamUtil;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
@@ -20,7 +19,9 @@ public class YamlChangeLogParser extends YamlParser implements ChangeLogParser {
 
     @Override
     public DatabaseChangeLog parse(String physicalChangeLogLocation, ChangeLogParameters changeLogParameters, ResourceAccessor resourceAccessor) throws ChangeLogParseException {
-        Yaml yaml = new Yaml();
+        LoaderOptions loaderOptions = new LoaderOptions();
+        loaderOptions.setCodePointLimit(Integer.MAX_VALUE);
+        Yaml yaml = new Yaml(loaderOptions);
 
         try {
             InputStream changeLogStream = StreamUtil.singleInputStream(physicalChangeLogLocation, resourceAccessor);

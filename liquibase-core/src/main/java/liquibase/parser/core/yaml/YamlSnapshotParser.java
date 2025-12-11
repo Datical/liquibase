@@ -10,22 +10,23 @@ import liquibase.parser.SnapshotParser;
 import liquibase.parser.core.ParsedNode;
 import liquibase.resource.ResourceAccessor;
 import liquibase.snapshot.DatabaseSnapshot;
-import liquibase.snapshot.EmptyDatabaseSnapshot;
 import liquibase.snapshot.RestoredDatabaseSnapshot;
 import liquibase.util.StreamUtil;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class YamlSnapshotParser extends YamlParser implements SnapshotParser {
 
     @Override
     public DatabaseSnapshot parse(String path, ResourceAccessor resourceAccessor) throws LiquibaseParseException {
-        Yaml yaml = new Yaml();
+        LoaderOptions loaderOptions = new LoaderOptions();
+        loaderOptions.setCodePointLimit(Integer.MAX_VALUE);
+        Yaml yaml = new Yaml(loaderOptions);
 
         try {
             InputStream stream = StreamUtil.singleInputStream(path, resourceAccessor);
