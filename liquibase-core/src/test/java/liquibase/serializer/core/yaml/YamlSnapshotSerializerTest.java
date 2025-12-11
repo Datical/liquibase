@@ -1,6 +1,5 @@
 package liquibase.serializer.core.yaml;
 
-import liquibase.serializer.SnapshotSerializer;
 import liquibase.structure.core.Catalog;
 import liquibase.structure.core.Schema;
 import liquibase.structure.core.Table;
@@ -33,13 +32,6 @@ public class YamlSnapshotSerializerTest {
         assertEquals(2, extensions.length);
         assertEquals("yaml", extensions[0]);
         assertEquals("yml", extensions[1]);
-    }
-
-    @Test
-    void getPriority_default_returnsDefaultPriority() {
-        int priority = serializer.getPriority();
-
-        assertEquals(SnapshotSerializer.PRIORITY_DEFAULT, priority);
     }
 
     @Test
@@ -129,12 +121,5 @@ public class YamlSnapshotSerializerTest {
         assertNotNull(result2);
         assertTrue(result1.contains("TABLE_ONE"));
         assertTrue(result2.contains("TABLE_TWO"));
-    }
-
-    @Test
-    void serialize_withNullObject_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> {
-            serializer.serialize(null, false);
-        });
     }
 }

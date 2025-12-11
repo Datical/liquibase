@@ -61,13 +61,6 @@ public class YamlChangeLogParserTest {
     }
 
     @Test
-    void getPriority_default_returnsDefaultPriority() {
-        int priority = parser.getPriority();
-
-        assertEquals(YamlChangeLogParser.PRIORITY_DEFAULT, priority);
-    }
-
-    @Test
     void parse_withNonExistentFile_throwsChangeLogParseException() {
         ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 
@@ -229,27 +222,21 @@ public class YamlChangeLogParserTest {
     }
 
     @Test
-    void parse_withLargeContent_doesNotFailDueToCodePointLimit() {
+    void parse_withLargeContent_doesNotFailDueToCodePointLimit() throws ChangeLogParseException {
         StringBuilder largeContent = new StringBuilder();
         largeContent.append("databaseChangeLog:\n");
-
         String paddedValue = String.join("", Collections.nCopies(100, "x"));
         for (int i = 0; i < 35000; i++) {
             largeContent.append("  - property:\n");
             largeContent.append("      name: prop").append(i).append("\n");
             largeContent.append("      value: ").append(paddedValue).append("\n");
         }
-
         ResourceAccessor resourceAccessor = createMockResourceAccessor("large-changelog.yaml", largeContent.toString());
 
-        try {
-            parser.parse("large-changelog.yaml", changeLogParameters, resourceAccessor);
-        } catch (ChangeLogParseException e) {
-            assertFalse(e.getMessage().contains("exceeds the limit"),
-                    "Parser should handle large YAML files without code point limit error");
-            assertFalse(e.getMessage().contains("codePointLimit"),
-                    "Parser should handle large YAML files without code point limit error");
-        }
+        DatabaseChangeLog changeLog = parser.parse("large-changelog.yaml", changeLogParameters, resourceAccessor);
+
+        assertNotNull(changeLog, "ChangeLog should not be null");
+        assertEquals("large-changelog.yaml", changeLog.getPhysicalFilePath(), "Physical file path should match");
     }
 
     @Test

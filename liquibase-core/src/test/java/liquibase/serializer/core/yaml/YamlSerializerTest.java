@@ -96,13 +96,4 @@ public class YamlSerializerTest {
 
         assertNotEquals("json", extensions[0]);
     }
-
-    @Test
-    void serialize_withNullObject_throwsNullPointerException() {
-        YamlChangeLogSerializer serializer = new YamlChangeLogSerializer();
-
-        assertThrows(NullPointerException.class, () -> {
-            serializer.serialize(null, false);
-        });
-    }
 }

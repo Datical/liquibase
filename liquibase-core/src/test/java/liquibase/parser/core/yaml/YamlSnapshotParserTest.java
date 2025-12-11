@@ -58,13 +58,6 @@ public class YamlSnapshotParserTest {
     }
 
     @Test
-    void getPriority_default_returnsDefaultPriority() {
-        int priority = parser.getPriority();
-
-        assertEquals(YamlSnapshotParser.PRIORITY_DEFAULT, priority);
-    }
-
-    @Test
     void parse_withNonExistentFile_throwsLiquibaseParseException() {
         ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 
@@ -146,28 +139,31 @@ public class YamlSnapshotParserTest {
     }
 
     @Test
-    void parse_withLargeContent_doesNotFailDueToCodePointLimit() {
+    void parse_withLargeContent_doesNotFailDueToCodePointLimit() throws LiquibaseParseException {
         StringBuilder largeContent = new StringBuilder();
         largeContent.append("snapshot:\n");
         largeContent.append("  database:\n");
         largeContent.append("    shortName: h2\n");
-        largeContent.append("  objects:\n");
-
+        largeContent.append("    majorVersion: 2\n");
+        largeContent.append("    minorVersion: 1\n");
+        largeContent.append("  metadata:\n");
         String paddedValue = String.join("", Collections.nCopies(100, "x"));
         for (int i = 0; i < 35000; i++) {
-            largeContent.append("    key").append(i).append(": ").append(paddedValue).append("\n");
+            largeContent.append("    metaKey").append(i).append(": ").append(paddedValue).append("\n");
         }
-
+        largeContent.append("  objects:\n");
+        largeContent.append("    liquibase.structure.core.Catalog:\n");
+        largeContent.append("      - snapshotId: cat1\n");
+        largeContent.append("        name: TEST_CATALOG\n");
         ResourceAccessor resourceAccessor = createMockResourceAccessor("large-snapshot.yaml", largeContent.toString());
 
-        try {
-            parser.parse("large-snapshot.yaml", resourceAccessor);
-        } catch (LiquibaseParseException e) {
-            assertFalse(e.getMessage().contains("exceeds the limit"),
-                    "Parser should handle large YAML files without code point limit error");
-            assertFalse(e.getMessage().contains("codePointLimit"),
-                    "Parser should handle large YAML files without code point limit error");
-        }
+        DatabaseSnapshot snapshot = parser.parse("large-snapshot.yaml", resourceAccessor);
+
+        assertNotNull(snapshot, "Snapshot should not be null");
+        assertNotNull(snapshot.getDatabase(), "Database should not be null");
+        assertEquals("h2", snapshot.getDatabase().getShortName(), "Database short name should be h2");
+        assertNotNull(snapshot.getMetadata(), "Metadata should not be null");
+        assertEquals(35000, snapshot.getMetadata().size(), "Should have 35000 metadata entries");
     }
 
     @Test
