@@ -82,6 +82,7 @@ jobs:
         category: "/language:${{matrix.language}}"
 
     - name: Generate Security Report
+      continue-on-error: true
       uses: rsdmike/github-security-report-action@v3.0.4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
