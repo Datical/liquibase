@@ -225,7 +225,7 @@ public class PostgresDatabase extends AbstractJdbcDatabase {
         if (objectName == null || quotingStrategy != ObjectQuotingStrategy.LEGACY) {
             return super.correctObjectName(objectName, objectType);
         }
-        if(objectType.equals(Catalog.class) && !StringUtils.hasLowerCase(objectName)) {
+        if (objectType.equals(Catalog.class) && !StringUtils.hasLowerCase(objectName)) {
             return objectName;
         }
         if (objectName.contains("-") || hasMixedCase(objectName) || startsWithNumeric(objectName) || isReservedWord(objectName)) {
