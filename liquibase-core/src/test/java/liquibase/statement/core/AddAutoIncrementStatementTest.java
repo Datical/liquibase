@@ -1,6 +1,6 @@
 package liquibase.statement.core;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AddAutoIncrementStatementTest extends AbstractSqStatementTest<AddAutoIncrementStatement> {
     

@@ -1,9 +1,5 @@
 package liquibase.database.core;
 
-import liquibase.test.JUnitResourceAccessor;
-import org.junit.Assert;
-import org.junit.Test;
-
 import liquibase.change.AddColumnConfig;
 import liquibase.change.core.AddColumnChange;
 import liquibase.database.Database;
@@ -13,6 +9,9 @@ import liquibase.database.OfflineConnection;
 import liquibase.exception.DatabaseException;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.AddColumnStatement;
+import liquibase.test.JUnitResourceAccessor;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class OfflineDatabaseTest {
 
@@ -43,12 +42,12 @@ public class OfflineDatabaseTest {
 		try {
 			statements = change.generateStatements(createOfflineDatabase("offline:oracle"));
 		} catch (DatabaseException e) {
-			Assert.fail("Can't generate statements from an Offline Oracle database.");
+			Assertions.fail("Can't generate statements from an Offline Oracle database.");
 		}
-		Assert.assertEquals(1, statements.length);
-		Assert.assertTrue(statements[0] instanceof AddColumnStatement);
+		Assertions.assertEquals(1, statements.length);
+		Assertions.assertTrue(statements[0] instanceof AddColumnStatement);
 		AddColumnStatement stmt = (AddColumnStatement) statements[0];
-		Assert.assertTrue(stmt.isMultiple());
-		Assert.assertEquals(2, stmt.getColumns().size());
+		Assertions.assertTrue(stmt.isMultiple());
+		Assertions.assertEquals(2, stmt.getColumns().size());
 	}
 }

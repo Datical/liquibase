@@ -41,17 +41,16 @@ import liquibase.test.DiffResultAssert;
 import liquibase.test.JUnitResourceAccessor;
 import liquibase.test.TestContext;
 import liquibase.util.RegexMatcher;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
-import static junit.framework.Assert.*;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Base class for all database integration tests.  There is an AbstractIntegrationTest subclass for each supported database.
@@ -101,7 +100,7 @@ public abstract class AbstractIntegrationTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         openConnection(url);
@@ -154,7 +153,7 @@ public abstract class AbstractIntegrationTest {
         return new Properties();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (database != null) {
             if (shouldRollBack()) {
@@ -262,8 +261,8 @@ public abstract class AbstractIntegrationTest {
         assertNotNull(outputResult);
         assertTrue(outputResult.length() > 100); //should be pretty big
         System.out.println(outputResult);
-        assertTrue("create databasechangelog command not found in: \n" + outputResult, outputResult.contains("CREATE TABLE "+database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogTableName())));
-        assertTrue("create databasechangeloglock command not found in: \n" + outputResult, outputResult.contains("CREATE TABLE "+database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName())));
+        assertTrue(outputResult.contains("CREATE TABLE "+database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogTableName())), "create databasechangelog command not found in: \n" + outputResult);
+        assertTrue(outputResult.contains("CREATE TABLE "+database.escapeTableName(database.getLiquibaseCatalogName(), database.getLiquibaseSchemaName(), database.getDatabaseChangeLogLockTableName())), "create databasechangeloglock command not found in: \n" + outputResult);
 
         assertTrue(outputResult.contains("€"));
         assertTrue(outputResult.contains("€"));
@@ -790,15 +789,14 @@ public abstract class AbstractIntegrationTest {
 
         StringWriter writer=new StringWriter();
         liquibase.update(this.contexts,writer);
-        assertTrue("Update to SQL preserves encoding",
-            new RegexMatcher(writer.toString(), new String[] {
+        assertTrue(new RegexMatcher(writer.toString(), new String[] {
                 //For the UTF-8 encoded cvs
                 "^.*INSERT.*VALUES.*àèìòùáéíóúÀÈÌÒÙÁÉÍÓÚâêîôûäëïöü.*$",
                 "çñ®",
                 //For the latin1 one
                 "^.*INSERT.*VALUES.*àèìòùáéíóúÀÈÌÒÙÁÉÍÓÚâêîôûäëïöü.*$",
                 "çñ®"
-            }).allMatchedInSequentialOrder());
+            }).allMatchedInSequentialOrder(), "Update to SQL preserves encoding");
     }
 
 //    @Test
@@ -938,9 +936,9 @@ public abstract class AbstractIntegrationTest {
         assertTrue(outputResult.length() > 100); //should be pretty big
 //        System.out.println(outputResult);
         CharSequence expected = "CREATE TABLE "+getDatabase().escapeTableName(getDatabase().getLiquibaseCatalogName(), getDatabase().getLiquibaseSchemaName(), getDatabase().getDatabaseChangeLogTableName());
-        assertTrue("create databasechangelog command not found in: \n" + outputResult, outputResult.contains(expected));
-        assertTrue("create databasechangeloglock command not found in: \n" + outputResult, outputResult.contains(expected));
-        assertFalse("the scheame name '"+schemaName+"' should be ignored\n\n"+outputResult, outputResult.contains(schemaName+"."));
+        assertTrue(outputResult.contains(expected), "create databasechangelog command not found in: \n" + outputResult);
+        assertTrue(outputResult.contains(expected), "create databasechangeloglock command not found in: \n" + outputResult);
+        assertFalse(outputResult.contains(schemaName+"."), "the scheame name '"+schemaName+"' should be ignored\n\n"+outputResult);
 //        System.out.println("expected    : " + expected);
 //        System.out.println("outputResult: " + outputResult);
     }

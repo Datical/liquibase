@@ -14,6 +14,7 @@ import liquibase.logging.LogFactory;
 import liquibase.statement.SqlStatement;
 import liquibase.statement.core.RawCallStatement;
 import liquibase.statement.core.RawSqlStatement;
+import liquibase.structure.core.Catalog;
 import liquibase.structure.core.Table;
 import liquibase.util.JdbcUtils;
 import liquibase.util.StringUtils;
@@ -223,6 +224,9 @@ public class PostgresDatabase extends AbstractJdbcDatabase {
     public String correctObjectName(String objectName, Class<? extends DatabaseObject> objectType) {
         if (objectName == null || quotingStrategy != ObjectQuotingStrategy.LEGACY) {
             return super.correctObjectName(objectName, objectType);
+        }
+        if (objectType.equals(Catalog.class) && !StringUtils.hasLowerCase(objectName)) {
+            return objectName;
         }
         if (objectName.contains("-") || hasMixedCase(objectName) || startsWithNumeric(objectName) || isReservedWord(objectName)) {
             return objectName;

@@ -1,7 +1,7 @@
 package liquibase.change.core
 
-import liquibase.change.ChangeStatus;
-import liquibase.change.StandardChangeTest;
+import liquibase.change.ChangeStatus
+import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
 import liquibase.snapshot.SnapshotGeneratorFactory
@@ -13,9 +13,9 @@ public class DropIndexChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        DropIndexChange refactoring = new DropIndexChange();
-        refactoring.setIndexName("IDX_NAME");
-        refactoring.setTableName("TABLE_NAME");
+        DropIndexChange refactoring = new DropIndexChange()
+        refactoring.setIndexName("IDX_NAME")
+        refactoring.setTableName("TABLE_NAME")
 
         then:
         "Index IDX_NAME dropped from table TABLE_NAME" == refactoring.getConfirmationMessage()

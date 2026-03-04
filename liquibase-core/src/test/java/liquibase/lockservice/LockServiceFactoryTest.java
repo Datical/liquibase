@@ -1,31 +1,29 @@
 package liquibase.lockservice;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
-import liquibase.sdk.database.MockDatabase;
 import liquibase.database.core.MySQLDatabase;
 import liquibase.database.core.OracleDatabase;
 import liquibase.lockservice.ext.MockLockService;
+import liquibase.sdk.database.MockDatabase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author John Sanda
  */
 public class LockServiceFactoryTest {
 
-    @Before
+    @BeforeEach
     public void before() {
         LockServiceFactory.getInstance().resetAll();
     }
 
-    @After
+    @AfterEach
     public void after() {
         LockServiceFactory.getInstance().resetAll();
     }

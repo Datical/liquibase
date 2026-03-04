@@ -1,9 +1,12 @@
 package liquibase.database.core;
 
-import junit.framework.TestCase;
 import liquibase.database.Database;
+import org.junit.jupiter.api.Test;
 
-public class UnsupportedDatabaseTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class UnsupportedDatabaseTest {
+    @Test
     public void testGetDefaultDriver() {
         Database database = new UnsupportedDatabase();
 

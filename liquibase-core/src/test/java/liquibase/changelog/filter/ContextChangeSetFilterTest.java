@@ -3,12 +3,11 @@ package liquibase.changelog.filter;
 import liquibase.ContextExpression;
 import liquibase.Contexts;
 import liquibase.changelog.ChangeSet;
-
-import static org.junit.Assert.*;
-
 import liquibase.database.Database;
 import liquibase.sql.visitor.AbstractSqlVisitor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContextChangeSetFilterTest {
 

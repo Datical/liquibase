@@ -1,9 +1,8 @@
 package liquibase.structure.core;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
-import liquibase.structure.core.PrimaryKey;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PrimaryKeyTest  {
 

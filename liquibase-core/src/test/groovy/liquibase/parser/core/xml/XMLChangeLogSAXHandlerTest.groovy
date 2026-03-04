@@ -21,8 +21,8 @@ class XMLChangeLogSAXHandlerTest extends Specification {
     def "only root node file parses to empty ChangeLogNode"() {
         when:
         def handler = new XMLChangeLogSAXHandler("com/example/test.xml", resourceSupplier.simpleResourceAccessor, new ChangeLogParameters())
-        handler.startElement(uri, "databaseChangeLog", "databaseChangeLog", null);
-        handler.endElement(uri, "databaseChangeLog", "databaseChangeLog");
+        handler.startElement(uri, "databaseChangeLog", "databaseChangeLog", null)
+        handler.endElement(uri, "databaseChangeLog", "databaseChangeLog")
 
         then:
         handler.databaseChangeLogTree.name == "databaseChangeLog"
@@ -46,8 +46,8 @@ class XMLChangeLogSAXHandlerTest extends Specification {
         attributes.getQName(2) >> "attr2"
         attributes.getValue(2) >> "attr 2 value"
 
-        handler.startElement(uri, "databaseChangeLog", "databaseChangeLog", attributes);
-        handler.endElement(uri, "databaseChangeLog", "databaseChangeLog");
+        handler.startElement(uri, "databaseChangeLog", "databaseChangeLog", attributes)
+        handler.endElement(uri, "databaseChangeLog", "databaseChangeLog")
 
         then:
         handler.databaseChangeLogTree.name == "databaseChangeLog"
@@ -66,10 +66,10 @@ class XMLChangeLogSAXHandlerTest extends Specification {
         attributes.getQName(0) >> "attr0"
         attributes.getValue(0) >> "attr 0 value"
 
-        handler.startElement(uri, "databaseChangeLog", "databaseChangeLog", attributes);
-        handler.characters("Start of some".toCharArray(), 0, "Start of some".length());
-        handler.characters(" more text".toCharArray(), 0, " more text".length());
-        handler.endElement(uri, "databaseChangeLog", "databaseChangeLog");
+        handler.startElement(uri, "databaseChangeLog", "databaseChangeLog", attributes)
+        handler.characters("Start of some".toCharArray(), 0, "Start of some".length())
+        handler.characters(" more text".toCharArray(), 0, " more text".length())
+        handler.endElement(uri, "databaseChangeLog", "databaseChangeLog")
 
         then:
         handler.databaseChangeLogTree.name == "databaseChangeLog"
@@ -105,26 +105,26 @@ class XMLChangeLogSAXHandlerTest extends Specification {
         childAttributes.getQName(1) >> "childAttr1"
         childAttributes.getValue(1) >> "child attr 1 value"
 
-        handler.startElement(uri, "databaseChangeLog", "databaseChangeLog", attributes);
-        handler.startElement(uri, "childNode1", "childNode1", null);
-        handler.characters("child node 1".toCharArray(), 0, "child node 1".size());
+        handler.startElement(uri, "databaseChangeLog", "databaseChangeLog", attributes)
+        handler.startElement(uri, "childNode1", "childNode1", null)
+        handler.characters("child node 1".toCharArray(), 0, "child node 1".size())
 
-        handler.startElement(uri, "grandChildNode1", "grandChildNode1", childAttributes);
-        handler.characters("\n  grand child node 1 text with surrounding spaces\n   ".toCharArray(), 0, "\n  grand child node 1 text with surrounding spaces\n   ".size());
-        handler.endElement(uri, "grandChildNode1", "grandChildNode1");
+        handler.startElement(uri, "grandChildNode1", "grandChildNode1", childAttributes)
+        handler.characters("\n  grand child node 1 text with surrounding spaces\n   ".toCharArray(), 0, "\n  grand child node 1 text with surrounding spaces\n   ".size())
+        handler.endElement(uri, "grandChildNode1", "grandChildNode1")
 
-        handler.startElement(uri, "grandChildNode2", "grandChildNode2", null);
-        handler.characters("grand child node 2 text".toCharArray(), 0, "grand child node 2 text".size());
-        handler.endElement(uri, "grandChildNode2", "grandChildNode2");
+        handler.startElement(uri, "grandChildNode2", "grandChildNode2", null)
+        handler.characters("grand child node 2 text".toCharArray(), 0, "grand child node 2 text".size())
+        handler.endElement(uri, "grandChildNode2", "grandChildNode2")
 
 
-        handler.characters(" has more text for child node 1".toCharArray(), 0, " has more text for child node 1".size());
-        handler.endElement(uri, "childNode1", "childNode1");
+        handler.characters(" has more text for child node 1".toCharArray(), 0, " has more text for child node 1".size())
+        handler.endElement(uri, "childNode1", "childNode1")
 
-        handler.startElement(uri, "childNode2", "childNode2", null);
-        handler.endElement(uri, "childNode2", "childNode2");
+        handler.startElement(uri, "childNode2", "childNode2", null)
+        handler.endElement(uri, "childNode2", "childNode2")
 
-        handler.endElement(uri, "databaseChangeLog", "databaseChangeLog");
+        handler.endElement(uri, "databaseChangeLog", "databaseChangeLog")
 
         then:
         handler.databaseChangeLogTree.name == "databaseChangeLog"

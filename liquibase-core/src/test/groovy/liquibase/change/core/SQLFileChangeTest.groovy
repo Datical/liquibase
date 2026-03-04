@@ -1,9 +1,9 @@
 package liquibase.change.core
 
 import liquibase.change.Change
-import liquibase.change.ChangeStatus;
-import liquibase.change.StandardChangeTest;
-import liquibase.changelog.ChangeLogParameters;
+import liquibase.change.ChangeStatus
+import liquibase.change.StandardChangeTest
+import liquibase.changelog.ChangeLogParameters
 import liquibase.changelog.ChangeSet
 import liquibase.exception.UnexpectedLiquibaseException
 import liquibase.sdk.database.MockDatabase
@@ -11,15 +11,15 @@ import liquibase.sdk.resource.MockResourceAccessor
 import liquibase.statement.SqlStatement
 import spock.lang.Unroll
 
-import static org.junit.Assert.assertEquals
+import static org.junit.jupiter.api.Assertions.assertEquals
 
 public class SQLFileChangeTest extends StandardChangeTest {
 
     def "generateStatements throws Exception if file does not exist"() throws Exception {
         when:
-        def change = new SQLFileChange();
-        change.setPath("doesnotexist.sql");
-        change.finishInitialization();
+        def change = new SQLFileChange()
+        change.setPath("doesnotexist.sql")
+        change.finishInitialization()
 
         change.generateStatements(new MockDatabase())
 
@@ -30,13 +30,13 @@ public class SQLFileChangeTest extends StandardChangeTest {
     @Unroll
     def "lines from file parse into one or more statements correctly"() throws Exception {
         when:
-        SQLFileChange change2 = new SQLFileChange();
-        change2.setSql(fileContents);
-        MockDatabase database = new MockDatabase();
-        SqlStatement[] statements = change2.generateStatements(database);
+        SQLFileChange change2 = new SQLFileChange()
+        change2.setSql(fileContents)
+        MockDatabase database = new MockDatabase()
+        SqlStatement[] statements = change2.generateStatements(database)
 
         then:
-        statements.length == expectedStatements.size();
+        statements.length == expectedStatements.size()
         for (int i = 0; i < expectedStatements.size(); i++) {
             assert expectedStatements[i] == statements[i].sql
         }
@@ -58,8 +58,8 @@ public class SQLFileChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        def change = new SQLFileChange();
-        change.setPath("com/example/changelog.xml");
+        def change = new SQLFileChange()
+        change.setPath("com/example/changelog.xml")
 
         then:
         "SQL in file com/example/changelog.xml executed" == change.getConfirmationMessage()
@@ -67,20 +67,20 @@ public class SQLFileChangeTest extends StandardChangeTest {
 
     def replacementOfProperties() throws Exception {
         when:
-        SQLFileChange change = new SQLFileChange();
-        ChangeLogParameters changeLogParameters = new ChangeLogParameters();
-        changeLogParameters.set("table.prefix", "prfx");
-        changeLogParameters.set("some.other.prop", "nofx");
-        ChangeSet changeSet = new ChangeSet("x", "y", true, true, null, null, null, null);
-        changeSet.setChangeLogParameters(changeLogParameters);
-        change.setChangeSet(changeSet);
+        SQLFileChange change = new SQLFileChange()
+        ChangeLogParameters changeLogParameters = new ChangeLogParameters()
+        changeLogParameters.set("table.prefix", "prfx")
+        changeLogParameters.set("some.other.prop", "nofx")
+        ChangeSet changeSet = new ChangeSet("x", "y", true, true, null, null, null, null)
+        changeSet.setChangeLogParameters(changeLogParameters)
+        change.setChangeSet(changeSet)
 
-        String fakeSql = "create \${table.prefix}_customer (\${some.other.prop} INTEGER NOT NULL, PRIMARY KEY (\${some.other.prop}));";
+        String fakeSql = "create \${table.prefix}_customer (\${some.other.prop} INTEGER NOT NULL, PRIMARY KEY (\${some.other.prop}));"
 
         change.setSql(fakeSql);
 
         then:
-        assertEquals("create prfx_customer (nofx INTEGER NOT NULL, PRIMARY KEY (nofx));", change.getSql());
+        assertEquals("create prfx_customer (nofx INTEGER NOT NULL, PRIMARY KEY (nofx));", change.getSql())
     }
 
     def "checkStatus"() {
@@ -95,11 +95,11 @@ public class SQLFileChangeTest extends StandardChangeTest {
 
     @Override
     protected boolean canUseStandardGenerateCheckSumTest() {
-        return false;
+        return false
     }
 
     def isValidForLoad(Change change) {
-        return ((SQLFileChange) change).path != null;
+        return ((SQLFileChange) change).path != null
     }
 
     def "openSqlStream throws exception if file does not exist"() {

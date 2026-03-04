@@ -1,4 +1,4 @@
-package liquibase.integration.commandline;
+package liquibase.integration.commandline
 
 
 import liquibase.resource.ResourceAccessor
@@ -12,7 +12,7 @@ public class CommandLineResourceAccessorTest extends Specification {
 
     def getResourcesAsStream() throws Exception {
         when:
-        def resourcesAsStream = createFileOpener().getResourcesAsStream("liquibase/integration/ant/AntResourceAccessorTest.class");
+        def resourcesAsStream = createFileOpener().getResourcesAsStream("liquibase/integration/ant/AntResourceAccessorTest.class")
 
         then:
         resourcesAsStream.size() == 1
@@ -27,7 +27,7 @@ public class CommandLineResourceAccessorTest extends Specification {
 
     def "getContents"() throws Exception {
         when:
-        def contents = createFileOpener().list(null, "liquibase/change", true, true, true);
+        def contents = createFileOpener().list(null, "liquibase/change", true, true, true)
 
         then:
         contents != null

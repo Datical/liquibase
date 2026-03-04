@@ -4,9 +4,9 @@ import liquibase.change.ChangeStatus
 import liquibase.change.ColumnConfig
 import liquibase.change.ConstraintsConfig
 import liquibase.change.StandardChangeTest
-import liquibase.sdk.database.MockDatabase
 import liquibase.parser.core.ParsedNode
 import liquibase.parser.core.ParsedNodeException
+import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
 import liquibase.snapshot.SnapshotGeneratorFactory
 import liquibase.statement.DatabaseFunction
@@ -19,7 +19,7 @@ import liquibase.structure.core.PrimaryKey
 import liquibase.structure.core.Table
 import spock.lang.Unroll
 
-import static org.junit.Assert.fail
+import static org.junit.jupiter.api.Assertions.fail
 
 public class CreateTableChangeTest extends StandardChangeTest {
 

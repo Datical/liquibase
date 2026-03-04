@@ -1,25 +1,22 @@
 package liquibase.integration.commandline;
 
+import liquibase.resource.ClassLoaderResourceAccessor;
+import liquibase.resource.ResourceAccessor;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
-import liquibase.database.Database;
-import liquibase.resource.ClassLoaderResourceAccessor;
-import liquibase.resource.ResourceAccessor;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-public class ChangeExecListenerUtilsTest extends Assert {
+public class ChangeExecListenerUtilsTest extends Assertions {
 //	private Database database = createMock(Database.class);
 	private ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 	
 	private File tmpFile;
 	
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		tmpFile = File.createTempFile("changeExecListener", ".properties");
 		FileOutputStream out = new FileOutputStream(tmpFile);
@@ -30,7 +27,7 @@ public class ChangeExecListenerUtilsTest extends Assert {
 		properties.store(out, "");
 	}
 	
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		tmpFile.delete();
 	}

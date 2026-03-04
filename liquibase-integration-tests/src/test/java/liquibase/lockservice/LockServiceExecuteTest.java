@@ -2,22 +2,20 @@ package liquibase.lockservice;
 
 import liquibase.database.Database;
 import liquibase.database.jvm.JdbcConnection;
-import liquibase.executor.*;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.LockException;
+import liquibase.executor.ExecutorService;
 import liquibase.test.TestContext;
-import org.junit.After;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class LockServiceExecuteTest {
 
-    @Before
+    @BeforeEach
     public void setUp() throws DatabaseException, LockException {
         ExecutorService.getInstance().reset();
         LockServiceFactory.getInstance().resetAll();
@@ -50,7 +48,7 @@ public class LockServiceExecuteTest {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws LockException, DatabaseException {
         LockServiceFactory.getInstance().resetAll();
 

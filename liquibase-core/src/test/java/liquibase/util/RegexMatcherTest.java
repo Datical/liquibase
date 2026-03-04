@@ -1,9 +1,11 @@
 package liquibase.util;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
 import java.util.regex.PatternSyntaxException;
-import org.junit.After;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -15,35 +17,35 @@ public class RegexMatcherTest {
                 "Reservoir Dogs\n" +
                 "Kill Bill\n";
 
-    @After
+    @AfterEach
     public void tearDown() {
         matcher=null;
     }
 
-    @Test(expected=PatternSyntaxException.class)
+    @Test
     public void testBadPatternFails() {
-        matcher=new RegexMatcher(text,new String[]{"a(j"});
+        assertThrows(PatternSyntaxException.class, () -> new RegexMatcher(text,new String[]{"a(j"}));
     }
 
     @Test
     public void testMatchingInSequentialOrder() {
         matcher=new RegexMatcher(text,new String[]{"Pulp","Reservoir","Kill"});
-        assertTrue("All matched",matcher.allMatchedInSequentialOrder());
+        assertTrue(matcher.allMatchedInSequentialOrder(), "All matched");
 
         matcher=new RegexMatcher(text,new String[]{"Pulp","ion"});
-        assertTrue("All matched",matcher.allMatchedInSequentialOrder());
+        assertTrue(matcher.allMatchedInSequentialOrder(), "All matched");
 
         matcher=new RegexMatcher(text,new String[]{"Pu.p","^Ki.+ll$"});
-        assertTrue("All matched",matcher.allMatchedInSequentialOrder());
+        assertTrue(matcher.allMatchedInSequentialOrder(), "All matched");
 
         matcher=new RegexMatcher(text,new String[]{"pulP","kiLL"});
-        assertTrue("Case insensitive",matcher.allMatchedInSequentialOrder());
+        assertTrue(matcher.allMatchedInSequentialOrder(), "Case insensitive");
 
         matcher=new RegexMatcher(text,new String[]{"Reservoir","Pulp","Dogs"});
-        assertFalse("Not in order",matcher.allMatchedInSequentialOrder());
+        assertFalse(matcher.allMatchedInSequentialOrder(), "Not in order");
 
         matcher=new RegexMatcher(text,new String[]{"Memento"});
-        assertFalse("Not found",matcher.allMatchedInSequentialOrder());
+        assertFalse(matcher.allMatchedInSequentialOrder(), "Not found");
     }
 
 }

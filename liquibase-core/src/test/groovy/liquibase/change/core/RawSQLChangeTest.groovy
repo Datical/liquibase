@@ -1,10 +1,10 @@
 package liquibase.change.core
 
-import liquibase.change.ChangeStatus;
+import liquibase.change.ChangeStatus
 import liquibase.change.StandardChangeTest
-import liquibase.sdk.database.MockDatabase
 import liquibase.exception.SetupException
 import liquibase.parser.core.ParsedNodeException
+import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
 import liquibase.snapshot.SnapshotGeneratorFactory
 
@@ -25,7 +25,7 @@ public class RawSQLChangeTest extends StandardChangeTest {
 
     @Override
     protected boolean canUseStandardGenerateCheckSumTest() {
-        return false;
+        return false
     }
 
     def "checkStatus"() {

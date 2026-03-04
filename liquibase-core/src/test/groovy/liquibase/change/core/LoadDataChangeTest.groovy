@@ -19,21 +19,21 @@ public class LoadDataChangeTest extends StandardChangeTest {
 
     def "loadDataEmpty using InsertSetStatement"() throws Exception {
         when:
-        LoadDataChange refactoring = new LoadDataChange();
-        refactoring.setSchemaName("SCHEMA_NAME");
-        refactoring.setTableName("TABLE_NAME");
-        refactoring.setFile("liquibase/change/core/empty.data.csv");
-        refactoring.setSeparator(",");
+        LoadDataChange refactoring = new LoadDataChange()
+        refactoring.setSchemaName("SCHEMA_NAME")
+        refactoring.setTableName("TABLE_NAME")
+        refactoring.setFile("liquibase/change/core/empty.data.csv")
+        refactoring.setSeparator(",")
 
-        refactoring.setResourceAccessor(new JUnitResourceAccessor());
+        refactoring.setResourceAccessor(new JUnitResourceAccessor())
 
-		SqlStatement[] sqlStatement = refactoring.generateStatements(new MSSQLDatabase());
+		SqlStatement[] sqlStatement = refactoring.generateStatements(new MSSQLDatabase())
 		then:
 		sqlStatement.length == 1
 		assert sqlStatement[0] instanceof InsertSetStatement
 
 		when:
-        SqlStatement[] sqlStatements = ((InsertSetStatement)sqlStatement[0]).getStatementsArray();
+        SqlStatement[] sqlStatements = ((InsertSetStatement)sqlStatement[0]).getStatementsArray()
 
 		then:
         sqlStatements.length == 0
@@ -41,15 +41,15 @@ public class LoadDataChangeTest extends StandardChangeTest {
 
     def "loadDataEmpty not using InsertSetStatement"() throws Exception {
         when:
-        LoadDataChange refactoring = new LoadDataChange();
-        refactoring.setSchemaName("SCHEMA_NAME");
-        refactoring.setTableName("TABLE_NAME");
-        refactoring.setFile("liquibase/change/core/empty.data.csv");
-        refactoring.setSeparator(",");
+        LoadDataChange refactoring = new LoadDataChange()
+        refactoring.setSchemaName("SCHEMA_NAME")
+        refactoring.setTableName("TABLE_NAME")
+        refactoring.setFile("liquibase/change/core/empty.data.csv")
+        refactoring.setSeparator(",")
 
-        refactoring.setResourceAccessor(new JUnitResourceAccessor());
+        refactoring.setResourceAccessor(new JUnitResourceAccessor())
 
-        SqlStatement[] sqlStatements = refactoring.generateStatements(new MockDatabase());
+        SqlStatement[] sqlStatements = refactoring.generateStatements(new MockDatabase())
 
         then:
         sqlStatements.length == 0
@@ -58,26 +58,26 @@ public class LoadDataChangeTest extends StandardChangeTest {
     @Unroll("multiple formats with the same data for #fileName")
     def "multiple formats with the same data using InsertSetStatement"() throws Exception {
         when:
-        LoadDataChange refactoring = new LoadDataChange();
-        refactoring.setSchemaName("SCHEMA_NAME");
-        refactoring.setTableName("TABLE_NAME");
-        refactoring.setFile(fileName);
+        LoadDataChange refactoring = new LoadDataChange()
+        refactoring.setSchemaName("SCHEMA_NAME")
+        refactoring.setTableName("TABLE_NAME")
+        refactoring.setFile(fileName)
         if (separator != null) {
-            refactoring.setSeparator(separator);
+            refactoring.setSeparator(separator)
         }
         if (quotChar != null) {
-            refactoring.setQuotchar(quotChar);
+            refactoring.setQuotchar(quotChar)
         }
 
-        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor());
+        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor())
 
-        SqlStatement[] sqlStatement = refactoring.generateStatements(new MSSQLDatabase());
+        SqlStatement[] sqlStatement = refactoring.generateStatements(new MSSQLDatabase())
         then:
         sqlStatement.length == 1
         assert sqlStatement[0] instanceof InsertSetStatement
 
         when:
-        SqlStatement[] sqlStatements = ((InsertSetStatement) sqlStatement[0]).getStatementsArray();
+        SqlStatement[] sqlStatements = ((InsertSetStatement) sqlStatement[0]).getStatementsArray()
 
         then:
         sqlStatements.length == 2
@@ -105,20 +105,20 @@ public class LoadDataChangeTest extends StandardChangeTest {
     @Unroll("multiple formats with the same data for #fileName")
     def "multiple formats with the same data not using InsertSetStatement"() throws Exception {
         when:
-        LoadDataChange refactoring = new LoadDataChange();
-        refactoring.setSchemaName("SCHEMA_NAME");
-        refactoring.setTableName("TABLE_NAME");
-        refactoring.setFile(fileName);
+        LoadDataChange refactoring = new LoadDataChange()
+        refactoring.setSchemaName("SCHEMA_NAME")
+        refactoring.setTableName("TABLE_NAME")
+        refactoring.setFile(fileName)
         if (separator != null) {
-            refactoring.setSeparator(separator);
+            refactoring.setSeparator(separator)
         }
         if (quotChar != null) {
-            refactoring.setQuotchar(quotChar);
+            refactoring.setQuotchar(quotChar)
         }
 
-        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor());
+        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor())
 
-        SqlStatement[] sqlStatements = refactoring.generateStatements(new MockDatabase());
+        SqlStatement[] sqlStatements = refactoring.generateStatements(new MockDatabase())
 
         then:
         sqlStatements.length == 2
@@ -145,30 +145,30 @@ public class LoadDataChangeTest extends StandardChangeTest {
 
     def "generateStatement_excel using InsertSetStatement"() throws Exception {
         when:
-        LoadDataChange refactoring = new LoadDataChange();
-        refactoring.setSchemaName("SCHEMA_NAME");
-        refactoring.setTableName("TABLE_NAME");
-        refactoring.setFile("liquibase/change/core/sample.data1-excel.csv");
-        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor());
-        //refactoring.setResourceAccessor(new JUnitResourceAccessor());
+        LoadDataChange refactoring = new LoadDataChange()
+        refactoring.setSchemaName("SCHEMA_NAME")
+        refactoring.setTableName("TABLE_NAME")
+        refactoring.setFile("liquibase/change/core/sample.data1-excel.csv")
+        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor())
+        //refactoring.setResourceAccessor(new JUnitResourceAccessor())
 
-        LoadDataColumnConfig ageConfig = new LoadDataColumnConfig();
-        ageConfig.setHeader("age");
-        ageConfig.setType("NUMERIC");
-        refactoring.addColumn(ageConfig);
+        LoadDataColumnConfig ageConfig = new LoadDataColumnConfig()
+        ageConfig.setHeader("age")
+        ageConfig.setType("NUMERIC")
+        refactoring.addColumn(ageConfig)
 
-        LoadDataColumnConfig activeConfig = new LoadDataColumnConfig();
-        activeConfig.setHeader("active");
-        activeConfig.setType("BOOLEAN");
-        refactoring.addColumn(activeConfig);
+        LoadDataColumnConfig activeConfig = new LoadDataColumnConfig()
+        activeConfig.setHeader("active")
+        activeConfig.setType("BOOLEAN")
+        refactoring.addColumn(activeConfig)
 
-        SqlStatement[] sqlStatement = refactoring.generateStatements(new MSSQLDatabase());
+        SqlStatement[] sqlStatement = refactoring.generateStatements(new MSSQLDatabase())
         then:
         sqlStatement.length == 1
         assert sqlStatement[0] instanceof InsertSetStatement
 
         when:
-        SqlStatement[] sqlStatements = ((InsertSetStatement) sqlStatement[0]).getStatementsArray();
+        SqlStatement[] sqlStatements = ((InsertSetStatement) sqlStatement[0]).getStatementsArray()
 
         then:
         sqlStatements.length == 2
@@ -192,24 +192,24 @@ public class LoadDataChangeTest extends StandardChangeTest {
 
     def "generateStatement_excel not using InsertStatement"() throws Exception {
         when:
-        LoadDataChange refactoring = new LoadDataChange();
-        refactoring.setSchemaName("SCHEMA_NAME");
-        refactoring.setTableName("TABLE_NAME");
-        refactoring.setFile("liquibase/change/core/sample.data1-excel.csv");
-        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor());
-        //refactoring.setResourceAccessor(new JUnitResourceAccessor());
+        LoadDataChange refactoring = new LoadDataChange()
+        refactoring.setSchemaName("SCHEMA_NAME")
+        refactoring.setTableName("TABLE_NAME")
+        refactoring.setFile("liquibase/change/core/sample.data1-excel.csv")
+        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor())
+        //refactoring.setResourceAccessor(new JUnitResourceAccessor())
 
-        LoadDataColumnConfig ageConfig = new LoadDataColumnConfig();
-        ageConfig.setHeader("age");
-        ageConfig.setType("NUMERIC");
-        refactoring.addColumn(ageConfig);
+        LoadDataColumnConfig ageConfig = new LoadDataColumnConfig()
+        ageConfig.setHeader("age")
+        ageConfig.setType("NUMERIC")
+        refactoring.addColumn(ageConfig)
 
-        LoadDataColumnConfig activeConfig = new LoadDataColumnConfig();
-        activeConfig.setHeader("active");
-        activeConfig.setType("BOOLEAN");
-        refactoring.addColumn(activeConfig);
+        LoadDataColumnConfig activeConfig = new LoadDataColumnConfig()
+        activeConfig.setHeader("active")
+        activeConfig.setType("BOOLEAN")
+        refactoring.addColumn(activeConfig)
 
-        SqlStatement[] sqlStatements = refactoring.generateStatements(new MockDatabase());
+        SqlStatement[] sqlStatements = refactoring.generateStatements(new MockDatabase())
 
         then:
         sqlStatements.length == 2
@@ -234,9 +234,9 @@ public class LoadDataChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        LoadDataChange refactoring = new LoadDataChange();
-        refactoring.setTableName("TABLE_NAME");
-        refactoring.setFile("FILE_NAME");
+        LoadDataChange refactoring = new LoadDataChange()
+        refactoring.setTableName("TABLE_NAME")
+        refactoring.setFile("FILE_NAME")
 
         then:
         "Data loaded from FILE_NAME into TABLE_NAME" == refactoring.getConfirmationMessage()
@@ -244,17 +244,17 @@ public class LoadDataChangeTest extends StandardChangeTest {
 
     def "generateChecksum produces different values with each field"() {
         when:
-        LoadDataChange refactoring = new LoadDataChange();
-        refactoring.setSchemaName("SCHEMA_NAME");
-        refactoring.setTableName("TABLE_NAME");
-        refactoring.setFile("liquibase/change/core/sample.data1.csv");
-        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor());
-        //refactoring.setFileOpener(new JUnitResourceAccessor());
+        LoadDataChange refactoring = new LoadDataChange()
+        refactoring.setSchemaName("SCHEMA_NAME")
+        refactoring.setTableName("TABLE_NAME")
+        refactoring.setFile("liquibase/change/core/sample.data1.csv")
+        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor())
+        //refactoring.setFileOpener(new JUnitResourceAccessor())
 
-        String md5sum1 = refactoring.generateCheckSum().toString();
+        String md5sum1 = refactoring.generateCheckSum().toString()
 
-        refactoring.setFile("liquibase/change/core/sample.data2.csv");
-        String md5sum2 = refactoring.generateCheckSum().toString();
+        refactoring.setFile("liquibase/change/core/sample.data2.csv")
+        String md5sum2 = refactoring.generateCheckSum().toString()
 
         then:
         assert !md5sum1.equals(md5sum2)
@@ -304,27 +304,27 @@ public class LoadDataChangeTest extends StandardChangeTest {
         when:
         ChangeSet changeSet = new ChangeSet(null, null, true, false,
                 "liquibase/change/fakeChangeSet.xml",
-                null, null, false, null, null);
+                null, null, false, null, null)
 
-        LoadDataChange relativeChange = new LoadDataChange();
+        LoadDataChange relativeChange = new LoadDataChange()
 
-        relativeChange.setSchemaName("SCHEMA_NAME");
-        relativeChange.setTableName("TABLE_NAME");
-        relativeChange.setRelativeToChangelogFile(Boolean.TRUE);
-        relativeChange.setChangeSet(changeSet);
-        relativeChange.setFile("core/sample.data1.csv");
-        relativeChange.setResourceAccessor(new ClassLoaderResourceAccessor());
+        relativeChange.setSchemaName("SCHEMA_NAME")
+        relativeChange.setTableName("TABLE_NAME")
+        relativeChange.setRelativeToChangelogFile(Boolean.TRUE)
+        relativeChange.setChangeSet(changeSet)
+        relativeChange.setFile("core/sample.data1.csv")
+        relativeChange.setResourceAccessor(new ClassLoaderResourceAccessor())
 
-        SqlStatement[] relativeStatements = relativeChange.generateStatements(new MockDatabase());
+        SqlStatement[] relativeStatements = relativeChange.generateStatements(new MockDatabase())
 
-        LoadUpdateDataChange nonRelativeChange = new LoadUpdateDataChange();
-        nonRelativeChange.setSchemaName("SCHEMA_NAME");
-        nonRelativeChange.setTableName("TABLE_NAME");
-        nonRelativeChange.setChangeSet(changeSet);
-        nonRelativeChange.setFile("liquibase/change/core/sample.data1.csv");
-        nonRelativeChange.setResourceAccessor(new ClassLoaderResourceAccessor());
+        LoadUpdateDataChange nonRelativeChange = new LoadUpdateDataChange()
+        nonRelativeChange.setSchemaName("SCHEMA_NAME")
+        nonRelativeChange.setTableName("TABLE_NAME")
+        nonRelativeChange.setChangeSet(changeSet)
+        nonRelativeChange.setFile("liquibase/change/core/sample.data1.csv")
+        nonRelativeChange.setResourceAccessor(new ClassLoaderResourceAccessor())
 
-        SqlStatement[] nonRelativeStatements = nonRelativeChange.generateStatements(new MockDatabase());
+        SqlStatement[] nonRelativeStatements = nonRelativeChange.generateStatements(new MockDatabase())
 
         then:
         assert relativeStatements != null
@@ -334,36 +334,36 @@ public class LoadDataChangeTest extends StandardChangeTest {
 
     def "checksum does not change when no comments in CSV and comment property changes"() {
         when:
-        LoadDataChange refactoring = new LoadDataChange();
-        refactoring.setSchemaName("SCHEMA_NAME");
-        refactoring.setTableName("TABLE_NAME");
-        refactoring.setFile("liquibase/change/core/sample.data1.csv");
-        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor());
-        //refactoring.setFileOpener(new JUnitResourceAccessor());
+        LoadDataChange refactoring = new LoadDataChange()
+        refactoring.setSchemaName("SCHEMA_NAME")
+        refactoring.setTableName("TABLE_NAME")
+        refactoring.setFile("liquibase/change/core/sample.data1.csv")
+        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor())
+        //refactoring.setFileOpener(new JUnitResourceAccessor())
 
         refactoring.setCommentLineStartsWith("") //comments disabled
-        String md5sum1 = refactoring.generateCheckSum().toString();
+        String md5sum1 = refactoring.generateCheckSum().toString()
 
-        refactoring.setCommentLineStartsWith("#");
-        String md5sum2 = refactoring.generateCheckSum().toString();
+        refactoring.setCommentLineStartsWith("#")
+        String md5sum2 = refactoring.generateCheckSum().toString()
 
         then:
         assert md5sum1.equals(md5sum2)
     }
     def "checksum changes when there are comments in CSV"() {
         when:
-        LoadDataChange refactoring = new LoadDataChange();
-        refactoring.setSchemaName("SCHEMA_NAME");
-        refactoring.setTableName("TABLE_NAME");
-        refactoring.setFile("liquibase/change/core/sample.data1-withComments.csv");
-        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor());
-        //refactoring.setFileOpener(new JUnitResourceAccessor());
+        LoadDataChange refactoring = new LoadDataChange()
+        refactoring.setSchemaName("SCHEMA_NAME")
+        refactoring.setTableName("TABLE_NAME")
+        refactoring.setFile("liquibase/change/core/sample.data1-withComments.csv")
+        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor())
+        //refactoring.setFileOpener(new JUnitResourceAccessor())
 
         refactoring.setCommentLineStartsWith("") //comments disabled
-        String md5sum1 = refactoring.generateCheckSum().toString();
+        String md5sum1 = refactoring.generateCheckSum().toString()
 
-        refactoring.setCommentLineStartsWith("#");
-        String md5sum2 = refactoring.generateCheckSum().toString();
+        refactoring.setCommentLineStartsWith("#")
+        String md5sum2 = refactoring.generateCheckSum().toString()
 
         then:
         assert !md5sum1.equals(md5sum2)
@@ -371,19 +371,19 @@ public class LoadDataChangeTest extends StandardChangeTest {
 
     def "checksum same for CSV files with comments and file with removed comments manually"() {
         when:
-        LoadDataChange refactoring = new LoadDataChange();
-        refactoring.setSchemaName("SCHEMA_NAME");
-        refactoring.setTableName("TABLE_NAME");
-        refactoring.setFile("liquibase/change/core/sample.data1-withComments.csv");
-        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor());
-        //refactoring.setFileOpener(new JUnitResourceAccessor());
+        LoadDataChange refactoring = new LoadDataChange()
+        refactoring.setSchemaName("SCHEMA_NAME")
+        refactoring.setTableName("TABLE_NAME")
+        refactoring.setFile("liquibase/change/core/sample.data1-withComments.csv")
+        refactoring.setResourceAccessor(new ClassLoaderResourceAccessor())
+        //refactoring.setFileOpener(new JUnitResourceAccessor())
 
-        refactoring.setCommentLineStartsWith("#");
-        String md5sum1 = refactoring.generateCheckSum().toString();
+        refactoring.setCommentLineStartsWith("#")
+        String md5sum1 = refactoring.generateCheckSum().toString()
 
-        refactoring.setFile("liquibase/change/core/sample.data1-removedComments.csv");
-        refactoring.setCommentLineStartsWith(""); //disable comments just in case
-        String md5sum2 = refactoring.generateCheckSum().toString();
+        refactoring.setFile("liquibase/change/core/sample.data1-removedComments.csv")
+        refactoring.setCommentLineStartsWith("") //disable comments just in case
+        String md5sum2 = refactoring.generateCheckSum().toString()
 
         then:
         assert md5sum1.equals(md5sum2)

@@ -1,9 +1,9 @@
 package liquibase.configuration;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class LiquibaseConfigurationTest {
 
@@ -14,6 +14,6 @@ public class LiquibaseConfigurationTest {
 
         assertNotNull(globalConfiguration);
 
-        assertSame("Multiple calls to getConfiguration should return the same instance", globalConfiguration, liquibaseConfiguration.getConfiguration(GlobalConfiguration.class));
+        assertSame(globalConfiguration, liquibaseConfiguration.getConfiguration(GlobalConfiguration.class), "Multiple calls to getConfiguration should return the same instance");
     }
 }

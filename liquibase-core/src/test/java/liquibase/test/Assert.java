@@ -9,25 +9,25 @@ import java.util.Set;
 public class Assert
 {
     public static void assertSetsEqual(String[] expected, Set<String> set) {
-        org.junit.Assert.assertEquals("Set size does not match: "+ StringUtils.join(expected, ",")+" vs "+StringUtils.join(set, ","), expected.length, set.size());
+        org.junit.jupiter.api.Assertions.assertEquals(expected.length, set.size(), "Set size does not match: "+ StringUtils.join(expected, ",")+" vs "+StringUtils.join(set, ","));
         for (String string : expected) {
-            org.junit.Assert.assertTrue("Missing expected element " + string, set.contains(string));
+            org.junit.jupiter.api.Assertions.assertTrue(set.contains(string), "Missing expected element " + string);
         }
         for (String found : set) {
-            org.junit.Assert.assertTrue("Unexpected element in set: " + found, Arrays.asList(expected).contains(found));
+            org.junit.jupiter.api.Assertions.assertTrue(Arrays.asList(expected).contains(found), "Unexpected element in set: " + found);
         }
     }
 
     public static void assertArraysEqual(String[] expected, String[] array) {
-        org.junit.Assert.assertEquals("Set size does not match", expected.length, array.length);
+        org.junit.jupiter.api.Assertions.assertEquals(expected.length, array.length, "Set size does not match");
 
         for (int i=0; i<expected.length; i++) {
-            org.junit.Assert.assertEquals("Difference in element "+i, expected[i], array[i]);
+            org.junit.jupiter.api.Assertions.assertEquals("Difference in element "+i, expected[i], array[i]);
         }
     }
 
     public static void assertListsEqual(Object[] expected, List list, AssertFunction assertFunction) {
-        org.junit.Assert.assertEquals("List size does not match", expected.length, list.size());
+        org.junit.jupiter.api.Assertions.assertEquals(expected.length, list.size(), "List size does not match");
 
         for (int i=0; i<expected.length; i++) {
             assertFunction.check("Difference in element "+i, expected[i], list.get(i));

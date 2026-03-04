@@ -1,21 +1,15 @@
 package liquibase.ext;
 
-import static org.junit.Assert.fail;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import liquibase.resource.CompositeResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 import liquibase.servicelocator.ServiceLocator;
-import liquibase.sqlgenerator.SqlGenerator;
-import liquibase.test.TestContext;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public class ExtServiceLocatorTest {
     private ServiceLocator serviceLocator;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception{
         ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 
@@ -23,7 +17,7 @@ public class ExtServiceLocatorTest {
         serviceLocator.setResourceAccessor(resourceAccessor);
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         ServiceLocator.reset();
     }

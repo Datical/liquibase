@@ -1,8 +1,8 @@
 package liquibase.change.core
 
 import liquibase.change.AddColumnConfig
-import liquibase.change.ChangeStatus;
-import liquibase.change.StandardChangeTest;
+import liquibase.change.ChangeStatus
+import liquibase.change.StandardChangeTest
 import liquibase.sdk.database.MockDatabase
 import liquibase.snapshot.MockSnapshotGeneratorFactory
 import liquibase.snapshot.SnapshotGeneratorFactory
@@ -13,9 +13,9 @@ public class DropColumnChangeTest extends StandardChangeTest {
 
     def getConfirmationMessage() throws Exception {
         when:
-        DropColumnChange change = new DropColumnChange();
-        change.setTableName("TABLE_NAME");
-        change.setColumnName("COL_HERE");
+        DropColumnChange change = new DropColumnChange()
+        change.setTableName("TABLE_NAME")
+        change.setColumnName("COL_HERE")
 
         then:
         "Column TABLE_NAME.COL_HERE dropped" == change.getConfirmationMessage()

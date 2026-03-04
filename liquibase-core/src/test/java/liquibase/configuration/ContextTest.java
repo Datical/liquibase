@@ -1,18 +1,16 @@
 package liquibase.configuration;
 
-import junit.framework.TestCase;
 import liquibase.exception.UnexpectedLiquibaseException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.TestCase.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContextTest {
 
     private AbstractConfigurationContainer exampleConfiguration;
 
-    @Before
+    @BeforeEach
     public void before() {
         System.clearProperty("liquibase.example.propertyBooleanNoDefault");
         System.clearProperty("liquibase.example.propertyBooleanDefaultFalse");
@@ -30,9 +28,9 @@ public class ContextTest {
 
     }
 
-    @Test(expected = UnexpectedLiquibaseException.class)
+    @Test
     public void setValue_wrongType() {
-        exampleConfiguration.getContainer().setValue("propertyBooleanDefaultFalse", 124);
+        assertThrows(UnexpectedLiquibaseException.class, () -> exampleConfiguration.getContainer().setValue("propertyBooleanDefaultFalse", 124));
     }
 
     @Test
@@ -43,9 +41,9 @@ public class ContextTest {
         ExampleContext exampleContext = new ExampleContext();
         exampleContext.init(new SystemPropertyProvider());
 
-        TestCase.assertEquals(Boolean.TRUE, exampleContext.getContainer().getValue("propertyBooleanNoDefault", Boolean.class));
-        TestCase.assertEquals(Boolean.TRUE, exampleContext.getContainer().getValue("propertyBooleanDefaultFalse", Boolean.class));
-        TestCase.assertEquals(Boolean.FALSE, exampleContext.getContainer().getValue("propertyBooleanDefaultTrue", Boolean.class));
+        assertTrue(exampleContext.getContainer().getValue("propertyBooleanNoDefault", Boolean.class));
+        assertTrue(exampleContext.getContainer().getValue("propertyBooleanDefaultFalse", Boolean.class));
+        assertFalse(exampleContext.getContainer().getValue("propertyBooleanDefaultTrue", Boolean.class));
     }
 
     private static class ExampleContext extends AbstractConfigurationContainer {

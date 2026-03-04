@@ -29,12 +29,12 @@ public abstract class StandardChangeTest extends Specification {
 //    def "generateChecksum produces different values with each field"() {
 //        given:
 //        if (!canUseStandardGenerateCheckSumTest()) {
-//            return;
+//            return
 //        }
 //        def changeClass = getChangeClass()
 //
 //        expect:
-//        Map<String, String> seenCheckSums = new HashMap<String, String>();
+//        Map<String, String> seenCheckSums = new HashMap<String, String>()
 //
 //        def database = new MockDatabase()
 //        for (Change change in changeSupplier.getSupplier(changeClass).getAllParameterPermutations(database)) {
@@ -44,10 +44,10 @@ public abstract class StandardChangeTest extends Specification {
 //                continue
 //            }
 //            def checkSum = change.generateCheckSum()
-//            assert CheckSum.getCurrentVersion() == checkSum.getVersion();
+//            assert CheckSum.getCurrentVersion() == checkSum.getVersion()
 //            assert checkSum.toString().startsWith(CheckSum.getCurrentVersion()+":")
 //
-//            def serialized = new StringChangeLogSerializer().serialize(change, false);
+//            def serialized = new StringChangeLogSerializer().serialize(change, false)
 //
 //            if (seenCheckSums.containsKey(checkSum.toString())) {
 //                if (!serialized.equals(seenCheckSums.get(checkSum.toString()))) {
@@ -55,7 +55,7 @@ public abstract class StandardChangeTest extends Specification {
 //                }
 //            }
 //
-//            seenCheckSums.put(checkSum.toString(), serialized);
+//            seenCheckSums.put(checkSum.toString(), serialized)
 //
 //        }
 //        assert seenCheckSums.size() > 0 : "No changes found to check checksums for"
@@ -69,7 +69,7 @@ public abstract class StandardChangeTest extends Specification {
 //
 //        def newChange = changeClass.newInstance() as Change
 //        if (!isValidForLoad(change)) {
-//            return;
+//            return
 //        }
 //        newChange.load(serialized, resourceSupplier.simpleResourceAccessor)
 //        def reserialized = newChange.serialize()
@@ -81,11 +81,11 @@ public abstract class StandardChangeTest extends Specification {
 //    }
 
     def isValidForLoad(Change change) {
-        return true;
+        return true
     }
 
     protected boolean canUseStandardGenerateCheckSumTest() {
-        return true;
+        return true
     }
 
     protected Class getChangeClass() {
