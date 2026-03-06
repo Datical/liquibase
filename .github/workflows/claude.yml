@@ -26,5 +26,5 @@ jobs:
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
       (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
-    uses: liquibase/build-logic/.github/workflows/claude.yml@main
+    uses: liquibase/build-logic/.github/workflows/claude.yml@3bc448f805496d87c284977b62cda22c5aad540d # main
     secrets: inherit

@@ -15,5 +15,5 @@ permissions:
 
 jobs:
   claude-review:
-    uses: liquibase/build-logic/.github/workflows/claude-code-review.yml@main
+    uses: liquibase/build-logic/.github/workflows/claude-code-review.yml@3bc448f805496d87c284977b62cda22c5aad540d # main
     secrets: inherit
