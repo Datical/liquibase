@@ -80,16 +80,39 @@ jobs:
       uses: github/codeql-action/analyze@03e4368ac7daa2bd82b3e85262f3bf87ee112f57 # v3.36.0
       with:
         category: "/language:${{matrix.language}}"
+        output: sarif-results
 
-    - name: Generate Security Report
+    - name: Summarize CodeQL results
+      if: always()
       continue-on-error: true
-      uses: rsdmike/github-security-report-action@v3.0.4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        outputDir: ./reports/
+      run: |
+        summary="${GITHUB_STEP_SUMMARY:-/dev/stdout}"
+        exec >> "$summary"
+        echo "## CodeQL security summary (${{ matrix.language }})"
+        shopt -s nullglob
+        sarifs=(sarif-results/*.sarif)
+        if [ ${#sarifs[@]} -eq 0 ]; then
+          echo "_No SARIF results were produced._"
+          exit 0
+        fi
+        total=0
+        for f in "${sarifs[@]}"; do
+          count=$(jq '[.runs[].results[]?] | length' "$f" 2>/dev/null || echo 0)
+          total=$((total + count))
+          echo ""
+          echo "<details><summary>$(basename "$f") $count finding(s)</summary>"
+          echo ""
+          jq -r '.runs[].results[]? | "- **\(.ruleId)** (\(.level // "warning")): \(.message.text) at `\(.locations[0].physicalLocation.artifactLocation.uri // "?"):\(.locations[0].physicalLocation.region.startLine // 0)`"' "$f" || true
+          echo ""
+          echo "</details>"
+        done
+        echo ""
+        echo "**Total findings: $total**. Full details in the Security tab (code scanning alerts) and the uploaded SARIF artifact."
 
-    - name: Upload Security Report
+    - name: Upload CodeQL SARIF
+      if: always()
+      continue-on-error: true
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
-        name: security-report-${{matrix.language}}
-        path: ./reports/summary.pdf
+        name: codeql-sarif-${{ matrix.language }}
+        path: sarif-results/
