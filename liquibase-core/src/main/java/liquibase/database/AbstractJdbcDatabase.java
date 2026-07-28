@@ -30,7 +30,8 @@ import liquibase.statement.DatabaseFunction;
 import liquibase.statement.SequenceCurrentValueFunction;
 import liquibase.statement.SequenceNextValueFunction;
 import liquibase.statement.SqlStatement;
-import liquibase.statement.core.*;
+import liquibase.statement.core.GetViewDefinitionStatement;
+import liquibase.statement.core.RawCallStatement;
 import liquibase.structure.DatabaseObject;
 import liquibase.structure.core.*;
 import liquibase.util.ISODateFormat;
@@ -763,7 +764,7 @@ public abstract class AbstractJdbcDatabase implements Database {
 	            typesToInclude.remove(PrimaryKey.class);
 	            typesToInclude.remove(UniqueConstraint.class);
 
-                if (supportsForeignKeyDisable() || getShortName().equals("postgresql")) {
+                if (supportsForeignKeyDisable() || getShortName().equals("postgresql") || getShortName().equals("oracle")) {
 		            //We do not remove ForeignKey because they will be disabled and removed as parts of tables.
                     // Postgress is treated as if we can disable foreign keys because we can't drop
                     // the foreign keys of a partitioned table, as discovered in
