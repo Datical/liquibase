@@ -6,10 +6,7 @@ import liquibase.configuration.GlobalConfiguration;
 import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.database.Database;
 import liquibase.database.DatabaseList;
-import liquibase.database.core.AbstractDb2Database;
-import liquibase.database.core.HsqlDatabase;
-import liquibase.database.core.MSSQLDatabase;
-import liquibase.database.core.OracleDatabase;
+import liquibase.database.core.*;
 import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.exception.ValidationErrors;
 import liquibase.parser.core.ParsedNode;
@@ -172,7 +169,7 @@ public class CreateProcedureChange extends AbstractChange implements DbmsTargete
         }
 
         if (this.getReplaceIfExists() != null && (DatabaseList.definitionMatches(getDbms(), database, true))) {
-            if (database instanceof MSSQLDatabase) {
+            if (database instanceof MSSQLDatabase || database instanceof PostgresDatabase) {
                 if (this.getReplaceIfExists() && this.getProcedureName() == null) {
                     validate.addError("procedureName is required if replaceIfExists = true");
                 }
